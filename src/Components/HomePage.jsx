@@ -1,7 +1,8 @@
 import React from 'react';
 import { FaLinkedin } from "react-icons/fa";
 import { FaBehance } from "react-icons/fa";
-import { Link } from 'react-router-dom'; // <-- add this!
+import { Link } from 'react-router-dom'; 
+import ChateoLogo from './ChateoLogo.png'
 
 const HomePage = () => {
   return (
@@ -9,10 +10,9 @@ const HomePage = () => {
       <div className="max-w-md">
         {/* Logo and Title */}
         <div className="flex items-center justify-center mb-6">
-          <div className="bg-indigo-100 p-3 rounded-full">
-            <div className="text-indigo-600 text-3xl">...</div>
-          </div>
-          <h1 className="ml-3 text-4xl font-bold text-gray-900">Chateo</h1>
+          <img src={ChateoLogo}
+          alt="Chateo Logo" 
+          />
         </div>
 
         {/* Description */}

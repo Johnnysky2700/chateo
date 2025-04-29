@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
+import illustration from './Illustration.png'
 
 const WalkThrough = () => {
   return (
@@ -8,7 +9,7 @@ const WalkThrough = () => {
       {/* Top Image */}
       <div className="flex-1 flex items-center justify-center">
         <img 
-          src="/your-image-path/walkthrough-image.jpg" 
+          src={illustration}
           alt="Messaging Illustration" 
           className="max-h-80 object-contain"
         />
@@ -22,13 +23,13 @@ const WalkThrough = () => {
       </div>
 
       {/* Terms */}
-      <div className="text-center text-gray-500 text-sm mb-8">
+      <div className="text-center text-base mb-8 pt-28">
         Terms & Privacy Policy
       </div>
 
       {/* Start Messaging Button */}
       <div className="w-full">
-        <Link to="/" className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-4 rounded-full">
+        <Link to="/VerifyPage" className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-4 rounded-full">
           Start Messaging
         </Link>
       </div>
