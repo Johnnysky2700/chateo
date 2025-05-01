@@ -92,7 +92,7 @@ export default function VerifyPage() {
               <button
                 key={idx}
                 onClick={() => handleInput(key)}
-                className="py-4 rounded-md bg-[#F7F7FC] hover:bg-gray-200"
+                className="py-4 bg-[#F7F7FC] hover:bg-gray-200"
               >
                 {key === 'backspace' ? (
                   <IoBackspaceOutline />

@@ -3,11 +3,10 @@ import { useState } from 'react';
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdChevronLeft } from "react-icons/md";
 
-
 export default function OtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { phone } = location.state || {}; // receiving phone number from VerifyPage
+  const { phone } = location.state || {};
 
   const [otp, setOtp] = useState('');
   const [showKeypad, setShowKeypad] = useState(false);
@@ -21,20 +20,32 @@ export default function OtpPage() {
 
   const handleInput = (value) => {
     if (value === 'backspace') {
-      setOtp(otp.slice(0, -1));
+      setOtp((prev) => prev.slice(0, -1));
     } else {
-      setOtp((prev) => prev + value);
+      setOtp((prev) => {
+        const newOtp = prev + value;
+
+        // Auto-navigate when OTP reaches 4 digits
+        if (newOtp.length === 4) {
+          setTimeout(() => {
+            navigate('/ProfileAcc');
+          }, 300);
+        }
+
+        return newOtp;
+      });
     }
   };
 
   const handleBack = () => {
-    navigate('/VerifyPage'); 
+    navigate('/VerifyPage');
   };
 
   const handleResend = () => {
-    navigate('/VerifyPage'); 
+    setOtp('');
+    setShowKeypad(false); 
   };
-
+  
   return (
     <div className="flex flex-col min-h-screen justify-between p-6 bg-white relative">
       <div>
@@ -42,9 +53,9 @@ export default function OtpPage() {
 
         <div className="flex flex-col items-center justify-center p-6">
           <h1 className="text-2xl font-bold mb-4">Enter OTP</h1>
-          <p className="text-gray-500 mb-6 text-center">We sent an OTP to <br /> <span className="font-semibold">{phone}</span></p>
+          <p className="text-gray-500 mb-6 text-center">We sent an OTP to <br /><span className="font-semibold">{phone}</span></p>
 
-          {/* OTP display input */}
+          {/* OTP input field */}
           <input
             type="text"
             value={otp}
@@ -57,7 +68,7 @@ export default function OtpPage() {
 
         <button
           onClick={handleResend}
-          className="w-full text-primary py-3 text-sm hover:bg-blue-700 transition mb-8"
+          className="w-full text-primary py-3 text-sm transition mb-8"
         >
           Resend Code
         </button>
@@ -71,7 +82,7 @@ export default function OtpPage() {
               <button
                 key={idx}
                 onClick={() => handleInput(key)}
-                className="py-4 rounded-md bg-[#F7F7FC] hover:bg-gray-200"
+                className="py-4 bg-[#F7F7FC] hover:bg-gray-200"
               >
                 {key === 'backspace' ? (
                   <IoBackspaceOutline />
