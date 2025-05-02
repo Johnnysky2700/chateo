@@ -15,34 +15,46 @@ export default function ProfileAcc() {
     navigate('/OtpPage');
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!firstName.trim()) {
       alert('First Name is required');
       return;
     }
 
-    console.log('Saving profile:', { firstName, lastName });
-  navigate('/ContactPage'); 
-};
+    try {
+      const response = await fetch('http://localhost:8000/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ firstName, lastName }),
+      });
+
+      if (response.ok) {
+        navigate('/ContactPage');
+      } else {
+        alert('Failed to save profile');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Network error');
+    }
+  };
 
   const alphabetKeys = [
     ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
-    'backspace'
+    'backspace',
   ];
 
   const handleInput = (key) => {
     if (focusedField === 'first') {
-      if (key === 'backspace') {
-        setFirstName((prev) => prev.slice(0, -1));
-      } else {
-        setFirstName((prev) => prev + key);
-      }
+      setFirstName((prev) =>
+        key === 'backspace' ? prev.slice(0, -1) : prev + key
+      );
     } else {
-      if (key === 'backspace') {
-        setLastName((prev) => prev.slice(0, -1));
-      } else {
-        setLastName((prev) => prev + key);
-      }
+      setLastName((prev) =>
+        key === 'backspace' ? prev.slice(0, -1) : prev + key
+      );
     }
   };
 
@@ -83,19 +95,19 @@ export default function ProfileAcc() {
 
       <button
         onClick={handleSave}
-        className="w-full bg-primary text-white py-3 rounded-full text-lg font-semibold hover:bg-primary transition"
+        className="w-full bg-blue-600 text-white py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition"
       >
         Save
       </button>
 
       {/* Alphabet Keyboard */}
       <div className="absolute bottom-0 left-0 right-0 bg-[#F7F7FC] shadow-2xl">
-        <div className="grid grid-cols-6 gap-3 text-center text-lg">
+        <div className="grid grid-cols-6 gap-3 text-center text-lg p-2">
           {alphabetKeys.map((key, idx) => (
             <button
               key={idx}
               onClick={() => handleInput(key)}
-              className="py-2 px-4 hover:bg-gray-200 "
+              className="py-2 px-4 hover:bg-gray-200"
             >
               {key === 'backspace' ? <IoBackspaceOutline className="mx-auto" /> : key}
             </button>
