@@ -49,12 +49,12 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen justify-between p-6 bg-white relative">
+    <div className="flex flex-col min-h-screen justify-between p-6 bg-white relative text-black dark:bg-black dark:text-white">
       <div>
         <button onClick={handleBack} className="text-2xl mb-6"><MdChevronLeft /></button> 
         
-        <h1 className="text-2xl font-bold mb-2">Enter Your Phone Number</h1>
-        <p className="text-gray-500 mb-6 text-center">Please confirm your country code and enter your phone number</p>
+        <h1 className="text-[#F7F7FC] text-2xl font-bold mb-2">Enter Your Phone Number</h1>
+        <p className="text-[#F7F7FC] mb-6 text-center">Please confirm your country code and enter your phone number</p>
 
         {/* Country code and phone number input */}
         <div className="flex items-center gap-2 mb-6">
@@ -86,13 +86,13 @@ export default function VerifyPage() {
 
       {/* Keypad */}
       {showKeypad && (
-        <div className="absolute bottom-0 left-0 right-0 bg-[#F7F7FC] p-1 shadow-2xl">
+        <div className="absolute bottom-0 left-0 right-0 bg-[#F7F7FC] p-1 shadow-2xl text-black dark:bg-black dark:text-white">
           <div className="grid grid-cols-3 gap-6 text-2xl text-center">
             {keypadNumbers.map((key, idx) => (
               <button
                 key={idx}
                 onClick={() => handleInput(key)}
-                className="py-4 bg-[#F7F7FC] hover:bg-gray-200"
+                className="py-4 bg-[#F7F7FC] hover:bg-gray-200 text-black dark:bg-black dark:text-white"
               >
                 {key === 'backspace' ? (
                   <IoBackspaceOutline />

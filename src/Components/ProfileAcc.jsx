@@ -59,7 +59,7 @@ export default function ProfileAcc() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6 bg-white pb-32 relative">
+    <div className="flex flex-col min-h-screen p-6 bg-white pb-32 relative text-black dark:bg-black dark:text-white">
       <button onClick={handleBack} className="text-lg mb-4 text-left flex items-center gap-1">
         <MdChevronLeft className="text-xl" /> Your Profile
       </button>
@@ -95,7 +95,7 @@ export default function ProfileAcc() {
 
       <button
         onClick={handleSave}
-        className="w-full bg-blue-600 text-white py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition"
+        className="w-full bg-blue-600 text-[#F7F7FC] py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition"
       >
         Save
       </button>

@@ -4,8 +4,8 @@ import { FiMoreHorizontal } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 import { RiGroupLine } from "react-icons/ri";
 import { CgPlayListCheck } from "react-icons/cg";
-import { LuMessageSquareShare } from "react-icons/lu";
 import { FaPlus } from "react-icons/fa6";
+import Icon from "./Icon.png"
 
 export default function ChatPage() {
   const [contacts, setContacts] = useState([]);
@@ -28,12 +28,16 @@ export default function ChatPage() {
   const recentContacts = contacts.slice(0, 3); // top 3 shown in story circle
 
   return (
-    <div className="min-h-screen bg-white p-4 pb-24">
+    <div className="min-h-screen bg-white p-4 pb-24 text-black dark:bg-black dark:text-white">
       {/* Header */}
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl">Chats</h1>
         <div className="flex items-center space-x-2 text-2xl">
-          <button><LuMessageSquareShare /></button>
+          <img
+          src={Icon}
+          alt="icon"
+          className='bg-white'
+         />
           <button><CgPlayListCheck /></button>
         </div>
       </div>
@@ -107,14 +111,15 @@ export default function ChatPage() {
       </ul>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-6">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-6 text-black dark:bg-black dark:text-white">
         <button onClick={() => navigate('/ContactPage')} className="text-2xl">
           <RiGroupLine />
         </button>
         <button className="text-center text-sm">
           Chats
         </button>
-        <button className="text-center text-sm">
+        <button className="text-center text-sm"
+          onClick={() => navigate('/MorePage')}>
           <span className="block text-2xl"><FiMoreHorizontal /></span>
         </button>
       </div>

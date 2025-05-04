@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import { HiPlus } from 'react-icons/hi';
-import { TbMessageCircle } from "react-icons/tb";
+import { RiChat3Line } from "react-icons/ri";
 import { FiMoreHorizontal } from "react-icons/fi";
 
 export default function ContactPage() {
@@ -29,7 +29,7 @@ export default function ContactPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white p-4 pb-24 relative">
+    <div className="min-h-screen bg-white p-4 pb-24 relative text-black dark:bg-black dark:text-white">
       {/* Header */}
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl">Contacts</h1>
@@ -85,7 +85,7 @@ export default function ContactPage() {
       </ul>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-6">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-6 text-black dark:bg-black dark:text-white">
         <button className="text-sm">Contacts</button>
 
         <button
@@ -93,14 +93,13 @@ export default function ContactPage() {
           onClick={() => navigate('/ChatPage')}
         >
           <span className="block text-2xl">
-            <TbMessageCircle />
+            <RiChat3Line />
           </span>
         </button>
 
-        <button className="text-center text-sm">
-          <span className="block text-2xl">
-            <FiMoreHorizontal />
-          </span>
+        <button className="text-center text-sm"
+          onClick={() => navigate('/MorePage')}>
+          <span className="block text-2xl"><FiMoreHorizontal /></span>
         </button>
       </div>
     </div>

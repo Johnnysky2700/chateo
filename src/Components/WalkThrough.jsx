@@ -4,7 +4,7 @@ import illustration from './Illustration.png'
 
 const WalkThrough = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-between px-8 py-12 bg-white">
+    <div className="min-h-screen flex flex-col items-center justify-between px-8 py-12 bg-white text-black dark:bg-black dark:text-white">
       
       {/* Top Image */}
       <div className="flex-1 flex items-center justify-center">
@@ -17,13 +17,13 @@ const WalkThrough = () => {
 
       {/* Text */}
       <div className="text-center mt-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <h2 className="text-[#F7F7FC] text-2xl font-bold mb-4">
           Connect easily with <br /> your family and friends <br /> over countries
         </h2>
       </div>
 
       {/* Terms */}
-      <div className="text-center text-base mb-8 pt-28">
+      <div className="text-[#F7F7FC] text-center text-base mb-8 pt-28">
         Terms & Privacy Policy
       </div>
 
