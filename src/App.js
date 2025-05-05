@@ -8,6 +8,7 @@ import ProfileAcc from "./Components/ProfileAcc";
 import ContactPage from "./Components/ContactPage";
 import ChatPage from "./Components/ChatPage";
 import MorePage from "./Components/MorePage";
+import ChatDetails from "./Components/ChatDetails";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/ContactPage" element={<ContactPage />} />
             <Route path="/ChatPage" element={<ChatPage />} />
             <Route path="/MorePage" element={<MorePage />} />
+            <Route path="/ChatDetails/:id" element={<ChatDetails />} />
           </Routes>
         </div>
       </Router>

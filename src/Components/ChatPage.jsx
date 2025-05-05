@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { RiGroupLine } from "react-icons/ri";
 import { CgPlayListCheck } from "react-icons/cg";
 import { FaPlus } from "react-icons/fa6";
-import Icon from "./Icon.png"
+import Icon from "./Icon.png";
 
 export default function ChatPage() {
   const [contacts, setContacts] = useState([]);
@@ -33,11 +33,7 @@ export default function ChatPage() {
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl">Chats</h1>
         <div className="flex items-center space-x-2 text-2xl">
-          <img
-          src={Icon}
-          alt="icon"
-          className='bg-white'
-         />
+          <img src={Icon} alt="icon" className='bg-white' />
           <button><CgPlayListCheck /></button>
         </div>
       </div>
@@ -46,7 +42,7 @@ export default function ChatPage() {
       <div className="flex items-center space-x-4 overflow-x-auto pb-4">
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#F7F7FC] border border-[#ADB5BD] text-3xl">
-            <FaPlus className='w-4 h-4 text-sm text-[#ADB5BD]'/>
+            <FaPlus className='w-4 h-4 text-sm text-[#ADB5BD]' />
           </div>
           <p className="text-xs mt-1">Your Story</p>
         </div>
@@ -82,7 +78,11 @@ export default function ChatPage() {
       {/* Chat list */}
       <ul>
         {contacts.map((contact) => (
-          <li key={contact.id} className="flex items-center justify-between py-4 border-b">
+          <li
+            key={contact.id}
+            onClick={() => navigate(`/ChatDetails/${contact.id}`)}
+            className="flex items-center justify-between py-4 border-b cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          >
             <div className="flex gap-3">
               {contact.avatar ? (
                 <img
@@ -115,11 +115,8 @@ export default function ChatPage() {
         <button onClick={() => navigate('/ContactPage')} className="text-2xl">
           <RiGroupLine />
         </button>
-        <button className="text-center text-sm">
-          Chats
-        </button>
-        <button className="text-center text-sm"
-          onClick={() => navigate('/MorePage')}>
+        <button className="text-center text-sm">Chats</button>
+        <button className="text-center text-sm" onClick={() => navigate('/MorePage')}>
           <span className="block text-2xl"><FiMoreHorizontal /></span>
         </button>
       </div>
