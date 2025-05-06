@@ -35,7 +35,7 @@ const HomePage = () => {
           </p>
 
           {/* Social Links */}
-          <div className="flex items-center justify-center space-x-6">
+          <div className="flex space-x-6">
             <a href="https://linkedin.com/in/johnnysky" className="flex items-center text-gray-700 hover:text-indigo-600 underline gap-1 text-sm">
               <div className="text-2xl">
                 <FaLinkedin />
