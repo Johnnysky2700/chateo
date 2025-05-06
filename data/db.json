@@ -64,5 +64,76 @@
       "firstName": "IIIIIII",
       "lastName": ""
     }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "contactId": "1",
+      "sender": "other",
+      "text": "Look at how chocho sleep in my arms!",
+      "timestamp": "16:46",
+      "type": "image",
+      "src": "/Avatars/cat.png"
+    },
+    {
+      "id": 2,
+      "contactId": "1",
+      "sender": "you",
+      "text": "Can I come over?",
+      "timestamp": "16:46",
+      "type": "text"
+    },
+    {
+      "id": 3,
+      "contactId": "1",
+      "sender": "other",
+      "text": "Of course, let me know if you're on your way",
+      "timestamp": "16:46",
+      "type": "text"
+    },
+    {
+      "id": 4,
+      "contactId": "1",
+      "sender": "you",
+      "text": "K, I'm on my way",
+      "timestamp": "16:50",
+      "type": "text",
+      "read": true
+    },
+    {
+      "id": 5,
+      "contactId": "1",
+      "sender": "you",
+      "type": "voice",
+      "duration": "0:20",
+      "timestamp": "09:13",
+      "read": true
+    },
+    {
+      "id": 6,
+      "contactId": "1",
+      "sender": "other",
+      "text": "Good morning, did you sleep well?",
+      "timestamp": "09:45",
+      "type": "text"
+    },
+    {
+      "id": "1d20",
+      "contactId": 1,
+      "type": "text",
+      "text": "whats your name",
+      "time": "02:28",
+      "sender": "you",
+      "read": true
+    },
+    {
+      "id": "85ca",
+      "contactId": 2,
+      "type": "text",
+      "text": "hello how you doing today",
+      "time": "02:35",
+      "sender": "you",
+      "read": true
+    }
   ]
 }

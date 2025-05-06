@@ -33,7 +33,7 @@ export default function ChatPage() {
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl">Chats</h1>
         <div className="flex items-center space-x-2 text-2xl">
-          <img src={Icon} alt="icon" className='bg-white' />
+          <img src={Icon} alt="icon" className='text-white'/>
           <button><CgPlayListCheck /></button>
         </div>
       </div>
