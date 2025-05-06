@@ -53,8 +53,8 @@ export default function VerifyPage() {
       <div>
         <button onClick={handleBack} className="text-2xl mb-6"><MdChevronLeft /></button> 
         
-        <h1 className="text-[#F7F7FC] text-2xl font-bold mb-2">Enter Your Phone Number</h1>
-        <p className="text-[#F7F7FC] mb-6 text-center">Please confirm your country code and enter your phone number</p>
+        <h1 className="text-2xl font-bold mb-2">Enter Your Phone Number</h1>
+        <p className="mb-6 text-center">Please confirm your country code and enter your phone number</p>
 
         {/* Country code and phone number input */}
         <div className="flex items-center gap-2 mb-6">

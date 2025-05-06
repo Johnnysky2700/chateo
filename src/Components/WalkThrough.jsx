@@ -17,13 +17,13 @@ const WalkThrough = () => {
 
       {/* Text */}
       <div className="text-center mt-8">
-        <h2 className="text-[#F7F7FC] text-2xl font-bold mb-4">
+        <h2 className="text-2xl font-bold mb-4">
           Connect easily with <br /> your family and friends <br /> over countries
         </h2>
       </div>
 
       {/* Terms */}
-      <div className="text-[#F7F7FC] text-center text-base mb-8 pt-28">
+      <div className="text-center text-base mb-8 pt-28">
         Terms & Privacy Policy
       </div>
 
