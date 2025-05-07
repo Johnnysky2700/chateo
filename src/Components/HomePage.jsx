@@ -2,25 +2,25 @@ import React from 'react';
 import { FaLinkedin } from "react-icons/fa";
 import { FaBehance } from "react-icons/fa";
 import { Link } from 'react-router-dom'; 
-import ChateoLogo from './ChateoLogo.png'
+import ChateoLogo from '../Assests/Images/ChateoLogo.png'
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 bg-[#FFFFFF] rounded-xl">
-      <div className="max-w-md">
+    <div className="min-h-screen items-center justify-center px-6 py-12 bg-[#FFFFFF] rounded-xl">
+      <div className="max-w-md m-auto">
         {/* Logo and Title */}
-        <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center justify-start mb-6">
           <img src={ChateoLogo}
           alt="Chateo Logo" 
           />
         </div>
 
         {/* Description */}
-        <p className='text-justify'>
-          Chateo has been created to help designers for
-          your next project. This UI kit is completely free 
-          for personal or commercial purposes.
-          If you have any feedback, reach me out on Linkedin.
+        <p className='font-semibold text-[16px]'>
+          Chateo has been created to help designers 
+          for your next project. This UI kit are completely 
+          free for personal or commercial purposes. if you 
+          have any feedback, reach me out on Linkedin 
         </p>
 
         {/* Divider */}

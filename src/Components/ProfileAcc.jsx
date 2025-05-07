@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { RiUserLine } from "react-icons/ri";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { MdChevronLeft } from "react-icons/md";
-import { IoBackspaceOutline } from "react-icons/io5";
 
 export default function ProfileAcc() {
   const navigate = useNavigate();
@@ -41,23 +40,6 @@ export default function ProfileAcc() {
     }
   };
 
-  const alphabetKeys = [
-    ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
-    'backspace',
-  ];
-
-  const handleInput = (key) => {
-    if (focusedField === 'first') {
-      setFirstName((prev) =>
-        key === 'backspace' ? prev.slice(0, -1) : prev + key
-      );
-    } else {
-      setLastName((prev) =>
-        key === 'backspace' ? prev.slice(0, -1) : prev + key
-      );
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen p-6 bg-white pb-32 relative text-black dark:bg-black dark:text-white">
       <button onClick={handleBack} className="text-lg mb-4 text-left flex items-center gap-1">
@@ -66,7 +48,7 @@ export default function ProfileAcc() {
 
       <div className="flex flex-col items-center mb-8">
         <div className="relative">
-          <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-4xl text-gray-600">
+          <div className="w-24 h-24 bg-[#F7F7FC] rounded-full flex items-center justify-center text-4xl text-gray-600">
             <RiUserLine />
           </div>
           <div className="absolute bottom-0 right-0">
@@ -79,8 +61,8 @@ export default function ProfileAcc() {
         type="text"
         value={firstName}
         onFocus={() => setFocusedField('first')}
-        readOnly
-        className={`border p-3 rounded-md mb-4 w-full text-sm focus:outline-none ${focusedField === 'first' ? 'ring-2 ring-blue-500' : ''}`}
+        onChange={(e) => setFirstName(e.target.value)}
+        className={`border p-2 rounded-md mb-4 w-full bg-[#F7F7FC] text-sm focus:outline-none ${focusedField === 'first' ? '' : ''}`}
         placeholder="First Name (Required)"
       />
 
@@ -88,8 +70,8 @@ export default function ProfileAcc() {
         type="text"
         value={lastName}
         onFocus={() => setFocusedField('last')}
-        readOnly
-        className={`border p-3 rounded-md mb-6 w-full text-sm focus:outline-none ${focusedField === 'last' ? 'ring-2 ring-blue-500' : ''}`}
+        onChange={(e) => setLastName(e.target.value)}
+        className={`border p-2 rounded-md mb-6 w-full bg-[#F7F7FC] text-sm focus:outline-none ${focusedField === 'last' ? '' : ''}`}
         placeholder="Last Name (Optional)"
       />
 
@@ -99,21 +81,6 @@ export default function ProfileAcc() {
       >
         Save
       </button>
-
-      {/* Alphabet Keyboard */}
-      <div className="absolute bottom-0 left-0 right-0 bg-[#F7F7FC] shadow-2xl">
-        <div className="grid grid-cols-6 gap-3 text-center text-lg p-2">
-          {alphabetKeys.map((key, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleInput(key)}
-              className="py-2 px-4 hover:bg-gray-200"
-            >
-              {key === 'backspace' ? <IoBackspaceOutline className="mx-auto" /> : key}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

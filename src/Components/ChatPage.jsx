@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { RiGroupLine } from "react-icons/ri";
 import { CgPlayListCheck } from "react-icons/cg";
 import { FaPlus } from "react-icons/fa6";
-import Icon from "./Icon.png";
+import Icon from "../Assests/Images/Icon.png";
 
 export default function ChatPage() {
   const [contacts, setContacts] = useState([]);

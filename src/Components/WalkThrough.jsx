@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import illustration from './Illustration.png'
+import illustration from '../Assests/Images/Illustration.png'
 
 const WalkThrough = () => {
   return (

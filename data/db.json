@@ -73,11 +73,16 @@
       "id": "655b",
       "firstName": "CCCCCCC",
       "lastName": ""
+    },
+    {
+      "id": "5bf9",
+      "firstName": "johnson",
+      "lastName": ""
     }
   ],
   "messages": [
     {
-      "id": 1,
+      "id": "1",
       "contactId": "1",
       "sender": "other",
       "text": "Look at how chocho sleep in my arms!",
@@ -86,7 +91,7 @@
       "src": "/Avatars/cat.png"
     },
     {
-      "id": 2,
+      "id": "2",
       "contactId": "1",
       "sender": "you",
       "text": "Can I come over?",
@@ -94,7 +99,7 @@
       "type": "text"
     },
     {
-      "id": 3,
+      "id": "3",
       "contactId": "1",
       "sender": "other",
       "text": "Of course, let me know if you're on your way",
@@ -102,7 +107,7 @@
       "type": "text"
     },
     {
-      "id": 4,
+      "id": "4",
       "contactId": "1",
       "sender": "you",
       "text": "K, I'm on my way",
@@ -111,7 +116,7 @@
       "read": true
     },
     {
-      "id": 5,
+      "id": "5",
       "contactId": "1",
       "sender": "you",
       "type": "voice",
@@ -120,7 +125,7 @@
       "read": true
     },
     {
-      "id": 6,
+      "id": "6",
       "contactId": "1",
       "sender": "other",
       "text": "Good morning, did you sleep well?",
