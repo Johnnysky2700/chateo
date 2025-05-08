@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import illustration from '../Assests/Images/Illustration.png'
+import illustrationLight from '../Assests/Images/Illustration.png';
+import illustrationDark from '../Assests/Images/Illustration-dark.png';
 
 const WalkThrough = () => {
   return (
@@ -8,10 +9,17 @@ const WalkThrough = () => {
       
       {/* Top Image */}
       <div className="flex-1 flex items-center justify-center">
+        {/* Light mode image */}
         <img 
-          src={illustration}
-          alt="Messaging Illustration" 
-          className="max-h-80 object-contain"
+          src={illustrationLight}
+          alt="Messaging Illustration Light" 
+          className="max-h-80 object-contain block dark:hidden"
+        />
+        {/* Dark mode image */}
+        <img 
+          src={illustrationDark}
+          alt="Messaging Illustration Dark" 
+          className="max-h-80 object-contain hidden dark:block"
         />
       </div>
 

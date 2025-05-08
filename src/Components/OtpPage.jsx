@@ -41,24 +41,24 @@ export default function OtpPage() {
   return (
     <div className="flex flex-col min-h-screen justify-between p-6 bg-white relative text-black">
       <div>
-        <button onClick={handleBack} className="text-2xl mb-6"><MdChevronLeft /></button>
+        <button onClick={handleBack} className="text-2xl mb-6 pb-8"><MdChevronLeft /></button>
 
         <div className="flex flex-col items-center justify-center p-6">
-          <h1 className="text-2xl font-bold mb-4">Enter OTP</h1>
-          <p className="text-gray-500 mb-6 text-center">
-            We sent an OTP to <br />
+          <h1 className="text-2xl font-bold mb-2">Enter Code</h1>
+          <p className="text-gray-500 mb-4 text-sm text-center">
+            We have sent you an SMS with the code to <br />
             <span className="font-semibold">{phone}</span>
           </p>
 
           {/* OTP Circles */}
-          <div className="flex gap-4 mb-6">
+          <div className="flex gap-4 mb-6 pb-6 pt-6">
             {[0, 1, 2, 3].map((index) => {
               const char = otp[index] || '';
               return (
                 <div
                   key={index}
-                  className={`w-8 h-8 flex items-center justify-center text-xl font-semibold
-                    ${char ? '' : 'rounded-full border-2 border-gray-300 bg-gray-200'}`}
+                  className={`w-6 h-6 flex items-center justify-center text-xl font-semibold
+                    ${char ? '' : 'rounded-full border-2 border-[#EDEDED] bg-[#EDEDED]'}`}
                 >
                   {char}
                 </div>

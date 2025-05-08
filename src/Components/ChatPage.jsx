@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { RiGroupLine } from "react-icons/ri";
 import { CgPlayListCheck } from "react-icons/cg";
 import { FaPlus } from "react-icons/fa6";
-import Icon from "../Assests/Images/Icon.png";
+import { RiChatNewLine } from "react-icons/ri";
 
 export default function ChatPage() {
   const [contacts, setContacts] = useState([]);
@@ -33,7 +33,7 @@ export default function ChatPage() {
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl">Chats</h1>
         <div className="flex items-center space-x-2 text-2xl">
-          <img src={Icon} alt="icon" className='text-white'/>
+          <button><RiChatNewLine /></button>
           <button><CgPlayListCheck /></button>
         </div>
       </div>
