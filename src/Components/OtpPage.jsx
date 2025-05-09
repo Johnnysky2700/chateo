@@ -15,7 +15,7 @@ export default function OtpPage() {
     '1', '2', '3',
     '4', '5', '6',
     '7', '8', '9',
-    '',  '0', 'backspace'
+    '', '0', 'backspace'
   ];
 
   const handleInput = (value) => {
@@ -26,6 +26,10 @@ export default function OtpPage() {
       setOtp(newOtp);
 
       if (newOtp.length === 4) {
+        // Save verified phone number to localStorage
+        localStorage.setItem('registeredPhone', phone);
+
+        // Simulate short delay before navigating
         setTimeout(() => navigate('/ProfileAcc'), 300);
       }
     }
@@ -85,7 +89,7 @@ export default function OtpPage() {
                 onClick={() => key && handleInput(key)}
                 className="py-2 bg-[#F7F7FC] hover:bg-gray-200"
               >
-                {key === 'backspace' ? <IoBackspaceOutline className='ml-10'/> : key}
+                {key === 'backspace' ? <IoBackspaceOutline className='ml-10' /> : key}
               </button>
             ))}
           </div>

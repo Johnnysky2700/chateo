@@ -7,18 +7,20 @@ import { MdChevronLeft } from "react-icons/md";
 export default function ProfileAcc() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
+  const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [focusedField, setFocusedField] = useState('first');
 
   const handleBack = () => {
     navigate('/OtpPage');
   };
 
   const handleSave = async () => {
-    if (!firstName.trim()) {
-      alert('First Name is required');
+    if (!firstName.trim() || !middleName.trim() || !lastName.trim()) {
+      alert('First name, Middle name, and Last name are all required.');
       return;
     }
+
+    const phoneNumber = localStorage.getItem('registeredPhone');
 
     try {
       const response = await fetch('http://localhost:8000/contacts', {
@@ -26,7 +28,7 @@ export default function ProfileAcc() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ firstName, lastName }),
+        body: JSON.stringify({ firstName, middleName, lastName, phone: phoneNumber }),
       });
 
       if (response.ok) {
@@ -60,19 +62,25 @@ export default function ProfileAcc() {
       <input
         type="text"
         value={firstName}
-        onFocus={() => setFocusedField('first')}
         onChange={(e) => setFirstName(e.target.value)}
-        className={`border p-2 rounded-md mb-4 w-full bg-[#F7F7FC] text-sm focus:outline-none ${focusedField === 'first' ? '' : ''}`}
+        className="border p-2 rounded-md mb-4 w-full bg-[#F7F7FC] text-sm focus:outline-none"
         placeholder="First Name (Required)"
       />
 
       <input
         type="text"
+        value={middleName}
+        onChange={(e) => setMiddleName(e.target.value)}
+        className="border p-2 rounded-md mb-4 w-full bg-[#F7F7FC] text-sm focus:outline-none"
+        placeholder="Middle Name (Required)"
+      />
+
+      <input
+        type="text"
         value={lastName}
-        onFocus={() => setFocusedField('last')}
         onChange={(e) => setLastName(e.target.value)}
-        className={`border p-2 rounded-md mb-6 w-full bg-[#F7F7FC] text-sm focus:outline-none ${focusedField === 'last' ? '' : ''}`}
-        placeholder="Last Name (Optional)"
+        className="border p-2 rounded-md mb-6 w-full bg-[#F7F7FC] text-sm focus:outline-none"
+        placeholder="Last Name (Required)"
       />
 
       <button
