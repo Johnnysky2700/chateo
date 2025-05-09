@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { HiPlus } from "react-icons/hi";
-import { RiChat3Line, RiUserLine } from "react-icons/ri";
-import { FiMoreHorizontal } from "react-icons/fi";
+import { RiUserLine } from "react-icons/ri";
 import { AiFillPlusCircle } from "react-icons/ai";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import Footer from "./Footer";
+
 
 export default function ContactPage() {
   const [contacts, setContacts] = useState([]);
@@ -18,7 +18,6 @@ export default function ContactPage() {
   const [phone, setPhone] = useState("");
   const [avatar, setAvatar] = useState(null);
   const fileInputRef = useRef(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -244,26 +243,7 @@ export default function ContactPage() {
         </div>
       )}
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-6 text-black dark:bg-black dark:text-white">
-        <button className="text-sm">Contacts</button>
-        <button
-          className="text-center text-sm"
-          onClick={() => navigate("/ChatPage")}
-        >
-          <span className="block text-2xl">
-            <RiChat3Line />
-          </span>
-        </button>
-        <button
-          className="text-center text-sm"
-          onClick={() => navigate("/MorePage")}
-        >
-          <span className="block text-2xl">
-            <FiMoreHorizontal />
-          </span>
-        </button>
-      </div>
+<Footer />
     </div>
   );
 }

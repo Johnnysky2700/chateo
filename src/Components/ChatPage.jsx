@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
-import { FiMoreHorizontal } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
-import { RiGroupLine } from "react-icons/ri";
 import { CgPlayListCheck } from "react-icons/cg";
 import { FaPlus } from "react-icons/fa6";
 import { RiChatNewLine } from "react-icons/ri";
+import Footer from "./Footer";
+
 
 export default function ChatPage() {
   const [contacts, setContacts] = useState([]);
@@ -32,9 +32,9 @@ export default function ChatPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl">Chats</h1>
-        <div className="flex items-center space-x-2 text-2xl">
+        <div className="flex items-center space-x-2 text-xl">
           <button><RiChatNewLine /></button>
-          <button><CgPlayListCheck /></button>
+          <button><CgPlayListCheck className='text-2xl'/></button>
         </div>
       </div>
 
@@ -109,17 +109,7 @@ export default function ChatPage() {
           </li>
         ))}
       </ul>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-6 text-black dark:bg-black dark:text-white">
-        <button onClick={() => navigate('/ContactPage')} className="text-2xl">
-          <RiGroupLine />
-        </button>
-        <button className="text-center text-sm">Chats</button>
-        <button className="text-center text-sm" onClick={() => navigate('/MorePage')}>
-          <span className="block text-2xl"><FiMoreHorizontal /></span>
-        </button>
-      </div>
+      <Footer />
     </div>
   );
 }
