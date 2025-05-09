@@ -103,6 +103,15 @@
       "middleName": "oluwaseyi",
       "lastName": "johnson",
       "phone": "+222222222222"
+    },
+    {
+      "id": "ac5e",
+      "name": "oluwaseyi johnson chinedu",
+      "initials": "oc",
+      "phone": "2349038163098",
+      "status": "New Contact",
+      "online": false,
+      "avatar": null
     }
   ],
   "messages": [
