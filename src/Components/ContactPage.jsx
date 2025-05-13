@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useContacts } from "../ContactContext"; // import useContacts
 import { FiSearch } from "react-icons/fi";
 import { HiPlus } from "react-icons/hi";
 import { RiUserLine } from "react-icons/ri";
@@ -7,9 +8,8 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Footer from "./Footer";
 
-
 export default function ContactPage() {
-  const [contacts, setContacts] = useState([]);
+  const { contacts, setContacts } = useContacts(); // use context here
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -24,14 +24,14 @@ export default function ContactPage() {
       try {
         const res = await fetch("http://localhost:8000/contacts");
         const data = await res.json();
-        setContacts(data);
+        setContacts(data); // Update contacts via context
       } catch (err) {
         console.error("Failed to fetch contacts:", err);
       }
     };
 
     fetchContacts();
-  }, []);
+  }, [setContacts]); // Make sure setContacts is stable
 
   const filteredContacts = contacts.filter((contact) =>
     contact?.name?.toLowerCase().includes(search.toLowerCase())
@@ -75,7 +75,7 @@ export default function ContactPage() {
 
       if (res.ok) {
         const saved = await res.json();
-        setContacts((prev) => [...prev, saved]);
+        setContacts((prev) => [...prev, saved]); // Update the contacts list
         setShowModal(false);
         setFirstName("");
         setMiddleName("");
@@ -243,7 +243,7 @@ export default function ContactPage() {
         </div>
       )}
 
-<Footer />
+      <Footer />
     </div>
   );
 }

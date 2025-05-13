@@ -2,7 +2,7 @@ import React from 'react';
 import { FaLinkedin } from "react-icons/fa";
 import { FaBehance } from "react-icons/fa";
 import { Link } from 'react-router-dom'; 
-import ChateoLogo from '../Assests/Images/ChateoLogo.png'
+import ChateoLogo from '../Assets/Images/ChateoLogo.png'
 
 const HomePage = () => {
   return (

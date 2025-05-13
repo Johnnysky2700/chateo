@@ -45,66 +45,6 @@
       "online": false
     },
     {
-      "id": "8e22",
-      "firstName": "OLUWASEYI",
-      "lastName": "JOHNSON"
-    },
-    {
-      "id": "7974",
-      "firstName": "DJICHI",
-      "lastName": ""
-    },
-    {
-      "id": "8142",
-      "firstName": "CCCCCCC",
-      "lastName": ""
-    },
-    {
-      "id": "03e1",
-      "firstName": "IIIIIII",
-      "lastName": ""
-    },
-    {
-      "id": "9117",
-      "firstName": "CCCCCC",
-      "lastName": ""
-    },
-    {
-      "id": "655b",
-      "firstName": "CCCCCCC",
-      "lastName": ""
-    },
-    {
-      "id": "5bf9",
-      "firstName": "johnson",
-      "lastName": ""
-    },
-    {
-      "id": "7bfc",
-      "firstName": "johnnysky",
-      "lastName": "",
-      "phone": null
-    },
-    {
-      "id": "6fe6",
-      "firstName": "oluwaseyi",
-      "lastName": "",
-      "phone": null
-    },
-    {
-      "id": "9677",
-      "firstName": "boluwatife",
-      "lastName": "",
-      "phone": "+222222222222"
-    },
-    {
-      "id": "2656",
-      "firstName": "akinyomi",
-      "middleName": "oluwaseyi",
-      "lastName": "johnson",
-      "phone": "+222222222222"
-    },
-    {
       "id": "ac5e",
       "name": "oluwaseyi johnson chinedu",
       "initials": "oc",
@@ -114,24 +54,28 @@
       "avatar": null
     },
     {
-      "id": "c1e2",
-      "firstName": "jkcjacnl",
-      "middleName": "ojlssmv.",
-      "lastName": "lmclk,n",
-      "phone": "+222222222"
-    },
-    {
-      "id": "8eef",
-      "firstName": "Nathan",
-      "middleName": "Micheal",
-      "lastName": "Moxlow",
-      "phone": "+14580236985"
-    },
-    {
       "id": "2810",
       "name": "Nathan Micheal Moxlow",
       "initials": "NM",
       "phone": "17343095200",
+      "status": "New Contact",
+      "online": false,
+      "avatar": null
+    },
+    {
+      "id": "d156",
+      "name": "jame m bond",
+      "initials": "jb",
+      "phone": "625788989008",
+      "status": "New Contact",
+      "online": false,
+      "avatar": null
+    },
+    {
+      "id": "4bf5",
+      "name": "xljlsjlk; kslnld nndlnldm",
+      "initials": "xn",
+      "phone": "625788989008",
       "status": "New Contact",
       "online": false,
       "avatar": null

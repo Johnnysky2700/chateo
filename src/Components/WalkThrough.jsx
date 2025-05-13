@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import illustrationLight from '../Assests/Images/Illustration.png';
-import illustrationDark from '../Assests/Images/Illustration-dark.png';
+import illustrationLight from '../Assets/Images/Illustration.png';
+import illustrationDark from '../Assets/Images/Illustration-dark.png';
 
 const WalkThrough = () => {
   return (
