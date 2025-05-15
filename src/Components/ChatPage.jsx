@@ -14,10 +14,9 @@ export default function ChatPage() {
   const [showModal, setShowModal] = useState(false);
   const [showStoryModal, setShowStoryModal] = useState(false);
   const [search, setSearch] = useState("");
-  const navigate = useNavigate();
   const [modalSearch, setModalSearch] = useState("");
+  const navigate = useNavigate();
 
-  // Memoized fetchContacts to avoid re-creation inside useEffect
   const fetchContacts = useCallback(async () => {
     try {
       const res = await fetch("http://localhost:8000/contacts");
@@ -47,7 +46,7 @@ export default function ChatPage() {
           })
         )
       );
-      fetchContacts(); // Refresh from backend
+      fetchContacts();
       setSelectedChats([]);
       setSelectMode(false);
     } catch (err) {
@@ -65,8 +64,10 @@ export default function ChatPage() {
     setSelectedChats([]);
   };
 
-  const filteredContacts = contacts.filter((contact) =>
-    (contact.name || "Unknown").toLowerCase().includes(search.toLowerCase())
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.lastMessage &&
+      (contact.name || "Unknown").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -172,7 +173,7 @@ export default function ChatPage() {
               )}
               <div>
                 <p className="font-medium">{contact.name}</p>
-                <p className="text-gray-400 text-sm">Sample message here</p>
+                <p className="text-gray-400 text-sm">{contact.lastMessage}</p>
               </div>
             </div>
           </li>
@@ -180,6 +181,7 @@ export default function ChatPage() {
       </ul>
 
       <Footer />
+
       {/* Story Modal */}
       {showStoryModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -198,62 +200,71 @@ export default function ChatPage() {
 
       {/* New Chat Modal */}
       {showModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-80 max-h-[90vh] overflow-hidden text-black dark:text-white">
-    <h2 className="text-lg font-semibold mb-2">Start New Chat</h2>
-<input
-  type="text"
-  value={modalSearch}
-  onChange={(e) => setModalSearch(e.target.value)}
-  placeholder="Search contacts"
-  className="w-full px-3 py-2 mb-3 bg-gray-100 dark:bg-gray-800 rounded-md"
-/>
-      
-      {/* Scrollable Contact List */}
-      <ul className="overflow-y-auto max-h-[60vh] pr-2">
-      {contacts
-  .filter((c) =>
-    (c.name || "").toLowerCase().includes(modalSearch.toLowerCase())
-  )
-  .map((contact) => (
-    <li
-      key={contact.id}
-      className="flex items-center gap-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-      onClick={() => {
-        setShowModal(false);
-        navigate(`/ChatDetails/${contact.id}`);
-      }}
-    >
-      {contact.avatar ? (
-        <img
-          src={contact.avatar}
-          alt={contact.name}
-          className="w-10 h-10 rounded-xl object-cover"
-        />
-      ) : (
-        <div className="w-10 h-10 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-sm font-semibold">
-          {contact.initials}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-96 max-h-[90vh] overflow-hidden text-black dark:text-white">
+            <h2 className="text-lg font-semibold mb-2">Start New Chat</h2>
+            <input
+              type="text"
+              value={modalSearch}
+              onChange={(e) => setModalSearch(e.target.value)}
+              placeholder="Search contacts"
+              className="w-full px-3 py-2 mb-3 bg-gray-100 dark:bg-gray-800 rounded-md"
+            />
+
+            <ul className="overflow-y-auto max-h-[60vh] pr-2">
+              {contacts
+                .filter((c) =>
+                  (c.name || "").toLowerCase().includes(modalSearch.toLowerCase())
+                )
+                .map((contact) => (
+                  <li
+                    key={contact.id}
+                    className="flex items-center gap-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                    onClick={async () => {
+                      try {
+                        await fetch(`http://localhost:8000/contacts/${contact.id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            lastMessage: "Started chat",
+                          }),
+                        });
+                        await fetchContacts();
+                        setShowModal(false);
+                        navigate(`/ChatDetails/${contact.id}`);
+                      } catch (err) {
+                        console.error("Failed to start chat:", err);
+                      }
+                    }}
+                  >
+                    {contact.avatar ? (
+                      <img
+                        src={contact.avatar}
+                        alt={contact.name}
+                        className="w-10 h-10 rounded-xl object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-sm font-semibold">
+                        {contact.initials}
+                      </div>
+                    )}
+                    <div>
+                      <p>{contact.name}</p>
+                      <p className="text-xs text-gray-400">{contact.phone}</p>
+                    </div>
+                  </li>
+                ))}
+            </ul>
+
+            <button
+              onClick={() => setShowModal(false)}
+              className="mt-4 w-full py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
-      <div>
-        <p>{contact.name}</p>
-        <p className="text-xs text-gray-400">{contact.phone}</p>
-      </div>
-    </li>
-))}
-
-      </ul>
-
-      {/* Cancel Button */}
-      <button
-        onClick={() => setShowModal(false)}
-        className="mt-4 w-full py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm"
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-)}
     </div>
   );
 }
