@@ -22,15 +22,17 @@ export default function ChatDetails() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/messages?contactId=${id}`);
+        const res = await fetch(`http://localhost:8000/messages`);
         const data = await res.json();
-        setMessages(data);
-        setFilteredMessages(data);
+        const filtered = data.filter((msg) =>
+          String(msg.contactId) === String(id)
+        );
+        setMessages(filtered);
+        setFilteredMessages(filtered);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
       }
-    };
-
+    };    
     fetchMessages();
   }, [id]);
 
@@ -65,38 +67,43 @@ export default function ChatDetails() {
     }
   }, [searchTerm, messages]);
 
-  const handleSend = async () => {
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
-
-    const newMsg = {
-      contactId: parseInt(id),
-      type: 'text',
+  
+    const newMessage = {
+      sender: "you",
       text: message,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      sender: 'you',
-      read: true,
+      timestamp: new Date().toISOString(),
     };
-
+  
     try {
-      const res = await fetch('http://localhost:8000/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newMsg),
+      // 1. Save the new message
+      await fetch(`http://localhost:8000/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contactId: id,
+          ...newMessage,
+        }),
       });
-
-      if (res.ok) {
-        setMessages((prev) => [...prev, newMsg]);
-        setMessage('');
-      } else {
-        console.error("Failed to send message");
-      }
+  
+      // 2. Update contact's lastMessage field (corrected endpoint)
+      await fetch(`http://localhost:8000/contacts/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lastMessage: newMessage.text,
+        }),
+      });
+  
+      // 3. Update local state
+      setMessages((prev) => [...prev, { ...newMessage, contactId: id }]);
+      setMessage(""); // Clear input
     } catch (err) {
-      console.error("Error sending message:", err);
+      console.error("Failed to send message:", err);
     }
   };
-
+  
   const handleMenuAction = async (action) => {
     setShowMenu(false);
     switch (action) {
@@ -104,33 +111,27 @@ export default function ChatDetails() {
         try {
           const res = await fetch(`http://localhost:8000/messages?contactId=${id}`);
           const data = await res.json();
-  
-          // Delete all messages individually
           await Promise.all(data.map(msg =>
             fetch(`http://localhost:8000/messages/${msg.id}`, {
               method: 'DELETE',
             })
           ));
-  
           setMessages([]);
           setFilteredMessages([]);
         } catch (err) {
           console.error("Failed to delete messages:", err);
         }
         break;
-  
       case 'block':
         alert('User blocked (not actually implemented)');
         break;
-  
       case 'mute':
         alert('User muted (not actually implemented)');
         break;
-  
       default:
         break;
     }
-  };  
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black relative">
@@ -141,10 +142,7 @@ export default function ChatDetails() {
           <h2 className="text-base dark:text-white">{contact?.name || 'Loading...'}</h2>
         </div>
         <div className="flex items-center gap-3 text-2xl text-black dark:text-white relative">
-          <AiOutlineSearch
-            className='cursor-pointer'
-            onClick={() => setSearchMode((prev) => !prev)}
-          />
+          <AiOutlineSearch className='cursor-pointer' onClick={() => setSearchMode((prev) => !prev)} />
           <BiMenu onClick={() => setShowMenu((prev) => !prev)} className='cursor-pointer' />
           {showMenu && (
             <div className="absolute right-0 top-10 bg-white dark:bg-gray-800 border rounded shadow-md w-40 text-sm z-50">
@@ -178,7 +176,8 @@ export default function ChatDetails() {
                 <div className={`p-3 rounded-lg text-sm ${msg.sender === 'you' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700'}`}>
                   {msg.text}
                   <div className={`text-[10px] mt-1 text-right ${msg.sender === 'you' ? 'text-white/80' : 'text-gray-500'}`}>
-                    {msg.time} {msg.read && '• Read'}
+                  {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : msg.time}
+                  {msg.read && '• Read'}
                   </div>
                 </div>
               )}
@@ -211,7 +210,7 @@ export default function ChatDetails() {
           className="flex-1 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-black dark:text-white"
           placeholder="Message"
         />
-        <button onClick={handleSend} className="ml-3 text-primary text-2xl">
+        <button onClick={handleSendMessage} className="ml-3 text-primary text-2xl">
           <RiSendPlaneFill />
         </button>
       </div>

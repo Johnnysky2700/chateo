@@ -173,7 +173,9 @@ export default function ChatPage() {
               )}
               <div>
                 <p className="font-medium">{contact.name}</p>
-                <p className="text-gray-400 text-sm">{contact.lastMessage}</p>
+                <p className="text-gray-400 text-sm">
+                  {contact.lastMessage || "Started chat"}
+                </p>
               </div>
             </div>
           </li>
@@ -222,13 +224,23 @@ export default function ChatPage() {
                     className="flex items-center gap-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                     onClick={async () => {
                       try {
+                        // Optional: fetch messages if needed
+                        const res = await fetch(
+                          `http://localhost:8000/messages?contactId=${contact.id}`
+                        );
+                        const messages = await res.json();
+                        const lastMsgText = messages.length
+                          ? messages[messages.length - 1].text
+                          : "";
+
                         await fetch(`http://localhost:8000/contacts/${contact.id}`, {
                           method: "PATCH",
                           headers: { "Content-Type": "application/json" },
                           body: JSON.stringify({
-                            lastMessage: "Started chat",
+                            lastMessage: lastMsgText,
                           }),
                         });
+
                         await fetchContacts();
                         setShowModal(false);
                         navigate(`/ChatDetails/${contact.id}`);
