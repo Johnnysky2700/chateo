@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { FiSun, FiHelpCircle, FiMail } from 'react-icons/fi';
 import { RiChat3Line, RiUserLine, RiFolder3Line } from 'react-icons/ri';
 import { MdNotificationsNone, MdOutlinePrivacyTip, MdChevronRight } from 'react-icons/md';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 
 export default function MorePage() {
@@ -9,8 +11,17 @@ export default function MorePage() {
 
   const toggleTheme = () => setDarkMode(!darkMode);
 
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!localStorage.getItem("currentUserId")) {
+      localStorage.setItem("currentUserId", "1");
+    }
+  }, []);  
+
+
   const menuItems = [
-    { label: 'Account', icon: <RiUserLine /> },
+    { label: 'Account', icon: <RiUserLine />, path: '/Account' },
     { label: 'Chats', icon: <RiChat3Line /> },
     { label: 'Appearance', icon: <FiSun />, action: toggleTheme },
     { label: 'Notification', icon: <MdNotificationsNone /> },
@@ -19,7 +30,7 @@ export default function MorePage() {
     { label: 'Data Usage', icon: <RiFolder3Line /> },
     { label: 'Help', icon: <FiHelpCircle /> },
     { label: 'Invite Your Friends', icon: <FiMail /> },
-  ];
+  ];  
 
   return (
     <div className={`min-h-screen p-4 pb-24 ${darkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
@@ -41,23 +52,29 @@ export default function MorePage() {
 
       {/* Menu List */}
       <div className="space-y-6">
-        {menuItems.map((item, index) =>
-          item.divider ? (
-            <hr key={index} className="border-t border-gray-300 dark:border-gray-600" />
-          ) : (
-            <div
-              key={index}
-              onClick={item.action}
-              className="flex items-center justify-between cursor-pointer"
-            >
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-2xl">{item.icon}</span>
-                {item.label}
-              </div>
-              <MdChevronRight className="text-2xl" />
-            </div>
-          )
-        )}
+      {menuItems.map((item, index) =>
+  item.divider ? (
+    <hr key={index} className="border-t border-gray-300 dark:border-gray-600" />
+  ) : (
+    <div
+      key={index}
+      onClick={() => {
+        if (item.path) {
+          navigate(item.path);
+        } else if (item.action) {
+          item.action();
+        }
+      }}
+      className="flex items-center justify-between cursor-pointer"
+    >
+      <div className="flex items-center gap-2 text-sm">
+        <span className="text-2xl">{item.icon}</span>
+        {item.label}
+      </div>
+      <MdChevronRight className="text-2xl" />
+    </div>
+  )
+)}
       </div>
      <Footer />
     </div>

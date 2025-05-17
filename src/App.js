@@ -10,7 +10,8 @@ import ChatPage from "./Components/ChatPage";
 import MorePage from "./Components/MorePage";
 import ChatDetails from "./Components/ChatDetails";
 import { ThemeProvider } from "./context/ThemeContext";
-import { ContactProvider } from "./ContactContext"; // ✅ Import your contact context provider
+import { ContactProvider } from "./ContactContext";
+import Account from './Components/Account';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="/ChatPage" element={<ChatPage />} />
               <Route path="/MorePage" element={<MorePage />} />
               <Route path="/ChatDetails/:id" element={<ChatDetails />} />
+              <Route path="/Account" element={<Account />} />
             </Routes>
           </div>
         </Router>
