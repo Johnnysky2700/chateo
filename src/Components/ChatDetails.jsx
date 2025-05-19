@@ -24,15 +24,13 @@ export default function ChatDetails() {
       try {
         const res = await fetch(`http://localhost:8000/messages`);
         const data = await res.json();
-        const filtered = data.filter((msg) =>
-          String(msg.contactId) === String(id)
-        );
+        const filtered = data.filter((msg) => String(msg.contactId) === String(id));
         setMessages(filtered);
         setFilteredMessages(filtered);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
       }
-    };    
+    };
     fetchMessages();
   }, [id]);
 
@@ -46,7 +44,6 @@ export default function ChatDetails() {
         console.error("Failed to fetch contact:", error);
       }
     };
-
     fetchContact();
   }, [id]);
 
@@ -69,81 +66,80 @@ export default function ChatDetails() {
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-  
+
     const newMessage = {
       sender: "you",
       text: message,
       timestamp: new Date().toISOString(),
+      contactId: id,
     };
-  
+
     try {
-      // 1. Save the new message
-      await fetch(`http://localhost:8000/messages`, {
+      // Save message
+      const res = await fetch(`http://localhost:8000/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contactId: id,
-          ...newMessage,
-        }),
+        body: JSON.stringify(newMessage),
       });
-  
-      // 2. Update contact's lastMessage field (corrected endpoint)
+
+      if (!res.ok) throw new Error('Message not saved');
+
+      // Update lastMessage on contact
       await fetch(`http://localhost:8000/contacts/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lastMessage: newMessage.text,
-        }),
+        body: JSON.stringify({ lastMessage: newMessage.text }),
       });
-  
-      // 3. Update local state
-      setMessages((prev) => [...prev, { ...newMessage, contactId: id }]);
-      setMessage(""); // Clear input
+
+      // Update local state
+      setMessages(prev => [...prev, newMessage]);
+      setMessage("");
     } catch (err) {
       console.error("Failed to send message:", err);
     }
   };
-  
+
   const handleMenuAction = async (action) => {
     setShowMenu(false);
-    switch (action) {
-      case 'delete':
-        try {
-          const res = await fetch(`http://localhost:8000/messages?contactId=${id}`);
-          const data = await res.json();
-          await Promise.all(data.map(msg =>
+    if (action === 'delete') {
+      try {
+        const res = await fetch(`http://localhost:8000/messages?contactId=${id}`);
+        const data = await res.json();
+
+        await Promise.all(
+          data.map(msg =>
             fetch(`http://localhost:8000/messages/${msg.id}`, {
-              method: 'DELETE',
+              method: "DELETE"
             })
-          ));
-          setMessages([]);
-          setFilteredMessages([]);
-        } catch (err) {
-          console.error("Failed to delete messages:", err);
-        }
-        break;
-      case 'block':
-        alert('User blocked (not actually implemented)');
-        break;
-      case 'mute':
-        alert('User muted (not actually implemented)');
-        break;
-      default:
-        break;
+          )
+        );
+
+        setMessages([]);
+        setFilteredMessages([]);
+      } catch (err) {
+        console.error("Failed to delete messages:", err);
+      }
+    } else if (action === 'block') {
+      alert("User blocked (not actually implemented)");
+    } else if (action === 'mute') {
+      alert("User muted (not actually implemented)");
     }
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black relative">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
-          <MdChevronLeft className="text-xl cursor-pointer dark:text-white" onClick={() => navigate('/ChatPage')} />
+          <MdChevronLeft
+            className="text-xl cursor-pointer dark:text-white"
+            onClick={() => navigate('/ChatPage')}
+          />
           <h2 className="text-base dark:text-white">{contact?.name || 'Loading...'}</h2>
         </div>
         <div className="flex items-center gap-3 text-2xl text-black dark:text-white relative">
-          <AiOutlineSearch className='cursor-pointer' onClick={() => setSearchMode((prev) => !prev)} />
-          <BiMenu onClick={() => setShowMenu((prev) => !prev)} className='cursor-pointer' />
+          <AiOutlineSearch className='cursor-pointer' onClick={() => setSearchMode(prev => !prev)} />
+          <BiMenu onClick={() => setShowMenu(prev => !prev)} className='cursor-pointer' />
           {showMenu && (
             <div className="absolute right-0 top-10 bg-white dark:bg-gray-800 border rounded shadow-md w-40 text-sm z-50">
               <button onClick={() => handleMenuAction('delete')} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Delete Chat</button>
@@ -154,7 +150,7 @@ export default function ChatDetails() {
         </div>
       </div>
 
-      {/* Search bar */}
+      {/* Search */}
       {searchMode && (
         <div className="px-4 py-2 bg-gray-100 dark:bg-gray-900">
           <input
@@ -167,21 +163,12 @@ export default function ChatDetails() {
         </div>
       )}
 
-      {/* Chat Messages */}
+      {/* Messages */}
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {filteredMessages.map((msg, index) => (
           <div key={index} className={`flex ${msg.sender === 'you' ? 'justify-end' : 'justify-start'}`}>
             <div className="max-w-[75%]">
-              {msg.type === 'text' && (
-                <div className={`p-3 rounded-lg text-sm ${msg.sender === 'you' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700'}`}>
-                  {msg.text}
-                  <div className={`text-[10px] mt-1 text-right ${msg.sender === 'you' ? 'text-white/80' : 'text-gray-500'}`}>
-                  {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : msg.time}
-                  {msg.read && '• Read'}
-                  </div>
-                </div>
-              )}
-              {msg.type === 'voice' && (
+              {msg.type === 'voice' ? (
                 <div className="bg-primary text-white p-3 rounded-lg">
                   <div className="flex items-center gap-3">
                     <BsPlayFill size={24} />
@@ -190,7 +177,15 @@ export default function ChatDetails() {
                     </div>
                   </div>
                   <div className="text-[10px] mt-1 text-right text-white/80">
-                    {msg.time} • Read
+                    {msg.timestamp && new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Read
+                  </div>
+                </div>
+              ) : (
+                <div className={`p-3 rounded-lg text-sm ${msg.sender === 'you' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                  {msg.text}
+                  <div className={`text-[10px] mt-1 text-right ${msg.sender === 'you' ? 'text-white/80' : 'text-gray-500'}`}>
+                    {msg.timestamp && new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {msg.read && ' • Read'}
                   </div>
                 </div>
               )}
@@ -201,7 +196,7 @@ export default function ChatDetails() {
       </div>
 
       {/* Input Bar */}
-      <div className="flex items-center p-4 border-t bg-white dark:bg-black">
+      <div className="flex items-center p-4 border-t bg-white dark:bg-black dark:border-gray-700">
         <FiPlus size={20} className="mr-3 text-gray-500" />
         <input
           type="text"

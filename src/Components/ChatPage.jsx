@@ -12,10 +12,11 @@ export default function ChatPage() {
   const [selectedChats, setSelectedChats] = useState([]);
   const [selectMode, setSelectMode] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showStoryModal, setShowStoryModal] = useState(false);
   const [search, setSearch] = useState("");
   const [modalSearch, setModalSearch] = useState("");
   const navigate = useNavigate();
+  const { currentUser } = useContacts();
+  // Removed duplicate declaration of currentUserId
 
   const fetchContacts = useCallback(async () => {
     try {
@@ -70,9 +71,45 @@ export default function ChatPage() {
       (contact.name || "Unknown").toLowerCase().includes(search.toLowerCase())
   );
 
+  const [showStoryModal, setShowStoryModal] = useState(false);
+  const [storyText, setStoryText] = useState("");
+  const [storyFile, setStoryFile] = useState(null);
+
+  const currentUserId = currentUser?.id || "user-123"; // Use fallback logic if currentUser is undefined
+
+  const handleUploadStory = async () => {
+    if (!storyText && !storyFile) {
+      alert("Please add text or select a file.");
+      return;
+    }
+
+    const newStory = {
+      contactId: currentUserId, // Attach the ID here
+      text: storyText,
+      file: storyFile ? URL.createObjectURL(storyFile) : null,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hrs
+    };
+
+    try {
+      await fetch("http://localhost:8000/stories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newStory),
+      });
+
+      alert("Story uploaded!");
+      setShowStoryModal(false);
+      setStoryText("");
+      setStoryFile(null);
+    } catch (err) {
+      console.error("Upload failed", err);
+      alert("Failed to upload story");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white p-4 pb-24 text-black dark:bg-black dark:text-white relative">
-      {/* Header */}
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl font-semibold">Chats</h1>
         <div className="flex items-center space-x-2 text-xl">
@@ -88,16 +125,32 @@ export default function ChatPage() {
       {/* Stories */}
       <div className="flex items-center space-x-4 overflow-x-auto pb-4">
         <div className="flex flex-col items-center">
-          <button
-            onClick={() => setShowStoryModal(true)}
-            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#F7F7FC] border border-[#ADB5BD] text-3xl"
-          >
-            <FaPlus className="w-4 h-4 text-sm text-[#ADB5BD]" />
-          </button>
-          <p className="text-xs mt-1">Your Story</p>
+          <div className="flex flex-col items-center">
+            <div
+              onClick={() => {
+                if (currentUser?.id) {
+                  navigate(`/story/${currentUser.id}`);
+                }
+              }}
+              className="w-12 h-12 rounded-2xl bg-gray-200 dark:bg-gray-700 border-2 border-blue-500 flex items-center justify-center cursor-pointer relative"
+            >
+              <FaPlus
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent navigation
+                  setShowStoryModal(true);
+                }}
+                className="w-4 h-4 text-sm text-[#ADB5BD]"
+              />
+            </div>
+            <p className="text-xs mt-1">Your Story</p>
+          </div>
         </div>
         {contacts.slice(0, 3).map((contact) => (
-          <div key={contact.id} className="flex flex-col items-center">
+          <div
+            key={contact.id}
+            className="flex flex-col items-center cursor-pointer"
+            onClick={() => navigate(`/StoryPage?contactId=${contact.id}`)}
+          >
             {contact.avatar ? (
               <img
                 src={contact.avatar}
@@ -116,12 +169,17 @@ export default function ChatPage() {
         ))}
       </div>
 
-      {/* Bulk Chat Actions */}
       {selectMode && selectedChats.length > 0 && (
         <div className="fixed bottom-16 left-4 right-4 z-40 flex justify-around items-center py-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
-          <button onClick={handleArchive} className="text-sm text-blue-600">Archive</button>
-          <button onClick={handleReadAll} className="text-sm text-green-600">Read All</button>
-          <button onClick={handleDelete} className="text-sm text-red-600">Delete</button>
+          <button onClick={handleArchive} className="text-sm text-blue-600">
+            Archive
+          </button>
+          <button onClick={handleReadAll} className="text-sm text-green-600">
+            Read All
+          </button>
+          <button onClick={handleDelete} className="text-sm text-red-600">
+            Delete
+          </button>
         </div>
       )}
 
@@ -189,10 +247,21 @@ export default function ChatPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-80 text-black dark:text-white">
             <h2 className="text-lg font-semibold mb-4">Add New Story</h2>
-            <input type="file" accept="image/*,video/*" className="mb-4" />
+            <textarea
+              placeholder="Write something..."
+              value={storyText}
+              onChange={(e) => setStoryText(e.target.value)}
+              className="w-full p-2 mb-3 rounded border dark:bg-gray-800 dark:border-gray-600"
+            />
+            <input
+              type="file"
+              accept="image/*,video/*"
+              onChange={(e) => setStoryFile(e.target.files[0])}
+              className="mb-4"
+            />
             <button
               className="w-full py-2 bg-blue-600 text-white rounded-lg"
-              onClick={() => setShowStoryModal(false)}
+              onClick={handleUploadStory}
             >
               Upload
             </button>
@@ -216,7 +285,9 @@ export default function ChatPage() {
             <ul className="overflow-y-auto max-h-[60vh] pr-2">
               {contacts
                 .filter((c) =>
-                  (c.name || "").toLowerCase().includes(modalSearch.toLowerCase())
+                  (c.name || "")
+                    .toLowerCase()
+                    .includes(modalSearch.toLowerCase())
                 )
                 .map((contact) => (
                   <li
@@ -224,7 +295,6 @@ export default function ChatPage() {
                     className="flex items-center gap-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                     onClick={async () => {
                       try {
-                        // Optional: fetch messages if needed
                         const res = await fetch(
                           `http://localhost:8000/messages?contactId=${contact.id}`
                         );
@@ -233,13 +303,16 @@ export default function ChatPage() {
                           ? messages[messages.length - 1].text
                           : "";
 
-                        await fetch(`http://localhost:8000/contacts/${contact.id}`, {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            lastMessage: lastMsgText,
-                          }),
-                        });
+                        await fetch(
+                          `http://localhost:8000/contacts/${contact.id}`,
+                          {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              lastMessage: lastMsgText,
+                            }),
+                          }
+                        );
 
                         await fetchContacts();
                         setShowModal(false);

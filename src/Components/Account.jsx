@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MdChevronLeft } from "react-icons/md";
 
 export default function Account() {
   const navigate = useNavigate();
@@ -69,8 +70,13 @@ export default function Account() {
 
   return (
     <div className="min-h-screen p-6 bg-white text-black dark:bg-black dark:text-white">
+      <div className="flex items-center gap-3">
+        <MdChevronLeft
+          className="text-2xl cursor-pointer mb-6"
+          onClick={() => navigate('/MorePage')}
+        />
       <h1 className="text-2xl font-bold mb-6">Edit Account</h1>
-
+      </div>
       <div className="space-y-5">
         {['firstName', 'lastName', 'email', 'address', 'country'].map((field) => (
           <div key={field}>
