@@ -12,6 +12,7 @@ import ChatDetails from "./Components/ChatDetails";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ContactProvider } from "./ContactContext";
 import Account from './Components/Account';
+import Appearance from './Components/Appearance';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/MorePage" element={<MorePage />} />
               <Route path="/ChatDetails/:id" element={<ChatDetails />} />
               <Route path="/Account" element={<Account />} />
+              <Route path="/Appearance" element={<Appearance />} />
             </Routes>
           </div>
         </Router>
