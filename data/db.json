@@ -245,108 +245,11 @@
   ],
   "stories": [
     {
-      "id": "1",
-      "text": "First story",
-      "mediaUrl": "https://example.com/image.jpg",
-      "mediaType": "image",
-      "createdAt": "2025-05-18T14:00:00.000Z"
-    },
-    {
-      "id": "2",
-      "text": "hello world",
-      "mediaUrl": null,
-      "mediaType": null,
-      "createdAt": "2025-05-19T16:58:32.988Z"
-    },
-    {
       "id": "3",
       "text": "hello world`",
       "mediaUrl": null,
       "mediaType": null,
       "createdAt": "2025-05-19T16:59:08.291Z"
-    },
-    {
-      "id": "20c1",
-      "text": "hello world",
-      "file": null,
-      "createdAt": "2025-05-19T17:06:41.011Z",
-      "expiresAt": "2025-05-20T17:06:41.011Z"
-    },
-    {
-      "id": "1bf0",
-      "text": "hello world ",
-      "file": null,
-      "createdAt": "2025-05-19T17:07:00.747Z",
-      "expiresAt": "2025-05-20T17:07:00.747Z"
-    },
-    {
-      "id": "8026",
-      "text": "hello world",
-      "file": null,
-      "createdAt": "2025-05-19T17:12:11.657Z",
-      "expiresAt": "2025-05-20T17:12:11.657Z"
-    },
-    {
-      "id": "fb18",
-      "text": "hello world",
-      "file": null,
-      "createdAt": "2025-05-19T17:27:58.504Z",
-      "expiresAt": "2025-05-20T17:27:58.504Z"
-    },
-    {
-      "id": "fb55",
-      "text": "hello world",
-      "file": null,
-      "createdAt": "2025-05-19T17:28:14.457Z",
-      "expiresAt": "2025-05-20T17:28:14.457Z"
-    },
-    {
-      "id": "cb37",
-      "contactId": "user-123",
-      "text": "hello world",
-      "file": null,
-      "createdAt": "2025-05-19T17:32:00.879Z",
-      "expiresAt": "2025-05-20T17:32:00.879Z"
-    },
-    {
-      "id": "556f",
-      "contactId": "user-123",
-      "text": "world ",
-      "file": null,
-      "createdAt": "2025-05-19T17:32:42.150Z",
-      "expiresAt": "2025-05-20T17:32:42.150Z"
-    },
-    {
-      "id": "2",
-      "contactId": "3",
-      "text": "hello world",
-      "file": null,
-      "createdAt": "2025-05-19T21:02:31.637Z",
-      "expiresAt": "2025-05-20T21:02:31.637Z"
-    },
-    {
-      "id": "1",
-      "contactId": "1",
-      "text": "hello world",
-      "file": null,
-      "createdAt": "2025-05-19T21:06:57.711Z",
-      "expiresAt": "2025-05-20T21:06:57.711Z"
-    },
-    {
-      "id": "7e1a",
-      "contactId": 1,
-      "text": "",
-      "file": "blob:http://localhost:3000/3b0320f5-7ebc-4aee-b976-5be05fc68298",
-      "createdAt": "2025-05-19T21:34:34.537Z",
-      "expiresAt": "2025-05-20T21:34:34.537Z"
-    },
-    {
-      "id": "1c69",
-      "contactId": 1,
-      "text": "ojodomo",
-      "file": null,
-      "createdAt": "2025-05-20T12:45:50.730Z",
-      "expiresAt": "2025-05-21T12:45:50.744Z"
     }
   ]
 }
