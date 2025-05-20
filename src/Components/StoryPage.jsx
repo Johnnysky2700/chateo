@@ -41,7 +41,7 @@ export default function StoryPage() {
 
   // Auto-slide every 5 seconds
   useEffect(() => {
-    const timer = setTimeout(goNext, 5000);
+    const timer = setTimeout(goNext, 4000);
     return () => clearTimeout(timer);
   }, [goNext, currentIndex]);
 
@@ -90,7 +90,7 @@ export default function StoryPage() {
           Back
         </button>
       </div>
-
+  
       <div className="max-w-md w-full h-full flex flex-col items-center justify-center px-4 text-center">
         {currentStory.file && (
           <img
@@ -103,6 +103,22 @@ export default function StoryPage() {
           <p className="text-xl font-medium">{currentStory.text}</p>
         )}
       </div>
+  
+      {/* Manual navigation buttons */}
+      <div className="absolute bottom-6 right-4 flex gap-2">
+        <button
+          onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
+          className="bg-gray-700 text-white px-4 py-2 rounded-md"
+        >
+          Prev
+        </button>
+        <button
+          onClick={goNext}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md"
+        >
+          Next
+        </button>
+      </div>
     </div>
-  );
+  );  
 }

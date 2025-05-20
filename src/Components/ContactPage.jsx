@@ -102,15 +102,15 @@ export default function ContactPage() {
       </div>
 
       {/* Search Input */}
-      <div className="relative mb-4">
+      <div className="relative mb-4 text-[#A4A4A4]">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-md"
+          className="w-full pl-10 pr-4 py-2 bg-[#F7F7FC] text-black rounded-md dark:bg-gray-900 dark:text-[#A4A4A4]"
           placeholder="Search"
         />
-        <FiSearch className="absolute left-3 top-2.5 text-gray-400" />
+        <FiSearch className="absolute left-3 top-2.5 text-[#A4A4A4]" />
       </div>
 
       {/* Contact List */}
