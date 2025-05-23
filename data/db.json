@@ -1,4 +1,8 @@
 {
+    "saveToPhotos": true,
+    "voiceTranscripts": false,
+    "keepArchived": true,
+  
   "contacts": [
     {
       "id": "1",

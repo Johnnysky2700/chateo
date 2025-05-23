@@ -19,7 +19,7 @@ export default function MorePage() {
 
   const menuItems = [
     { label: 'Account', icon: <RiUserLine />, path: '/Account' },
-    { label: 'Chats', icon: <RiChat3Line /> },
+    { label: 'Chats', icon: <RiChat3Line />, path: '/Chats'},
     { label: 'Appearance', icon: <FiSun />, path: '/Appearance' },
     { label: 'Notification', icon: <MdNotificationsNone /> },
     { label: 'Privacy', icon: <MdOutlinePrivacyTip /> },
@@ -41,9 +41,6 @@ export default function MorePage() {
         <div>
           <p className="font-semibold">Almayra Zamzamy</p>
           <p className="text-gray-400 text-sm">+62 1309 - 1710 - 1920</p>
-        </div>
-        <div className="ml-auto text-2xl">
-          <MdChevronRight />
         </div>
       </div>
 

@@ -15,6 +15,7 @@ import { ContactProvider, useContacts } from "./ContactContext";
 import Account from './Components/Account';
 import Appearance from './Components/Appearance';
 import StoryPage from './Components/StoryPage';
+import Chats from './Components/Chats';
 
 // Create a wrapper component to access context
 function AppWithContext() {
@@ -47,6 +48,7 @@ function AppWithContext() {
           <Route path="/ChatDetails/:id" element={<ChatDetails />} />
           <Route path="/Account" element={<Account />} />
           <Route path="/Appearance" element={<Appearance />} />
+          <Route path="/Chats" element={<Chats />} />
           <Route path="/story/:contactId" element={<StoryPage />} />
         </Routes>
       </div>
