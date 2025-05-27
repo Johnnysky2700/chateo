@@ -1,8 +1,7 @@
 {
-    "saveToPhotos": true,
-    "voiceTranscripts": false,
-    "keepArchived": true,
-  
+  "saveToPhotos": true,
+  "voiceTranscripts": false,
+  "keepArchived": true,
   "contacts": [
     {
       "id": "1",
@@ -49,7 +48,7 @@
       "status": "Online",
       "avatar": "/Avatars/Erlan.png",
       "online": true,
-      "lastMessage": "good morning"
+      "lastMessage": "hello"
     },
     {
       "id": "3",
@@ -235,6 +234,13 @@
       "text": "im okay and you",
       "timestamp": "2025-05-19T07:49:29.952Z",
       "contactId": "1"
+    },
+    {
+      "id": "e35e",
+      "sender": "you",
+      "text": "hello",
+      "timestamp": "2025-05-27T08:51:36.633Z",
+      "contactId": "2"
     }
   ],
   "users": [
@@ -249,11 +255,75 @@
   ],
   "stories": [
     {
-      "id": "3",
+      "id": "1",
       "text": "hello world`",
       "mediaUrl": null,
       "mediaType": null,
       "createdAt": "2025-05-19T16:59:08.291Z"
+    },
+    {
+      "id": "2677",
+      "contactId": 1,
+      "text": "hello world",
+      "file": null,
+      "createdAt": "2025-05-26T08:48:44.103Z",
+      "expiresAt": "2025-05-27T08:48:44.105Z"
+    },
+    {
+      "id": "7df4",
+      "contactId": 1,
+      "text": "",
+      "file": "blob:http://localhost:3000/e04d125c-9564-4da2-acd4-4db08cdf28c5",
+      "createdAt": "2025-05-26T08:49:23.935Z",
+      "expiresAt": "2025-05-27T08:49:23.935Z"
+    },
+    {
+      "id": "36f2",
+      "contactId": 1,
+      "text": "",
+      "file": "blob:http://localhost:3000/50045a9e-4544-46d0-8999-602e045738ed",
+      "createdAt": "2025-05-26T08:49:43.971Z",
+      "expiresAt": "2025-05-27T08:49:43.971Z"
+    },
+    {
+      "id": "79b0",
+      "contactId": 1,
+      "text": "hello world",
+      "file": null,
+      "createdAt": "2025-05-26T09:33:53.792Z",
+      "expiresAt": "2025-05-27T09:33:53.792Z"
+    },
+    {
+      "id": "0052",
+      "userId": 1,
+      "text": "hello world\n",
+      "file": null,
+      "createdAt": "2025-05-26T20:30:19.167Z",
+      "expiresAt": "2025-05-27T20:30:19.168Z"
+    },
+    {
+      "id": "7da7",
+      "userId": 1,
+      "text": "hello",
+      "file": null,
+      "createdAt": "2025-05-27T08:18:27.631Z",
+      "expiresAt": "2025-05-28T08:18:27.631Z"
+    },
+    {
+      "id": "b1bb",
+      "userId": 1,
+      "text": "hello",
+      "file": null,
+      "createdAt": "2025-05-27T08:50:14.694Z",
+      "expiresAt": "2025-05-28T08:50:14.694Z"
+    },
+    {
+      "id": "dfb0",
+      "userId": 1,
+      "text": "happy me",
+      "file": "blob:http://localhost:3000/c4822e4a-545f-4ac5-8b48-1b8f4d5ec7f5",
+      "createdAt": "2025-05-27T09:10:45.437Z",
+      "expiresAt": "2025-05-28T09:10:45.437Z"
     }
   ]
 }

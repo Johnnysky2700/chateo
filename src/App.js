@@ -16,6 +16,7 @@ import Account from './Components/Account';
 import Appearance from './Components/Appearance';
 import StoryPage from './Components/StoryPage';
 import Chats from './Components/Chats';
+import Notification from './Components/Notification';
 
 // Create a wrapper component to access context
 function AppWithContext() {
@@ -49,7 +50,8 @@ function AppWithContext() {
           <Route path="/Account" element={<Account />} />
           <Route path="/Appearance" element={<Appearance />} />
           <Route path="/Chats" element={<Chats />} />
-          <Route path="/story/:contactId" element={<StoryPage />} />
+          <Route path="/Notification" element={<Notification />} />
+          <Route path="/story/:userId" element={<StoryPage />} />
         </Routes>
       </div>
     </Router>

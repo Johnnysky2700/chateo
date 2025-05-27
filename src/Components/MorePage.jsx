@@ -21,7 +21,7 @@ export default function MorePage() {
     { label: 'Account', icon: <RiUserLine />, path: '/Account' },
     { label: 'Chats', icon: <RiChat3Line />, path: '/Chats'},
     { label: 'Appearance', icon: <FiSun />, path: '/Appearance' },
-    { label: 'Notification', icon: <MdNotificationsNone /> },
+    { label: 'Notification', icon: <MdNotificationsNone />, path: '/Notification' },
     { label: 'Privacy', icon: <MdOutlinePrivacyTip /> },
     { divider: true },
     { label: 'Data Usage', icon: <RiFolder3Line /> },

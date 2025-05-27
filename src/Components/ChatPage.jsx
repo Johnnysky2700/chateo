@@ -1,22 +1,46 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useContacts } from "../ContactContext";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { CgPlayListCheck } from "react-icons/cg";
-import { FaPlus } from "react-icons/fa6";
 import { RiChatNewLine } from "react-icons/ri";
 import Footer from "./Footer";
+import StoryBar from "./StoryBar";
 
 export default function ChatPage() {
-  const { contacts, setContacts } = useContacts();
+  const { contacts, setContacts, currentUser } = useContacts();
   const [selectedChats, setSelectedChats] = useState([]);
   const [selectMode, setSelectMode] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
-  const [modalSearch, setModalSearch] = useState("");
+  const [showFullModal, setShowFullModal] = useState(false);
+  const [storyText, setStoryText] = useState("");
+  const [storyFile, setStoryFile] = useState(null);
+  const [modalSearch, setModalSearch] = useState(""); // ✅ ADDED missing state
+
   const navigate = useNavigate();
-  const { currentUser } = useContacts();
-  // Removed duplicate declaration of currentUserId
+  const currentUserId = currentUser?.id || "user-123";
+
+  const [stories, setStories] = useState([]);
+
+  useEffect(() => {
+    const fetchStories = async () => {
+      const res = await fetch("http://localhost:8000/stories");
+      const data = await res.json();
+      const now = new Date();
+
+      const valid = data
+        .filter((story) => new Date(story.expiresAt) > now)
+        .map((s) => ({
+          ...s,
+          userId: s.userId || s.contactId,
+        }));
+
+      setStories(valid);
+    };
+
+    fetchStories();
+  }, []);
 
   const fetchContacts = useCallback(async () => {
     try {
@@ -42,9 +66,7 @@ export default function ChatPage() {
     try {
       await Promise.all(
         selectedChats.map((id) =>
-          fetch(`http://localhost:8000/contacts/${id}`, {
-            method: "DELETE",
-          })
+          fetch(`http://localhost:8000/contacts/${id}`, { method: "DELETE" })
         )
       );
       fetchContacts();
@@ -55,28 +77,6 @@ export default function ChatPage() {
     }
   };
 
-  const handleReadAll = () => {
-    alert("All selected chats marked as read (mock action)");
-    setSelectedChats([]);
-  };
-
-  const handleArchive = () => {
-    alert("Selected chats archived (mock action)");
-    setSelectedChats([]);
-  };
-
-  const filteredContacts = contacts.filter(
-    (contact) =>
-      contact.lastMessage &&
-      (contact.name || "Unknown").toLowerCase().includes(search.toLowerCase())
-  );
-
-  const [showStoryModal, setShowStoryModal] = useState(false);
-  const [storyText, setStoryText] = useState("");
-  const [storyFile, setStoryFile] = useState(null);
-
-  const currentUserId = currentUser?.id || "user-123"; // Use fallback logic if currentUser is undefined
-
   const handleUploadStory = async () => {
     if (!storyText && !storyFile) {
       alert("Please add text or select a file.");
@@ -84,99 +84,78 @@ export default function ChatPage() {
     }
 
     const newStory = {
-      contactId: currentUserId, // Attach the ID here
+      userId: currentUserId,
       text: storyText,
       file: storyFile ? URL.createObjectURL(storyFile) : null,
       createdAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hrs
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     };
 
     try {
-      await fetch("http://localhost:8000/stories", {
+      const response = await fetch("http://localhost:8000/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),
       });
 
+      if (!response.ok) throw new Error("Upload failed");
+
       alert("Story uploaded!");
-      setShowStoryModal(false);
+      setShowFullModal(false);
       setStoryText("");
       setStoryFile(null);
     } catch (err) {
-      console.error("Upload failed", err);
+      console.error(err);
       alert("Failed to upload story");
     }
   };
 
+  const previewUrl = useMemo(() => {
+    if (!storyFile) return null;
+    return URL.createObjectURL(storyFile);
+  }, [storyFile]);
+
+  // ✅ Revoke preview URL to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.lastMessage &&
+      (contact.name || "Unknown").toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-white p-4 pb-24 text-black dark:bg-black dark:text-white relative">
+      {/* Header */}
       <div className="flex justify-between items-center mb-4 py-4">
         <h1 className="text-xl font-semibold">Chats</h1>
         <div className="flex items-center space-x-2 text-xl">
-          <button onClick={() => setShowModal(true)}>
+          <button onClick={() => setShowModal(true)} aria-label="New chat">
             <RiChatNewLine />
           </button>
-          <button onClick={() => setSelectMode(!selectMode)}>
+          <button onClick={() => setSelectMode(!selectMode)} aria-label="Toggle select mode">
             <CgPlayListCheck className="text-2xl" />
           </button>
         </div>
       </div>
 
-      {/* Stories */}
-      <div className="flex items-center space-x-4 overflow-x-auto pb-4">
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center">
-            <div
-              onClick={() => {
-                if (currentUser?.id) {
-                  navigate(`/story/${currentUser.id}`);
-                }
-              }}
-              className="w-12 h-12 rounded-2xl bg-gray-200 dark:bg-gray-700 border-2 border-blue-500 flex items-center justify-center cursor-pointer relative"
-            >
-              <FaPlus
-                onClick={(e) => {
-                  e.stopPropagation(); // prevent navigation
-                  setShowStoryModal(true);
-                }}
-                className="w-4 h-4 text-sm text-[#ADB5BD]"
-              />
-            </div>
-            <p className="text-xs mt-1">Your Story</p>
-          </div>
-        </div>
-        {contacts.slice(0, 3).map((contact) => (
-          <div
-            key={contact.id}
-            className="flex flex-col items-center cursor-pointer"
-            onClick={() => navigate(`/StoryPage?contactId=${contact.id}`)}
-          >
-            {contact.avatar ? (
-              <img
-                src={contact.avatar}
-                alt={contact.name}
-                className="rounded-2xl border-2 border-blue-500 object-cover w-12 h-12"
-              />
-            ) : (
-              <div className="rounded-2xl bg-blue-500 flex items-center justify-center text-white font-semibold text-sm w-12 h-12">
-                {contact.initials}
-              </div>
-            )}
-            <p className="text-xs mt-1 truncate w-16 text-center">
-              {contact.name.split(" ")[0]}
-            </p>
-          </div>
-        ))}
-      </div>
+      {/* Story bar */}
+      <StoryBar
+        currentUser={currentUser}
+        contacts={contacts}
+        setShowFullModal={setShowFullModal}
+        stories={stories} // ✅ Passing down fetched stories
+      />
 
+      {/* Bulk delete */}
       {selectMode && selectedChats.length > 0 && (
         <div className="fixed bottom-16 left-4 right-4 z-40 flex justify-around items-center py-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
-          <button onClick={handleArchive} className="text-sm text-blue-600">
-            Archive
-          </button>
-          <button onClick={handleReadAll} className="text-sm text-green-600">
-            Read All
-          </button>
           <button onClick={handleDelete} className="text-sm text-red-600">
             Delete
           </button>
@@ -195,7 +174,7 @@ export default function ChatPage() {
         <FiSearch className="absolute left-3 top-2.5 text-gray-400" />
       </div>
 
-      {/* Chat List */}
+      {/* Contact list */}
       <ul>
         {filteredContacts.map((contact) => (
           <li
@@ -242,26 +221,67 @@ export default function ChatPage() {
 
       <Footer />
 
-      {/* Story Modal */}
-      {showStoryModal && (
+      {/* Upload Story Modal */}
+      {showFullModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-80 text-black dark:text-white">
-            <h2 className="text-lg font-semibold mb-4">Add New Story</h2>
-            <textarea
-              placeholder="Write something..."
-              value={storyText}
-              onChange={(e) => setStoryText(e.target.value)}
-              className="w-full p-2 mb-3 rounded border dark:bg-gray-800 dark:border-gray-600"
-            />
-            <input
-              type="file"
-              accept="image/*,video/*"
-              onChange={(e) => setStoryFile(e.target.files[0])}
-              className="mb-4"
-            />
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-80 text-black dark:text-white relative">
             <button
-              className="w-full py-2 bg-blue-600 text-white rounded-lg"
+              onClick={() => {
+                setShowFullModal(false);
+                setStoryFile(null);
+                setStoryText("");
+              }}
+              className="absolute top-2 right-3 text-gray-400 hover:text-white"
+            >
+              ×
+            </button>
+
+            <h2 className="text-lg font-semibold mb-4">Add New Story</h2>
+
+            <div className="relative mb-3">
+              <textarea
+                placeholder="Say something..."
+                value={storyText}
+                onChange={(e) => setStoryText(e.target.value)}
+                className="w-full p-2 pl-10 rounded border dark:bg-gray-800 dark:border-gray-600"
+              />
+              <span className="absolute left-3 top-2.5 text-xl text-gray-400">💬</span>
+            </div>
+
+            {previewUrl && (
+              <div className="mb-4">
+                {storyFile?.type?.startsWith("image/") ? (
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="rounded w-full max-h-48 object-cover"
+                  />
+                ) : storyFile?.type?.startsWith("video/") ? (
+                  <video
+                    controls
+                    src={previewUrl}
+                    className="rounded w-full max-h-48 object-cover"
+                  />
+                ) : null}
+              </div>
+            )}
+
+            <div className="flex items-center justify-center">
+              <label className="cursor-pointer text-3xl">
+                📷
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={(e) => setStoryFile(e.target.files[0])}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            <button
+              className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
               onClick={handleUploadStory}
+              disabled={!storyText && !storyFile}
             >
               Upload
             </button>
