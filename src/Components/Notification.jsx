@@ -1,102 +1,132 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export default function Notification() {
   const navigate = useNavigate();
-  const [settings, setSettings] = useState({
-    messageShow: true,
-    messageReaction: true,
-    groupShow: true,
-    groupReaction: true,
-    statusReaction: true,
-    reminders: true,
-    clearBadge: true,
-  });
 
-  const handleToggle = (field) => {
-    setSettings((prev) => ({ ...prev, [field]: !prev[field] }));
+  const [messageNotifications, setMessageNotifications] = useState(true);
+  const [messageReactions, setMessageReactions] = useState(true);
+  const [groupNotifications, setGroupNotifications] = useState(true);
+  const [groupReactions, setGroupReactions] = useState(true);
+  const [statusReactions, setStatusReactions] = useState(true);
+  const [reminders, setReminders] = useState(true);
+  const [clearBadge, setClearBadge] = useState(true);
+
+  const handleAction = async (action) => {
+    const response = await fetch(`http://localhost:8000/notifications/${action}`, {
+      method: "POST",
+    });
+    if (response.ok) {
+      alert(`${action.replace(/-/g, " ")} completed`);
+    } else {
+      alert("Something went wrong");
+    }
   };
 
+  const Toggle = ({ value, onChange }) => (
+    <input
+      type="checkbox"
+      className="w-5 h-5"
+      checked={value}
+      onChange={() => onChange(!value)}
+    />
+  );
+
+  const Section = ({ title, children }) => (
+    <div className="mb-2">
+      {title && <h2 className="text-gray-500 text-sm font-semibold mb-2">{title}</h2>}
+      <div className="space-y-3 bg-white dark:bg-neutral-600 p-4 rounded-lg shadow-sm">
+        {children}
+      </div>
+    </div>
+  );
+
+  const SoundItem = () => (
+    <div
+      onClick={() => navigate("/notification-sound")}
+      className="flex justify-between items-center cursor-pointer"
+    >
+      <span className="text-black dark:text-white">Sound</span>
+      <span className="text-gray-400">Note &gt;</span>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-6">
-      <div className="flex items-center mb-6">
+    <div className="min-h-screen bg-gray-300 text-black dark:bg-black dark:text-white p-4 space-y-4">
+      <div className="flex items-center mb-6 relative">
         <MdChevronLeft
           onClick={() => navigate(-1)}
-          className="text-3xl cursor-pointer mr-2"
+          className="text-3xl cursor-pointer absolute left-0"
         />
-        <h1 className="text-xl font-bold flex-1 text-center -ml-6">Notifications</h1>
+        <h1 className="text-xl font-bold w-full text-center">Notifications</h1>
       </div>
 
-      {/* Section: Message Notifications */}
-      <div className="space-y-4 mb-8">
-        <p className="text-gray-400">Message notifications</p>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg flex justify-between items-center">
-          <span>Show notifications</span>
-          <input type="checkbox" checked={settings.messageShow} onChange={() => handleToggle("messageShow")} />
+      <Section title="Message notifications">
+        <div className="flex justify-between items-center">
+          <span className="text-black dark:text-white">Show notifications</span>
+          <Toggle value={messageNotifications} onChange={setMessageNotifications} />
         </div>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg">
-          <span>Sound</span>
-          <span className="block text-right text-green-400">Note</span>
+        <SoundItem />
+        <div className="flex justify-between items-center">
+          <span className="text-black dark:text-white">Reaction notifications</span>
+          <Toggle value={messageReactions} onChange={setMessageReactions} />
         </div>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg flex justify-between items-center">
-          <span>Reaction notifications</span>
-          <input type="checkbox" checked={settings.messageReaction} onChange={() => handleToggle("messageReaction")} />
-        </div>
-      </div>
+      </Section>
 
-      {/* Section: Group Notifications */}
-      <div className="space-y-4 mb-8">
-        <p className="text-gray-400">Group notifications</p>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg flex justify-between items-center">
-          <span>Show notifications</span>
-          <input type="checkbox" checked={settings.groupShow} onChange={() => handleToggle("groupShow")} />
+      <Section title="Group notifications">
+        <div className="flex justify-between items-center">
+          <span className="text-black dark:text-white">Show notifications</span>
+          <Toggle value={groupNotifications} onChange={setGroupNotifications} />
         </div>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg">
-          <span>Sound</span>
-          <span className="block text-right text-green-400">Note</span>
+        <SoundItem />
+        <div className="flex justify-between items-center">
+          <span className="text-black dark:text-white">Reaction notifications</span>
+          <Toggle value={groupReactions} onChange={setGroupReactions} />
         </div>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg flex justify-between items-center">
-          <span>Reaction notifications</span>
-          <input type="checkbox" checked={settings.groupReaction} onChange={() => handleToggle("groupReaction")} />
-        </div>
-      </div>
+      </Section>
 
-      {/* Section: Status Notifications */}
-      <div className="space-y-4 mb-8">
-        <p className="text-gray-400">Status notifications</p>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg">
-          <span>Sound</span>
-          <span className="block text-right text-green-400">Note</span>
+      <Section title="Status notifications">
+        <SoundItem />
+        <div className="flex justify-between items-center">
+          <span className="text-black dark:text-white">Reaction notifications</span>
+          <Toggle value={statusReactions} onChange={setStatusReactions} />
         </div>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg flex justify-between items-center">
-          <span>Reaction notifications</span>
-          <input type="checkbox" checked={settings.statusReaction} onChange={() => handleToggle("statusReaction")} />
-        </div>
-      </div>
+      </Section>
 
-      {/* Section: Reminders */}
-      <div className="space-y-2 mb-8">
-        <div className="bg-[#1c1c1e] p-4 rounded-lg flex justify-between items-center">
-          <span>Reminders</span>
-          <input type="checkbox" checked={settings.reminders} onChange={() => handleToggle("reminders")} />
+      <Section>
+        <div className="flex justify-between items-center">
+          <span className="text-black dark:text-white">Reminders</span>
+          <Toggle value={reminders} onChange={setReminders} />
         </div>
-        <p className="text-gray-400 text-sm px-1">
-          Get occasional reminders about messages or status updates you haven’t seen.
-        </p>
-      </div>
+      </Section>
+      <p className="text-gray-500 text-sm">
+        Get occasional reminders about messages or status updates you haven’t seen.
+      </p>
 
-      {/* Section: Home Screen Notifications */}
-      <div className="space-y-2">
-        <p className="text-gray-400">Home screen notifications</p>
-        <div className="bg-[#1c1c1e] p-4 rounded-lg flex justify-between items-center">
+      <Section title="Home screen notifications">
+        <div className="flex justify-between items-center">
           <div>
-            <p>Clear badge</p>
-            <p className="text-gray-400 text-sm">Your home screen badge clears completely after every time you open the app.</p>
+            <p className="text-black dark:text-white">Clear badge</p>
           </div>
-          <input type="checkbox" checked={settings.clearBadge} onChange={() => handleToggle("clearBadge")} />
+          <Toggle value={clearBadge} onChange={setClearBadge} />
         </div>
+      </Section>
+      <p className="text-gray-500 text-sm">
+        Your home screen badge clears completely after every time you open the app.
+      </p>
+
+      <div className="bg-white dark:bg-neutral-600 p-4 rounded-lg">
+        <button
+          className="text-red-500"
+          onClick={() => handleAction("reset-all")}
+        >
+          Reset Notification settings
+        </button>
       </div>
+      <p className="text-sm text-gray-500">
+        Reset all notification settings, including custom notification settings for your chats.
+      </p>
     </div>
   );
 }

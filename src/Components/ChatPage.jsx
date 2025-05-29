@@ -6,6 +6,7 @@ import { CgPlayListCheck } from "react-icons/cg";
 import { RiChatNewLine } from "react-icons/ri";
 import Footer from "./Footer";
 import StoryBar from "./StoryBar";
+import StoryModal from "./StoryModal";
 
 export default function ChatPage() {
   const { contacts, setContacts, currentUser } = useContacts();
@@ -16,7 +17,8 @@ export default function ChatPage() {
   const [showFullModal, setShowFullModal] = useState(false);
   const [storyText, setStoryText] = useState("");
   const [storyFile, setStoryFile] = useState(null);
-  const [modalSearch, setModalSearch] = useState(""); // ✅ ADDED missing state
+  const [modalSearch, setModalSearch] = useState("");
+ // ✅ ADDED missing state
 
   const navigate = useNavigate();
   const currentUserId = currentUser?.id || "user-123";
@@ -147,12 +149,23 @@ export default function ChatPage() {
 
       {/* Story bar */}
       <StoryBar
-        currentUser={currentUser}
-        contacts={contacts}
-        setShowFullModal={setShowFullModal}
-        stories={stories} // ✅ Passing down fetched stories
-      />
+  currentUser={currentUser}
+  contacts={contacts}
+  setShowFullModal={setShowFullModal}
+  stories={stories}
+/>
 
+{showFullModal && (
+ <StoryModal
+ currentUser={currentUser}
+ onClose={() => setShowFullModal(false)}
+ onStoryUpload={() => {
+   setStoryText("");
+   setStoryFile(null);
+  //  fetchStoriesAgain(); // Optional to refresh stories
+ }}
+/>
+)}
       {/* Bulk delete */}
       {selectMode && selectedChats.length > 0 && (
         <div className="fixed bottom-16 left-4 right-4 z-40 flex justify-around items-center py-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
@@ -249,23 +262,27 @@ export default function ChatPage() {
             </div>
 
             {previewUrl && (
-              <div className="mb-4">
-                {storyFile?.type?.startsWith("image/") ? (
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="rounded w-full max-h-48 object-cover"
-                  />
-                ) : storyFile?.type?.startsWith("video/") ? (
-                  <video
-                    controls
-                    src={previewUrl}
-                    className="rounded w-full max-h-48 object-cover"
-                  />
-                ) : null}
-              </div>
-            )}
-
+  <div className="mb-4 relative w-full max-h-48 rounded overflow-hidden">
+    {storyFile?.type?.startsWith("image/") ? (
+      <img
+        src={previewUrl}
+        alt="Preview"
+        className="w-full h-48 object-cover rounded"
+      />
+    ) : storyFile?.type?.startsWith("video/") ? (
+      <video
+        controls
+        src={previewUrl}
+        className="w-full h-48 object-cover rounded"
+      />
+    ) : null}
+    {storyText && (
+      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm p-1 text-center">
+        {storyText}
+      </div>
+    )}
+  </div>
+)}
             <div className="flex items-center justify-center">
               <label className="cursor-pointer text-3xl">
                 📷

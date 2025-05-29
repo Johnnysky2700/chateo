@@ -28,20 +28,23 @@ export default function StoryPage() {
   }, [userId]);
 
   useEffect(() => {
-    if (!stories.length) return;
+  if (!stories.length) return;
 
-    const currentStory = stories[currentIndex];
-    if (!currentStory) return;
+  const currentStory = stories[currentIndex];
+  if (!currentStory) return;
 
-    if (!currentStory.file || currentStory.file.match(/\.(jpeg|jpg|png|gif)$/i)) {
-      timerRef.current = setTimeout(() => {
-        if (currentIndex < stories.length - 1) setCurrentIndex(currentIndex + 1);
-        else navigate(-1);
-      }, 5000);
-    }
+  const fileExt = currentStory.file?.split(".").pop()?.toLowerCase();
+  const isImage = !currentStory.file || ["jpg", "jpeg", "png", "gif", "webp"].includes(fileExt);
 
-    return () => clearTimeout(timerRef.current);
-  }, [currentIndex, stories, navigate]);
+  if (isImage) {
+    timerRef.current = setTimeout(() => {
+      if (currentIndex < stories.length - 1) setCurrentIndex(currentIndex + 1);
+      else navigate(-1);
+    }, 5000);
+  }
+
+  return () => clearTimeout(timerRef.current);
+}, [currentIndex, stories, navigate]);
 
   const goNext = () => {
     if (currentIndex < stories.length - 1) setCurrentIndex(currentIndex + 1);
@@ -64,47 +67,46 @@ export default function StoryPage() {
 
   return (
     <div className="fixed inset-0 bg-black flex flex-col justify-center items-center text-white">
-      {/* Close */}
-      <div className="absolute top-4 left-4 cursor-pointer text-xl" onClick={() => navigate(-1)}>
-        × Close
-      </div>
-
-      {/* Counter */}
-      <div className="absolute top-4 right-4 text-sm opacity-70">
-        {currentIndex + 1} / {stories.length}
-      </div>
-
       {/* Story area */}
       <div
-        className="relative flex-grow flex items-center justify-center w-full max-w-md p-4 cursor-pointer"
-        onClick={goNext}
-      >
-        {currentStory.file ? (
-          currentStory.file.match(/\.(mp4|webm|ogg)$/i) ? (
-            <video
-              src={currentStory.file}
-              autoPlay
-              controls={false}
-              onEnded={goNext}
-              className="max-h-[80vh] max-w-full rounded"
-              muted
-            />
-          ) : (
-            <img
-              src={currentStory.file}
-              alt="Story"
-              className="max-h-[80vh] max-w-full rounded"
-            />
-          )
-        ) : null}
+  className="relative flex-grow flex items-center justify-center w-full h-full cursor-pointer rounded"
+  onClick={goNext}
+  style={{
+    backgroundColor: !currentStory.file ? (currentStory.bgColor || "#000000") : undefined,
+  }}
+>
+  <div className="relative w-full h-full flex justify-center items-center">
+    {currentStory.file ? (
+      currentStory.file.match(/\.(mp4|webm|ogg)$/i) ? (
+        <video
+          src={currentStory.file}
+          autoPlay
+          controls={false}
+          onEnded={goNext}
+          className="h-full w-full object-contain rounded"
+          muted
+        />
+      ) : (
+        <img
+          src={currentStory.file}
+          alt="Story"
+          className="h-full w-full object-contain rounded"
+        />
+      )
+    ) : null}
 
-        {/* Centered text */}
-        {currentStory.text && (
-          <div className="absolute text-center px-6 text-lg font-medium text-white">
-            {currentStory.text}
-          </div>
-        )}
+    {/* Text positioned accordingly */}
+    {currentStory.text && (
+      <div
+        className={`absolute px-6 text-lg font-medium text-white text-center w-full ${
+          currentStory.file ? "bottom-6" : "top-1/2 transform -translate-y-1/2"
+        }`}
+      >
+        {currentStory.text}
       </div>
+    )}
+  </div>
+</div>
 
       {/* Nav buttons */}
       <div className="flex justify-between w-full max-w-md px-4 pb-6 text-2xl select-none">
