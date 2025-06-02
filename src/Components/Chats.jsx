@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdChevronLeft } from "react-icons/md";
+import Footer from './Footer';
 
 export default function Chats() {
   const navigate = useNavigate();
@@ -150,6 +151,7 @@ export default function Chats() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

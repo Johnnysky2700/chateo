@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdCheck } from "react-icons/md";
+import Footer from './Footer';
 
 const tones = {
   "Alert tones": [
@@ -115,6 +116,7 @@ export default function NotificationSound() {
           </div>
         ))}
       </div>
+      <Footer />
     </div>
   );
 }

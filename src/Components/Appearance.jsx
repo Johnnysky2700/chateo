@@ -1,6 +1,7 @@
 import { useTheme } from '../context/ThemeContext';
 import { MdChevronLeft, MdOutlineLightMode, MdOutlineDarkMode } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import Footer from './Footer';
 
 export default function Appearance() {
   const navigate = useNavigate();
@@ -46,6 +47,7 @@ export default function Appearance() {
           Dark Mode
         </button>
       </div>
+      <Footer />
     </div>
   );
 }

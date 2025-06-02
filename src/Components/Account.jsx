@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdChevronLeft } from "react-icons/md";
+import Footer from './Footer';
 
 export default function Account() {
   const navigate = useNavigate();
@@ -109,6 +110,7 @@ export default function Account() {
           Save
         </button>
       </div>
+      <Footer />
     </div>
   );
 }

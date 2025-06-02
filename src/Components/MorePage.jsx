@@ -22,7 +22,7 @@ export default function MorePage() {
     { label: 'Chats', icon: <RiChat3Line />, path: '/Chats'},
     { label: 'Appearance', icon: <FiSun />, path: '/Appearance' },
     { label: 'Notification', icon: <MdNotificationsNone />, path: '/Notification' },
-    { label: 'Privacy', icon: <MdOutlinePrivacyTip /> },
+    { label: 'Privacy', icon: <MdOutlinePrivacyTip />, path: '/Privacy' },
     { divider: true },
     { label: 'Data Usage', icon: <RiFolder3Line /> },
     { label: 'Help', icon: <FiHelpCircle /> },

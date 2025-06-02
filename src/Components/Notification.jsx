@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import Footer from './Footer';
 
 export default function Notification() {
   const navigate = useNavigate();
@@ -130,6 +131,7 @@ export default function Notification() {
       <p className="text-sm text-gray-500">
         Reset all notification settings, including custom notification settings for your chats.
       </p>
+      <Footer />
     </div>
   );
 }
