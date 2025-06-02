@@ -17,6 +17,7 @@ import Appearance from './Components/Appearance';
 import StoryPage from './Components/StoryPage';
 import Chats from './Components/Chats';
 import Notification from './Components/Notification';
+import NotificationSound from "./Components/NotificationSound";
 
 // Create a wrapper component to access context
 function AppWithContext() {
@@ -51,6 +52,7 @@ function AppWithContext() {
           <Route path="/Appearance" element={<Appearance />} />
           <Route path="/Chats" element={<Chats />} />
           <Route path="/Notification" element={<Notification />} />
+          <Route path="/notification-sound" element={<NotificationSound />} />
           <Route path="/story/:userId" element={<StoryPage />} />
         </Routes>
       </div>

@@ -42,15 +42,18 @@ export default function Notification() {
     </div>
   );
 
-  const SoundItem = () => (
-    <div
-      onClick={() => navigate("/notification-sound")}
-      className="flex justify-between items-center cursor-pointer"
-    >
-      <span className="text-black dark:text-white">Sound</span>
-      <span className="text-gray-400">Note &gt;</span>
-    </div>
-  );
+  const SoundItem = () => {
+    const selectedTone = localStorage.getItem("selectedTone") || "Note (Default)";
+    return (
+      <div
+        onClick={() => navigate("/notification-sound")}
+        className="flex justify-between items-center cursor-pointer"
+      >
+        <span className="text-black dark:text-white">Sound</span>
+        <span className="text-gray-400">{selectedTone} &gt;</span>
+      </div>
+    );
+  };  
 
   return (
     <div className="min-h-screen bg-gray-300 text-black dark:bg-black dark:text-white p-4 space-y-4">
