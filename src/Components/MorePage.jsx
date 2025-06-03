@@ -24,9 +24,9 @@ export default function MorePage() {
     { label: 'Notification', icon: <MdNotificationsNone />, path: '/Notification' },
     { label: 'Privacy', icon: <MdOutlinePrivacyTip />, path: '/Privacy' },
     { divider: true },
-    { label: 'Data Usage', icon: <RiFolder3Line /> },
-    { label: 'Help', icon: <FiHelpCircle /> },
-    { label: 'Invite Your Friends', icon: <FiMail /> },
+    { label: 'Data Usage', icon: <RiFolder3Line />, path: '/DataUsage' },
+    { label: 'Help', icon: <FiHelpCircle />, path: '/Help' },
+    { label: 'Invite Your Friends', icon: <FiMail />, path: '/InviteFriends' },
   ];
 
   return (
