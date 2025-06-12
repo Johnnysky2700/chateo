@@ -49,8 +49,11 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black text-white">
       {/* Close button */}
-      <div className="absolute top-4 right-4" onClick={onClose}>
-        <XMarkIcon className="w-6 h-6 cursor-pointer" />
+      <div className="absolute top-4 right-4 z-50 bg-black bg-opacity-60 rounded-full p-1">
+        <XMarkIcon
+        className="w-6 h-6 cursor-pointer text-white"
+        onClick={onClose}
+        />
       </div>
       {/* Story preview */}
       <div className="flex-grow flex items-center justify-center relative w-full h-full">

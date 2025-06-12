@@ -40,7 +40,7 @@
           "type": "text"
         }
       ],
-      "lastMessage": "im okay and you"
+      "lastMessage": "https://github.com/notifications"
     },
     {
       "id": "2",
@@ -241,6 +241,13 @@
       "text": "hello",
       "timestamp": "2025-05-27T08:51:36.633Z",
       "contactId": "2"
+    },
+    {
+      "id": "6b74",
+      "sender": "you",
+      "text": "https://github.com/notifications",
+      "timestamp": "2025-06-04T19:55:33.534Z",
+      "contactId": "1"
     }
   ],
   "users": [

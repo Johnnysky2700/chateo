@@ -14,7 +14,7 @@ const menuItems = [
 
 const AttachmentMenu = ({ onSelect, onClose }) => {
   return (
-    <div className="absolute bottom-16 left-4 z-10 p-2 rounded-lg bg-white dark:bg-neutral-800 shadow-xl grid grid-cols-4 gap-4 animate-fadeIn">
+    <div className="absolute bottom-16 left-4 z-10 p-2 rounded-lg bg-white dark:bg-neutral-800 shadow-xl grid grid-cols-4 gap-4 animate-fadeIn w-full">
       {menuItems.map((item) => (
         <div
           key={item.label}

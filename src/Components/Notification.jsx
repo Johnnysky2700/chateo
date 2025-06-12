@@ -58,14 +58,14 @@ export default function Notification() {
 
   return (
     <div className="min-h-screen bg-gray-300 text-black dark:bg-black dark:text-white p-4 space-y-4">
-      <div className="flex items-center mb-6 relative">
+      <div className="flex items-center mb-6 fixed top-0 left-0 w-full bg-white p-2">
         <MdChevronLeft
           onClick={() => navigate(-1)}
           className="text-3xl cursor-pointer absolute left-0"
         />
         <h1 className="text-xl font-bold w-full text-center">Notifications</h1>
       </div>
-
+<div className="mt-20 pt-6">
       <Section title="Message notifications">
         <div className="flex justify-between items-center">
           <span className="text-black dark:text-white">Show notifications</span>
@@ -128,9 +128,10 @@ export default function Notification() {
           Reset Notification settings
         </button>
       </div>
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-gray-500 mb-12">
         Reset all notification settings, including custom notification settings for your chats.
       </p>
+      </div>
       <Footer />
     </div>
   );
