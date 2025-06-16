@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiMenu } from "react-icons/bi";
-import { BsPlayFill } from "react-icons/bs";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { FiPlus } from "react-icons/fi";
 import { MdChevronLeft } from "react-icons/md";
@@ -21,18 +20,96 @@ export default function ChatDetails() {
   const [searchMode, setSearchMode] = useState(false);
   const [showPoll, setShowPoll] = useState(false);
   const [showEvent, setShowEvent] = useState(false);
+  const [attachmentPreview, setAttachmentPreview] = useState(null);
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [selectMode, setSelectMode] = useState(false);
 
   const bottomRef = useRef(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const handleSelectAction = (action) => {
-    setShowMenu(false);
-    if (action === "poll") setShowPoll(true);
-    if (action === "event") setShowEvent(true);
-    // Add logic for photos, camera, etc.
+  const handleMenuAction = async (action) => {
+    if (action === "delete") {
+      if (selectedMessages.length === 0) {
+        setSelectMode(true); // Enable selection mode
+        return;
+      }
+
+      if (!window.confirm(`Delete ${selectedMessages.length} message(s)?`))
+        return;
+
+      try {
+        await Promise.all(
+          selectedMessages.map((msgId) =>
+            fetch(`http://localhost:8000/messages/${msgId}`, {
+              method: "DELETE",
+            })
+          )
+        );
+        setMessages((prev) =>
+          prev.filter((msg) => !selectedMessages.includes(msg.id))
+        );
+        setFilteredMessages((prev) =>
+          prev.filter((msg) => !selectedMessages.includes(msg.id))
+        );
+        setSelectedMessages([]);
+        setSelectMode(false);
+        setShowMenu(false);
+      } catch (err) {
+        console.error("Error deleting messages:", err);
+      }
+    } else if (action === "block") {
+      alert("User blocked (mock)");
+    } else if (action === "mute") {
+      alert("User muted (mock)");
+    }
   };
 
+  const handleFileInput = (type) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept =
+      type === "photos"
+        ? "image/*"
+        : type === "document"
+        ? ".pdf,.doc,.docx"
+        : "";
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        setAttachmentPreview({
+          type: type === "photos" ? "image" : "document",
+          file,
+          url,
+        });
+      }
+    };
+
+    input.click();
+  };
+
+  const handleCamera = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.capture = "environment";
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        setAttachmentPreview({
+          type: "image",
+          file,
+          url,
+        });
+      }
+    };
+
+    input.click();
+  };
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -81,13 +158,16 @@ export default function ChatDetails() {
   }, [searchTerm, messages]);
 
   const handleSendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() && !attachmentPreview) return;
 
     const newMessage = {
       sender: "you",
       text: message,
       timestamp: new Date().toISOString(),
       contactId: id,
+      type: attachmentPreview?.type || "text",
+      attachmentUrl: attachmentPreview?.url || null,
+      attachmentName: attachmentPreview?.file?.name || null,
     };
 
     try {
@@ -102,45 +182,18 @@ export default function ChatDetails() {
       await fetch(`http://localhost:8000/contacts/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lastMessage: newMessage.text }),
+        body: JSON.stringify({
+          lastMessage: newMessage.text || "📎 Attachment",
+        }),
       });
 
       setMessages((prev) => [...prev, newMessage]);
       setMessage("");
+      setAttachmentPreview(null);
     } catch (err) {
       console.error("Failed to send message:", err);
     }
   };
-
-  const handleMenuAction = async (action) => {
-    setShowMenu(false);
-    if (action === "delete") {
-      try {
-        const res = await fetch(
-          `http://localhost:8000/messages?contactId=${id}`
-        );
-        const data = await res.json();
-
-        await Promise.all(
-          data.map((msg) =>
-            fetch(`http://localhost:8000/messages/${msg.id}`, {
-              method: "DELETE",
-            })
-          )
-        );
-
-        setMessages([]);
-        setFilteredMessages([]);
-      } catch (err) {
-        console.error("Failed to delete messages:", err);
-      }
-    } else if (action === "block") {
-      alert("User blocked (not actually implemented)");
-    } else if (action === "mute") {
-      alert("User muted (not actually implemented)");
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black relative">
       {/* Header */}
@@ -169,7 +222,7 @@ export default function ChatDetails() {
                 onClick={() => handleMenuAction("delete")}
                 className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Delete Chat
+                {selectMode ? "Delete Selected" : "Delete Chat"}
               </button>
               <button
                 onClick={() => handleMenuAction("block")}
@@ -187,8 +240,19 @@ export default function ChatDetails() {
           )}
         </div>
       </div>
+      {selectMode && (
+        <button
+          className="text-sm text-red-500 border px-2 py-1 rounded"
+          onClick={() => {
+            setSelectMode(false);
+            setSelectedMessages([]);
+          }}
+        >
+          Cancel
+        </button>
+      )}
 
-      {/* Search */}
+      {/* Search Input */}
       {searchMode && (
         <div className="px-4 py-2 bg-gray-100 dark:bg-gray-900">
           <input
@@ -201,32 +265,39 @@ export default function ChatDetails() {
         </div>
       )}
 
-      {/* Messages */}
+      {/* Message List */}
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {filteredMessages.map((msg, index) => (
           <div
-            key={index}
+            key={msg.id || index}
             className={`flex ${
               msg.sender === "you" ? "justify-end" : "justify-start"
-            }`}
+            } relative group`}
           >
+            {selectMode && (
+              <input
+                type="checkbox"
+                className="absolute -left-6 top-1"
+                checked={selectedMessages.includes(msg.id)}
+                onChange={() => {
+                  setSelectedMessages((prev) =>
+                    prev.includes(msg.id)
+                      ? prev.filter((id) => id !== msg.id)
+                      : [...prev, msg.id]
+                  );
+                }}
+              />
+            )}
             <div className="max-w-[75%]">
-              {msg.type === "voice" ? (
-                <div className="bg-primary text-white p-3 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <BsPlayFill size={24} />
-                    <div className="bg-white h-6 w-full rounded">
-                      <div className="h-full bg-primary w-[60%]"></div>
-                    </div>
-                  </div>
-                  <div className="text-[10px] mt-1 text-right text-white/80">
-                    {msg.timestamp &&
-                      new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}{" "}
-                    • Read
-                  </div>
+              {msg.type === "image" && msg.attachmentUrl ? (
+                <img
+                  src={msg.attachmentUrl}
+                  className="w-full rounded-lg"
+                  alt="Attachment"
+                />
+              ) : msg.type === "document" && msg.attachmentUrl ? (
+                <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-sm text-black dark:text-white">
+                  📄 {msg.attachmentName}
                 </div>
               ) : (
                 <div
@@ -237,34 +308,71 @@ export default function ChatDetails() {
                   }`}
                 >
                   {msg.text}
-                  <div
-                    className={`text-[10px] mt-1 text-right ${
-                      msg.sender === "you" ? "text-white/80" : "text-gray-500"
-                    }`}
-                  >
-                    {msg.timestamp &&
-                      new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    {msg.read && " • Read"}
-                  </div>
                 </div>
               )}
+              <div
+                className={`text-[10px] mt-1 text-right ${
+                  msg.sender === "you" ? "text-white/80" : "text-gray-500"
+                }`}
+              >
+                {msg.timestamp &&
+                  new Date(msg.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                {msg.read && " • Read"}
+              </div>
             </div>
           </div>
         ))}
         <div ref={bottomRef} />
       </div>
 
-      {/* Input Bar */}
+      {/* Attachment Preview */}
+      {attachmentPreview && (
+        <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-neutral-800">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm text-black dark:text-white">
+              Attachment Preview
+            </p>
+            <button
+              className="text-red-500 text-sm"
+              onClick={() => setAttachmentPreview(null)}
+            >
+              Cancel
+            </button>
+          </div>
+          {attachmentPreview.type === "image" && (
+            <img
+              src={attachmentPreview.url}
+              alt="preview"
+              className="w-full rounded"
+            />
+          )}
+          {attachmentPreview.type === "document" && (
+            <div className="p-2 bg-white dark:bg-neutral-700 text-sm rounded text-black dark:text-white">
+              📄 {attachmentPreview.file.name}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Input Bar + Attachment Menu + Modals */}
       <div className="relative">
         {showAttachmentMenu && (
           <AttachmentMenu
-            onSelect={handleSelectAction}
+            onSelect={(action) => {
+              if (["photos", "document"].includes(action))
+                handleFileInput(action);
+              if (action === "camera") handleCamera();
+              if (action === "poll") setShowPoll(true);
+              if (action === "event") setShowEvent(true);
+              setShowAttachmentMenu(false);
+            }}
             onClose={() => setShowAttachmentMenu(false)}
           />
         )}
+
         {showPoll && (
           <PollModal
             onClose={() => setShowPoll(false)}
@@ -287,7 +395,7 @@ export default function ChatDetails() {
         <div className="flex items-center p-4 border-t bg-white dark:bg-black dark:border-gray-700">
           <FiPlus
             size={20}
-            className="mr-3 text-gray-500"
+            className="mr-3 text-gray-500 cursor-pointer"
             onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
           />
           <input

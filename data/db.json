@@ -40,7 +40,7 @@
           "type": "text"
         }
       ],
-      "lastMessage": "https://github.com/notifications"
+      "lastMessage": "hello"
     },
     {
       "id": "2",
@@ -120,14 +120,6 @@
       "src": "/Avatars/cat.png"
     },
     {
-      "id": "2",
-      "contactId": "1",
-      "sender": "you",
-      "text": "Can I come over?",
-      "timestamp": "16:46",
-      "type": "text"
-    },
-    {
       "id": "3",
       "contactId": "1",
       "sender": "other",
@@ -145,30 +137,12 @@
       "read": true
     },
     {
-      "id": "5",
-      "contactId": "1",
-      "sender": "you",
-      "type": "voice",
-      "duration": "0:20",
-      "timestamp": "09:13",
-      "read": true
-    },
-    {
       "id": "6",
       "contactId": "1",
       "sender": "other",
       "text": "Good morning, did you sleep well?",
       "timestamp": "09:45",
       "type": "text"
-    },
-    {
-      "id": "1d20",
-      "contactId": "1",
-      "type": "text",
-      "text": "whats your name",
-      "time": "02:28",
-      "sender": "you",
-      "read": true
     },
     {
       "id": "85ca",
@@ -180,60 +154,11 @@
       "read": true
     },
     {
-      "id": "b2ab",
-      "contactId": "1",
-      "sender": "you",
-      "text": "hello",
-      "timestamp": "2025-05-15T18:54:42.175Z"
-    },
-    {
-      "id": "faa6",
-      "contactId": "1",
-      "sender": "you",
-      "text": "how are you doing",
-      "timestamp": "2025-05-15T18:55:06.178Z"
-    },
-    {
-      "id": "05e7",
-      "contactId": "1",
-      "sender": "you",
-      "text": "how are you",
-      "timestamp": "2025-05-15T18:56:55.523Z"
-    },
-    {
-      "id": "ab1c",
-      "contactId": "1",
-      "sender": "you",
-      "text": "how are doing",
-      "timestamp": "2025-05-15T19:03:11.604Z"
-    },
-    {
-      "id": "ab9d",
-      "contactId": "1",
-      "sender": "you",
-      "text": "how are doing",
-      "timestamp": "2025-05-15T19:03:37.757Z"
-    },
-    {
-      "id": "cd78",
-      "contactId": "1",
-      "sender": "you",
-      "text": "hello",
-      "timestamp": "2025-05-15T19:03:59.075Z"
-    },
-    {
       "id": "d4ef",
       "contactId": "2",
       "sender": "you",
       "text": "good morning",
       "timestamp": "2025-05-19T07:24:27.042Z"
-    },
-    {
-      "id": "92a7",
-      "sender": "you",
-      "text": "im okay and you",
-      "timestamp": "2025-05-19T07:49:29.952Z",
-      "contactId": "1"
     },
     {
       "id": "e35e",
@@ -243,11 +168,14 @@
       "contactId": "2"
     },
     {
-      "id": "6b74",
+      "id": "512d",
       "sender": "you",
-      "text": "https://github.com/notifications",
-      "timestamp": "2025-06-04T19:55:33.534Z",
-      "contactId": "1"
+      "text": "hello",
+      "timestamp": "2025-06-16T11:54:51.033Z",
+      "contactId": "1",
+      "type": "text",
+      "attachmentUrl": null,
+      "attachmentName": null
     }
   ],
   "users": [
