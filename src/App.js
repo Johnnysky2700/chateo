@@ -23,6 +23,7 @@ import DataUsage from "./Components/DataUsage";
 import Help from "./Components/Help";
 import InviteFriends from "./Components/InviteFriends";
 import NewsFeed from "./Components/NewsFeed";
+import PrivateRoute from './Components/PrivateRoute';
 
 // Create a wrapper component to access context
 function AppWithContext() {
@@ -49,6 +50,7 @@ function AppWithContext() {
           <Route path="/VerifyPage" element={<VerifyPage />} />
           <Route path="/OtpPage" element={<OtpPage />} />
           <Route path="/ProfileAcc" element={<ProfileAcc />} />
+          <Route path="/ContactPage" element={ <PrivateRoute><ContactPage /></PrivateRoute> } />
           <Route path="/ContactPage" element={<ContactPage />} />
           <Route path="/ChatPage" element={<ChatPage />} />
           <Route path="/MorePage" element={<MorePage />} />

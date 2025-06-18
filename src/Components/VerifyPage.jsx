@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdChevronLeft } from "react-icons/md";
 import { IoBackspaceOutline } from "react-icons/io5";
 import PhoneInput from 'react-phone-input-2';
@@ -10,6 +10,14 @@ export default function VerifyPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showKeypad, setShowKeypad] = useState(false);
 
+  // ✅ Auto-login if already stored
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user) {
+      navigate('/ContactPage');
+    }
+  }, [navigate]);
+
   const handleInput = (value) => {
     if (value === 'backspace') {
       setPhoneNumber((prev) => prev.slice(0, -1));
@@ -18,14 +26,37 @@ export default function VerifyPage() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (phoneNumber.length < 7) {
       alert('Please enter a valid phone number.');
       return;
     }
 
     const fullPhoneNumber = '+' + phoneNumber;
-    navigate('/OtpPage', { state: { phone: fullPhoneNumber } });
+
+    try {
+      // Fetch contacts
+      const res = await fetch('http://localhost:8000/contacts');
+      const contacts = await res.json();
+
+      // ✅ Safely check match
+      const exactContact = contacts.find(
+        c => c.phone && ('+' + c.phone.trim()) === fullPhoneNumber.trim()
+      );
+
+      if (exactContact) {
+        // Login logic
+        const userRes = await fetch(`http://localhost:8000/users/1`);
+        const userData = await userRes.json();
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        navigate('/ContactPage');
+      } else {
+        // Navigate to OTP page
+        navigate('/OtpPage', { state: { phone: fullPhoneNumber } });
+      }
+    } catch (error) {
+      console.error("Error verifying phone:", error);
+    }
   };
 
   const handleBack = () => navigate('/WalkThrough');
