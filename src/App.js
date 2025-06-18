@@ -22,6 +22,7 @@ import Privacy from "./Components/Privacy";
 import DataUsage from "./Components/DataUsage";
 import Help from "./Components/Help";
 import InviteFriends from "./Components/InviteFriends";
+import NewsFeed from "./Components/NewsFeed";
 
 // Create a wrapper component to access context
 function AppWithContext() {
@@ -62,6 +63,7 @@ function AppWithContext() {
           <Route path="/DataUsage" element={<DataUsage />} />
           <Route path="/help" element={<Help />} />
           <Route path="/InviteFriends" element={<InviteFriends />} />
+          <Route path="/NewsFeed" element={<NewsFeed />} />
         </Routes>
       </div>
     </Router>

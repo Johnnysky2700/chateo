@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useContacts } from "../ContactContext";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ export default function ChatPage() {
   const [storyText, setStoryText] = useState("");
   const [storyFile, setStoryFile] = useState(null);
   const [modalSearch, setModalSearch] = useState("");
- // ✅ ADDED missing state
+  // ✅ ADDED missing state
 
   const navigate = useNavigate();
   const currentUserId = currentUser?.id || "user-123";
@@ -132,6 +132,32 @@ export default function ChatPage() {
       (contact.name || "Unknown").toLowerCase().includes(search.toLowerCase())
   );
 
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close menu when clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleSelectChats = () => {
+    setSelectMode(!selectMode);
+    setShowMenu(false);
+  };
+
+  const handleGoToNewsFeed = () => {
+    navigate("/NewsFeed");
+    setShowMenu(false);
+  };
+
   return (
     <div className="min-h-screen bg-white p-4 pb-24 text-black dark:bg-black dark:text-white relative">
       {/* Header */}
@@ -141,31 +167,52 @@ export default function ChatPage() {
           <button onClick={() => setShowModal(true)} aria-label="New chat">
             <RiChatNewLine />
           </button>
-          <button onClick={() => setSelectMode(!selectMode)} aria-label="Toggle select mode">
-            <CgPlayListCheck className="text-2xl" />
-          </button>
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              aria-label="Toggle menu"
+            >
+              <CgPlayListCheck className="text-2xl" />
+            </button>
+            {showMenu && (
+              <div className="absolute right-0 top-10 w-40 bg-white dark:bg-gray-800 shadow-lg border rounded z-50">
+                <button
+                  onClick={handleSelectChats}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+                >
+                  {selectMode ? "Cancel Selection" : "Select Chats"}
+                </button>
+                <button
+                  onClick={handleGoToNewsFeed}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+                >
+                  Go to NewsFeed
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Story bar */}
       <StoryBar
-  currentUser={currentUser}
-  contacts={contacts}
-  setShowFullModal={setShowFullModal}
-  stories={stories}
-/>
+        currentUser={currentUser}
+        contacts={contacts}
+        setShowFullModal={setShowFullModal}
+        stories={stories}
+      />
 
-{showFullModal && (
- <StoryModal
- currentUser={currentUser}
- onClose={() => setShowFullModal(false)}
- onStoryUpload={() => {
-   setStoryText("");
-   setStoryFile(null);
-  //  fetchStoriesAgain(); // Optional to refresh stories
- }}
-/>
-)}
+      {showFullModal && (
+        <StoryModal
+          currentUser={currentUser}
+          onClose={() => setShowFullModal(false)}
+          onStoryUpload={() => {
+            setStoryText("");
+            setStoryFile(null);
+            //  fetchStoriesAgain(); // Optional to refresh stories
+          }}
+        />
+      )}
       {/* Bulk delete */}
       {selectMode && selectedChats.length > 0 && (
         <div className="fixed bottom-16 left-4 right-4 z-40 flex justify-around items-center py-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
@@ -258,31 +305,33 @@ export default function ChatPage() {
                 onChange={(e) => setStoryText(e.target.value)}
                 className="w-full p-2 pl-10 rounded border dark:bg-gray-800 dark:border-gray-600"
               />
-              <span className="absolute left-3 top-2.5 text-xl text-gray-400">💬</span>
+              <span className="absolute left-3 top-2.5 text-xl text-gray-400">
+                💬
+              </span>
             </div>
 
             {previewUrl && (
-  <div className="mb-4 relative w-full max-h-48 rounded overflow-hidden">
-    {storyFile?.type?.startsWith("image/") ? (
-      <img
-        src={previewUrl}
-        alt="Preview"
-        className="w-full h-48 object-cover rounded"
-      />
-    ) : storyFile?.type?.startsWith("video/") ? (
-      <video
-        controls
-        src={previewUrl}
-        className="w-full h-48 object-cover rounded"
-      />
-    ) : null}
-    {storyText && (
-      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm p-1 text-center">
-        {storyText}
-      </div>
-    )}
-  </div>
-)}
+              <div className="mb-4 relative w-full max-h-48 rounded overflow-hidden">
+                {storyFile?.type?.startsWith("image/") ? (
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded"
+                  />
+                ) : storyFile?.type?.startsWith("video/") ? (
+                  <video
+                    controls
+                    src={previewUrl}
+                    className="w-full h-48 object-cover rounded"
+                  />
+                ) : null}
+                {storyText && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm p-1 text-center">
+                    {storyText}
+                  </div>
+                )}
+              </div>
+            )}
             <div className="flex items-center justify-center">
               <label className="cursor-pointer text-3xl">
                 📷
