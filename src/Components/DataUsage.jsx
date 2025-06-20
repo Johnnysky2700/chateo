@@ -23,9 +23,9 @@ const DataUsage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-300 dark:bg-black text-black dark:text-white text-sm space-y-4">
+    <div className="min-h-screen bg-gray-300 dark:bg-black text-black dark:text-white text-sm space-y-4 mt-14 pb-24">
       {/* Header */}
-      <div className="flex items-center px-4 py-4 border-b border-gray-300 dark:border-gray-700 relative bg-gray-300 dark:bg-neutral-800">
+      <div className="flex items-center px-4 py-4 border-b border-gray-300 dark:border-gray-700 fixed top-0 left-0 w-full bg-white p-2 dark:bg-neutral-800">
         <MdChevronLeft
           onClick={() => navigate(-1)}
           className="text-3xl absolute left-4 cursor-pointer"

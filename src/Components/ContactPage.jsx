@@ -94,7 +94,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white p-4 pb-24 relative text-black dark:bg-black dark:text-white">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4 py-4">
+      <div className="flex justify-between items-center mb-4 py-4 fixed top-0 w-full bg-white">
         <h1 className="text-xl">Contacts</h1>
         <button className="text-2xl" onClick={() => setShowModal(true)}>
           <HiPlus />
@@ -102,7 +102,7 @@ export default function ContactPage() {
       </div>
 
       {/* Search Input */}
-      <div className="relative mb-4 text-[#A4A4A4]">
+      <div className="mb-4 text-[#A4A4A4] mt-10 fixed w-full">
         <input
           type="text"
           value={search}
@@ -114,6 +114,7 @@ export default function ContactPage() {
       </div>
 
       {/* Contact List */}
+      <div className="mt-20">
       <ul>
         {filteredContacts.map((contact) => (
           <li
@@ -146,7 +147,7 @@ export default function ContactPage() {
           </li>
         ))}
       </ul>
-
+      </div>
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

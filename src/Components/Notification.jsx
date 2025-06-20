@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import Footer from './Footer';
+import Footer from "./Footer";
 
 export default function Notification() {
   const navigate = useNavigate();
@@ -15,9 +15,12 @@ export default function Notification() {
   const [clearBadge, setClearBadge] = useState(true);
 
   const handleAction = async (action) => {
-    const response = await fetch(`http://localhost:8000/notifications/${action}`, {
-      method: "POST",
-    });
+    const response = await fetch(
+      `http://localhost:8000/notifications/${action}`,
+      {
+        method: "POST",
+      }
+    );
     if (response.ok) {
       alert(`${action.replace(/-/g, " ")} completed`);
     } else {
@@ -36,7 +39,9 @@ export default function Notification() {
 
   const Section = ({ title, children }) => (
     <div className="mb-2">
-      {title && <h2 className="text-gray-500 text-sm font-semibold mb-2">{title}</h2>}
+      {title && (
+        <h2 className="text-gray-500 text-sm font-semibold mb-2">{title}</h2>
+      )}
       <div className="space-y-3 bg-white dark:bg-neutral-600 p-4 rounded-lg shadow-sm">
         {children}
       </div>
@@ -44,7 +49,8 @@ export default function Notification() {
   );
 
   const SoundItem = () => {
-    const selectedTone = localStorage.getItem("selectedTone") || "Note (Default)";
+    const selectedTone =
+      localStorage.getItem("selectedTone") || "Note (Default)";
     return (
       <div
         onClick={() => navigate("/notification-sound")}
@@ -54,7 +60,7 @@ export default function Notification() {
         <span className="text-gray-400">{selectedTone} &gt;</span>
       </div>
     );
-  };  
+  };
 
   return (
     <div className="min-h-screen bg-gray-300 text-black dark:bg-black dark:text-white p-4 space-y-4">
@@ -65,72 +71,91 @@ export default function Notification() {
         />
         <h1 className="text-xl font-bold w-full text-center">Notifications</h1>
       </div>
-<div className="mt-20 pt-6">
-      <Section title="Message notifications">
-        <div className="flex justify-between items-center">
-          <span className="text-black dark:text-white">Show notifications</span>
-          <Toggle value={messageNotifications} onChange={setMessageNotifications} />
-        </div>
-        <SoundItem />
-        <div className="flex justify-between items-center">
-          <span className="text-black dark:text-white">Reaction notifications</span>
-          <Toggle value={messageReactions} onChange={setMessageReactions} />
-        </div>
-      </Section>
-
-      <Section title="Group notifications">
-        <div className="flex justify-between items-center">
-          <span className="text-black dark:text-white">Show notifications</span>
-          <Toggle value={groupNotifications} onChange={setGroupNotifications} />
-        </div>
-        <SoundItem />
-        <div className="flex justify-between items-center">
-          <span className="text-black dark:text-white">Reaction notifications</span>
-          <Toggle value={groupReactions} onChange={setGroupReactions} />
-        </div>
-      </Section>
-
-      <Section title="Status notifications">
-        <SoundItem />
-        <div className="flex justify-between items-center">
-          <span className="text-black dark:text-white">Reaction notifications</span>
-          <Toggle value={statusReactions} onChange={setStatusReactions} />
-        </div>
-      </Section>
-
-      <Section>
-        <div className="flex justify-between items-center">
-          <span className="text-black dark:text-white">Reminders</span>
-          <Toggle value={reminders} onChange={setReminders} />
-        </div>
-      </Section>
-      <p className="text-gray-500 text-sm">
-        Get occasional reminders about messages or status updates you haven’t seen.
-      </p>
-
-      <Section title="Home screen notifications">
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-black dark:text-white">Clear badge</p>
+      <div className="mt-20 pt-6">
+        <Section title="Message notifications">
+          <div className="flex justify-between items-center">
+            <span className="text-black dark:text-white">
+              Show notifications
+            </span>
+            <Toggle
+              value={messageNotifications}
+              onChange={setMessageNotifications}
+            />
           </div>
-          <Toggle value={clearBadge} onChange={setClearBadge} />
-        </div>
-      </Section>
-      <p className="text-gray-500 text-sm">
-        Your home screen badge clears completely after every time you open the app.
-      </p>
+          <SoundItem />
+          <div className="flex justify-between items-center">
+            <span className="text-black dark:text-white">
+              Reaction notifications
+            </span>
+            <Toggle value={messageReactions} onChange={setMessageReactions} />
+          </div>
+        </Section>
 
-      <div className="bg-white dark:bg-neutral-600 p-4 rounded-lg">
-        <button
-          className="text-red-500"
-          onClick={() => handleAction("reset-all")}
-        >
-          Reset Notification settings
-        </button>
-      </div>
-      <p className="text-sm text-gray-500 mb-12">
-        Reset all notification settings, including custom notification settings for your chats.
-      </p>
+        <Section title="Group notifications">
+          <div className="flex justify-between items-center">
+            <span className="text-black dark:text-white">
+              Show notifications
+            </span>
+            <Toggle
+              value={groupNotifications}
+              onChange={setGroupNotifications}
+            />
+          </div>
+          <SoundItem />
+          <div className="flex justify-between items-center">
+            <span className="text-black dark:text-white">
+              Reaction notifications
+            </span>
+            <Toggle value={groupReactions} onChange={setGroupReactions} />
+          </div>
+        </Section>
+
+        <Section title="Status notifications">
+          <SoundItem />
+          <div className="flex justify-between items-center">
+            <span className="text-black dark:text-white">
+              Reaction notifications
+            </span>
+            <Toggle value={statusReactions} onChange={setStatusReactions} />
+          </div>
+        </Section>
+
+        <Section>
+          <div className="flex justify-between items-center">
+            <span className="text-black dark:text-white">Reminders</span>
+            <Toggle value={reminders} onChange={setReminders} />
+          </div>
+        </Section>
+        <p className="text-gray-500 text-sm">
+          Get occasional reminders about messages or status updates you haven’t
+          seen.
+        </p>
+
+        <Section title="Home screen notifications">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-black dark:text-white">Clear badge</p>
+            </div>
+            <Toggle value={clearBadge} onChange={setClearBadge} />
+          </div>
+        </Section>
+        <p className="text-gray-500 text-sm">
+          Your home screen badge clears completely after every time you open the
+          app.
+        </p>
+
+        <div className="bg-white dark:bg-neutral-600 p-4 rounded-lg">
+          <button
+            className="text-red-500"
+            onClick={() => handleAction("reset-all")}
+          >
+            Reset Notification settings
+          </button>
+        </div>
+        <p className="text-sm text-gray-500 mb-12">
+          Reset all notification settings, including custom notification
+          settings for your chats.
+        </p>
       </div>
       <Footer />
     </div>

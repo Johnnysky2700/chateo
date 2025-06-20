@@ -17,9 +17,9 @@ const Privacy = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-300 dark:bg-black text-black dark:text-white text-sm space-y-4">
+    <div className="min-h-screen bg-gray-300 dark:bg-black text-black dark:text-white text-sm space-y-4 pb-24">
       {/* Header */}
-      <div className="flex items-center px-4 py-4 border-b border-gray-300 dark:border-gray-700 relative bg-gray-300 dark:bg-neutral-800">
+      <div className="flex items-center px-4 py-4 border-b border-gray-300 dark:border-gray-700 dark:bg-neutral-800 fixed top-0 left-0 w-full bg-white p-2">
         <MdChevronLeft
           onClick={() => navigate(-1)}
           className="text-3xl absolute left-4 cursor-pointer"
@@ -30,7 +30,7 @@ const Privacy = () => {
       {/* List */}
       <div className="space-y-4">
         {/* First block */}
-        <div className="rounded-lg overflow-hidden">
+        <div className="rounded-lg overflow-hidden mt-16">
           {navItem("Last seen & online", "Nobody", "/privacy/last-seen")}
           {navItem("Profile photo", "Everyone", "/privacy/profile-photo")}
           {navItem("About", "My contacts", "/privacy/about")}

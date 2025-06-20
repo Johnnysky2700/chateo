@@ -45,14 +45,14 @@ export default function Chats() {
   return (
     <div className="min-h-screen bg-gray-300">
       <div className=" text-black dark:bg-black dark:text-white px-4 py-6 min-h-screen">
-        <div className="relative flex items-center justify-center mb-6">
+        <div className="flex items-center justify-center mb-6 fixed top-0 left-0 w-full bg-white p-2">
           <MdChevronLeft
             onClick={() => navigate(-1)}
             className="absolute left-0 text-3xl cursor-pointer"
           />
           <h1 className="text-xl font-bold">Chats</h1>
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6 mt-10 mb-12">
           <div
             className="bg-white dark:bg-neutral-600 p-4 rounded-lg cursor-pointer"
             onClick={() => navigate("/chat-theme")}

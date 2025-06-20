@@ -41,7 +41,7 @@ const InviteFriends = () => {
   return (
     <div className="relative min-h-screen bg-gray-300 dark:bg-black text-black dark:text-white text-sm">
       {/* Header */}
-      <div className="flex items-center px-4 py-4 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-neutral-800">
+      <div className="flex items-center px-4 py-4 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-neutral-800 fixed top-0 left-0 w-full p-2">
       <MdChevronLeft
           onClick={() => navigate(-1)}
           className="text-2xl absolute cursor-pointer"
@@ -50,7 +50,7 @@ const InviteFriends = () => {
       </div>
 
       {/* Search Box */}
-      <div className="px-4 py-3 bg-white dark:bg-neutral-800">
+      <div className="px-4 py-3 bg-white dark:bg-neutral-800 mt-14 fixed w-full top-0 left-0">
         <input
           type="text"
           placeholder="Search"
@@ -61,7 +61,7 @@ const InviteFriends = () => {
       </div>
 
       {/* Share Link */}
-      <div className="flex items-center gap-4 px-4 py-3 bg-white dark:bg-neutral-800 border-b border-gray-200 dark:border-gray-700 cursor-pointer">
+      <div className="flex items-center gap-4 px-4 py-3 bg-white dark:bg-neutral-800 border-b border-gray-200 dark:border-gray-700 cursor-pointer mt-28">
         <div className="bg-gray-300 dark:bg-neutral-700 p-2 rounded-full">
           <FiShare2 className="text-black dark:text-white" />
         </div>
