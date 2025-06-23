@@ -92,61 +92,62 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4 pb-24 relative text-black dark:bg-black dark:text-white">
+    <div className="min-h-screen bg-white p-4 pb-24 text-black dark:bg-black dark:text-white">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4 py-4 fixed top-0 w-full bg-white">
-        <h1 className="text-xl">Contacts</h1>
-        <button className="text-2xl" onClick={() => setShowModal(true)}>
-          <HiPlus />
-        </button>
-      </div>
+      <div className="fixed z-50 top-0 w-full bg-white left-0">
+        <div className="flex justify-between items-center mb-4 py-4 px-2">
+          <h1 className="text-xl">Contacts</h1>
+          <button className="text-2xl" onClick={() => setShowModal(true)}>
+            <HiPlus />
+          </button>
+        </div>
 
-      {/* Search Input */}
-      <div className="mb-4 text-[#A4A4A4] mt-10 fixed w-full">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 bg-[#F7F7FC] text-black rounded-md dark:bg-gray-900 dark:text-[#A4A4A4]"
-          placeholder="Search"
-        />
-        <FiSearch className="absolute left-3 top-2.5 text-[#A4A4A4]" />
+        {/* Search Input */}
+        <div className="mb-4 relative px-2">
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A4A4A4]" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-[#F7F7FC] text-black rounded-md dark:bg-gray-900 dark:text-[#A4A4A4]"
+            placeholder="Search"
+          />
+        </div>
       </div>
-
       {/* Contact List */}
-      <div className="mt-20">
-      <ul>
-        {filteredContacts.map((contact) => (
-          <li
-            key={contact.id}
-            className="flex items-center gap-3 py-3 border-b"
-          >
-            {contact.avatar ? (
-              <div className="relative">
-                <img
-                  src={contact.avatar}
-                  alt={contact.name}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                {contact.online && (
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                )}
+      <div className="mt-28">
+        <ul>
+          {filteredContacts.map((contact) => (
+            <li
+              key={contact.id}
+              className="flex items-center gap-3 py-3 border-b"
+            >
+              {contact.avatar ? (
+                <div className="relative">
+                  <img
+                    src={contact.avatar}
+                    alt={contact.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  {contact.online && (
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                  )}
+                </div>
+              ) : (
+                <div className="relative bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold">
+                  {contact.initials}
+                  {contact.online && (
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                  )}
+                </div>
+              )}
+              <div>
+                <p className="font-medium">{contact.name}</p>
+                <p className="text-sm text-gray-400">{contact.phone}</p>
               </div>
-            ) : (
-              <div className="relative bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold">
-                {contact.initials}
-                {contact.online && (
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                )}
-              </div>
-            )}
-            <div>
-              <p className="font-medium">{contact.name}</p>
-              <p className="text-sm text-gray-400">{contact.phone}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
       </div>
       {/* Modal */}
       {showModal && (
