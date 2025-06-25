@@ -172,7 +172,7 @@ export default function ChatPage() {
               onClick={() => setShowMenu(!showMenu)}
               aria-label="Toggle menu"
             >
-              <CgPlayListCheck className="text-2xl" />
+              <CgPlayListCheck className="text-2xl mt-2" />
             </button>
             {showMenu && (
               <div className="absolute right-0 top-10 w-40 bg-white dark:bg-gray-800 shadow-lg border rounded z-50">

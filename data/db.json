@@ -184,8 +184,38 @@
       "firstName": "Almayra",
       "lastName": "Zamzamy",
       "email": "almayra@example.com",
+      "phone": "6281234567890",
       "address": "123 Example Street",
-      "country": "Indonesia"
+      "country": "Indonesia",
+      "avatar": "/Avatars/Almayra.png"
+    },
+    {
+      "id": "2",
+      "firstName": "Nathan",
+      "lastName": "Moxlow",
+      "email": "nathan@example.com",
+      "phone": "17343095200",
+      "address": "456 Elm Street",
+      "country": "USA",
+      "avatar": "/Avatars/Nathan.png"
+    },
+    {
+      "id": "3",
+      "firstName": "Almayra",
+      "lastName": "Zamzamy",
+      "email": "almayra@example.com",
+      "address": "123 Example Street",
+      "country": "Indonesia",
+      "avatar": "/Avatars/Almayra.png"
+    },
+    {
+      "id": "4",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "address": "456 Maple Avenue",
+      "country": "USA",
+      "avatar": "/Avatars/John.png"
     }
   ],
   "stories": [
@@ -206,6 +236,120 @@
       "bgColor": null,
       "createdAt": "2025-05-29T20:00:31.629Z",
       "expiresAt": "2025-05-30T20:00:31.629Z"
+    },
+    {
+      "id": "s1",
+      "userId": "1",
+      "text": "Good morning!",
+      "file": null,
+      "bgColor": "#FF5733",
+      "createdAt": "2025-06-18T08:00:00.000Z",
+      "expiresAt": "2025-06-19T08:00:00.000Z"
+    },
+    {
+      "id": "5add",
+      "userId": "1",
+      "text": "Another sunny day 🌞",
+      "file": "/Uploads/sunnyday.jpg",
+      "bgColor": null,
+      "createdAt": "2025-06-24T08:00:00Z",
+      "expiresAt": "2025-06-25T08:00:00Z"
+    }
+  ],
+  "posts": [
+    {
+      "id": "p1",
+      "userId": "1",
+      "username": "Almayra Zamzamy",
+      "userAvatar": "/Avatars/Almayra.png",
+      "mediaUrl": "/Uploads/post1.jpg",
+      "caption": "Good vibes only 🌸",
+      "type": "image",
+      "liked": true,
+      "saved": false,
+      "timestamp": "2025-06-18T10:00:00.000Z"
+    },
+    {
+      "id": "p2",
+      "userId": "2",
+      "username": "Nathan Moxlow",
+      "userAvatar": "/Avatars/Nathan.png",
+      "mediaUrl": "/Uploads/post2.mp4",
+      "caption": "Chilling by the beach 🏖️",
+      "type": "video",
+      "liked": true,
+      "saved": true,
+      "timestamp": "2025-06-18T11:30:00.000Z"
+    },
+    {
+      "id": "1",
+      "username": "Almayra Zamzamy",
+      "userAvatar": "/Avatars/Almayra.png",
+      "caption": "Loving the sunshine! ☀️",
+      "location": "Jakarta, Indonesia",
+      "tagged": [
+        "@johnDoe"
+      ],
+      "mediaUrl": "/Uploads/sunshine.jpg",
+      "type": "image",
+      "timestamp": "2025-06-25T10:30:00Z",
+      "likes": 23,
+      "comments": [
+        "c1",
+        "c2"
+      ],
+      "saved": false
+    }
+  ],
+  "comments": [
+    {
+      "id": "c1",
+      "postId": "p1",
+      "userId": "1",
+      "username": "Almayra Zamzamy",
+      "userAvatar": "/Avatars/Almayra.png",
+      "text": "So beautiful!",
+      "timestamp": "2025-06-18T12:00:00.000Z"
+    },
+    {
+      "id": "c2",
+      "postId": "p1",
+      "userId": "2",
+      "username": "Nathan Moxlow",
+      "userAvatar": "/Avatars/Nathan.png",
+      "text": "Wow 😍",
+      "timestamp": "2025-06-18T12:05:00.000Z"
+    },
+    {
+      "id": "c3",
+      "postId": "p2",
+      "userId": "1",
+      "username": "Almayra Zamzamy",
+      "userAvatar": "/Avatars/Almayra.png",
+      "text": "Beach looks fun!",
+      "timestamp": "2025-06-18T13:15:00.000Z"
+    },
+    {
+      "id": "c4",
+      "postId": "1",
+      "userId": "1",
+      "text": "Wow! Looks amazing 😍",
+      "timestamp": "2025-06-25T11:00:00Z"
+    },
+    {
+      "id": "c5",
+      "postId": "1",
+      "userId": "2",
+      "text": "@AlmayraZ Great shot!",
+      "timestamp": "2025-06-25T11:05:00Z"
+    },
+    {
+      "id": "1cea",
+      "postId": "p1",
+      "userId": 1,
+      "text": "hello",
+      "timestamp": "2025-06-25T17:21:43.026Z",
+      "parentId": null
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import StoryBar from "./NewsStoryBar";
 import CommentModal from "./CommentModal";
 import CreatePostModal from "./CreatePostModal";
@@ -10,6 +11,7 @@ import {
   AiFillSave,
 } from "react-icons/ai";
 import { FiPlus } from "react-icons/fi";
+import { MdChevronLeft } from "react-icons/md";
 
 export default function NewsFeed() {
   const [posts, setPosts] = useState([]);
@@ -19,14 +21,31 @@ export default function NewsFeed() {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [likedPosts, setLikedPosts] = useState([]);
   const [savedPosts, setSavedPosts] = useState([]);
-  const containerRef = useRef(null);
   const [hasMore, setHasMore] = useState(true);
   const [userFilter, setUserFilter] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [friendPostsOnly, setFriendPostsOnly] = useState(false); // ✅ Filter flag
+  const containerRef = useRef(null);
+  const navigate = useNavigate();
+
+  // ✅ Get current user info from localStorage and fetch from backend
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("currentUser"));
+    if (stored?.id) {
+      fetch(`http://localhost:8000/users/${stored.id}`)
+        .then((res) => res.json())
+        .then((data) => setCurrentUser(data))
+        .catch((err) => console.error("Failed to fetch user:", err));
+    }
+  }, []);
 
   const fetchPosts = useCallback(async () => {
     try {
       let url = `http://localhost:8000/posts?_page=${page}&_limit=5`;
-      if (userFilter) {
+      if (friendPostsOnly && currentUser?.friends) {
+        const friendsFilter = currentUser.friends.join(",");
+        url += `&userId=${friendsFilter}`;
+      } else if (userFilter) {
         url += `&userId=${userFilter}`;
       }
       const res = await fetch(url);
@@ -39,7 +58,7 @@ export default function NewsFeed() {
     } catch (err) {
       console.error("Failed to fetch posts:", err);
     }
-  }, [page, userFilter]);
+  }, [page, userFilter, friendPostsOnly, currentUser]);
 
   useEffect(() => {
     fetchPosts();
@@ -93,6 +112,13 @@ export default function NewsFeed() {
     setShowCommentModal(true);
   };
 
+  const handleFilterByUser = (userId) => {
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    setUserFilter(userId);
+  };
+
   const renderMedia = (post) => {
     if (post.type === "video") {
       return (
@@ -106,14 +132,15 @@ export default function NewsFeed() {
         />
       );
     }
-    return <img src={post.mediaUrl} alt="post" className="w-full rounded-lg" />;
-  };
-
-  const handleFilterByUser = (userId) => {
-    setPosts([]);
-    setPage(1);
-    setHasMore(true);
-    setUserFilter(userId);
+    return (
+      <div className="relative">
+        <img
+          src={post.mediaUrl}
+          alt="post"
+          className="w-full rounded-lg filter brightness-95 saturate-110"
+        />
+      </div>
+    );
   };
 
   return (
@@ -121,9 +148,50 @@ export default function NewsFeed() {
       className="h-screen overflow-y-auto bg-white dark:bg-black"
       ref={containerRef}
     >
+      {/* Current User Header */}
+      {currentUser && (
+        <div className="flex items-center gap-3 p-4 border-b dark:border-gray-700 bg-white dark:bg-black overflow-x-auto">
+          <MdChevronLeft
+            onClick={() => navigate(-1)}
+            className="text-3xl cursor-pointer"
+          />
+          <div className="flex-shrink-0 w-12 h-12 rounded-full overflow-hidden">
+            <img
+              src={currentUser.avatar || "/default-avatar.png"}
+              alt="profile"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <p className="font-bold dark:text-white">{`${currentUser.firstName} ${currentUser.lastName}`}</p>
+            <p className="text-xs text-gray-500">{currentUser.email}</p>
+          </div>
+        </div>
+      )}
+
       {/* Stories */}
       <div className="p-3 border-b dark:border-gray-700">
         <StoryBar />
+      </div>
+
+      {/* Toggle Friend Posts */}
+      <div className="p-3">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            className="form-checkbox text-blue-600"
+            checked={friendPostsOnly}
+            onChange={(e) => {
+              setPosts([]);
+              setPage(1);
+              setHasMore(true);
+              setFriendPostsOnly(e.target.checked);
+            }}
+          />
+          <span className="ml-2 text-sm dark:text-gray-300">
+            Show posts from friends only
+          </span>
+        </label>
       </div>
 
       {/* Create Post Button */}
@@ -144,7 +212,7 @@ export default function NewsFeed() {
             className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm"
             onDoubleClick={() => handleDoubleTap(post.id)}
           >
-            {/* User Info */}
+            {/* Post User */}
             <div className="flex items-center gap-2 mb-2 cursor-pointer">
               <img
                 src={post.userAvatar || "/default-avatar.png"}
@@ -177,6 +245,10 @@ export default function NewsFeed() {
                   className="cursor-pointer"
                   onClick={() => handleCommentClick(post)}
                 />
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {post.likes || 0} likes • {post.comments?.length || 0}{" "}
+                  comments
+                </span>
               </div>
               <div>
                 {savedPosts.includes(post.id) ? (
