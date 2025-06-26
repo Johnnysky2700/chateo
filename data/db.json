@@ -48,7 +48,7 @@
       "status": "Online",
       "avatar": "/Avatars/Erlan.png",
       "online": true,
-      "lastMessage": "hello"
+      "lastMessage": "how are you doing today"
     },
     {
       "id": "3",
@@ -176,6 +176,16 @@
       "type": "text",
       "attachmentUrl": null,
       "attachmentName": null
+    },
+    {
+      "id": "d710",
+      "sender": "you",
+      "text": "how are you doing today",
+      "timestamp": "2025-06-26T14:06:22.430Z",
+      "contactId": "2",
+      "type": "text",
+      "attachmentUrl": null,
+      "attachmentName": null
     }
   ],
   "users": [
@@ -206,7 +216,8 @@
       "email": "almayra@example.com",
       "address": "123 Example Street",
       "country": "Indonesia",
-      "avatar": "/Avatars/Almayra.png"
+      "avatar": "/Avatars/Almayra.png",
+      "phone": "+62 578 898 900 8"
     },
     {
       "id": "4",
@@ -298,7 +309,8 @@
         "c1",
         "c2"
       ],
-      "saved": false
+      "saved": false,
+      "liked": true
     }
   ],
   "comments": [

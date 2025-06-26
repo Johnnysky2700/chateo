@@ -1,85 +1,122 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdChevronLeft } from "react-icons/md";
+import { MdChevronLeft, MdEdit } from 'react-icons/md';
+import imageCompression from 'browser-image-compression';
 import Footer from './Footer';
 
 export default function Account() {
   const navigate = useNavigate();
-  const userId = localStorage.getItem("currentUserId");
-
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    address: '',
-    country: '',
-  });
-
+  const [user, setUser] = useState(null);
+  const [avatar, setAvatar] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user data on mount
   useEffect(() => {
-    if (!userId) {
-      alert("No user ID found.");
-      navigate('/MorePage');
+    const stored = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!stored?.id) {
+      alert("No user found. Please log in again.");
+      navigate('/VerifyPage');
       return;
     }
 
     const fetchUser = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/users/${userId}`);
+        const res = await fetch(`http://localhost:8000/users/${stored.id}`);
         if (!res.ok) throw new Error('User not found');
         const data = await res.json();
         setUser(data);
-      } catch (err) {
-        console.error("Failed to load user data:", err);
-        alert("Failed to load user data");
-      } finally {
+        setAvatar(data.avatar || null);
         setLoading(false);
+      } catch (err) {
+        console.error("Failed to load user:", err);
+        alert("Failed to load user info.");
+        navigate('/VerifyPage');
       }
     };
 
     fetchUser();
-  }, [userId, navigate]);
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async () => {
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
     try {
-      const res = await fetch(`http://localhost:8000/users/${userId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 300,
+        useWebWorker: true,
       });
 
-      if (!res.ok) throw new Error('Failed to save user info');
-
-      alert('Account info saved!');
-      navigate('/MorePage');
-    } catch (err) {
-      console.error(err);
-      alert('Error saving user info');
+      const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
+      setAvatar(base64);
+      setUser((prev) => ({ ...prev, avatar: base64 }));
+    } catch (error) {
+      console.error("Image compression failed:", error);
     }
   };
 
-  if (loading) {
+  const handleSave = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...user, avatar }),
+      });
+
+      if (!res.ok) throw new Error('Failed to save user');
+
+      const updatedUser = await res.json();
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser)); // ✅ Update localStorage
+      alert('Profile updated!');
+      navigate('/MorePage');
+    } catch (err) {
+      console.error(err);
+      alert('Error saving user data');
+    }
+  };
+
+  if (loading || !user) {
     return <div className="p-6 text-center">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen p-6 bg-white text-black dark:bg-black dark:text-white">
-      <div className="flex items-center gap-3">
+    <div className="min-h-screen p-6 bg-white text-black dark:bg-black dark:text-white pb-24">
+      {/* Header */}
+      <div className="flex items-center gap-3 fixed w-full left-0 top-0 p-2 bg-white dark:bg-black z-20">
         <MdChevronLeft
           className="text-2xl cursor-pointer mb-6"
           onClick={() => navigate('/MorePage')}
         />
-      <h1 className="text-2xl font-bold mb-6">Edit Account</h1>
+        <h1 className="text-2xl font-bold mb-6">Edit Account</h1>
       </div>
+
+      {/* Avatar */}
+      <div className="relative w-24 h-24 mx-auto mb-6 mt-16">
+        <img
+          src={avatar || "/default-avatar.png"}
+          alt="Avatar"
+          className="w-full h-full object-cover rounded-full border-2 border-gray-300 dark:border-gray-600"
+        />
+        <label className="absolute bottom-0 right-0 bg-gray-200 p-1 rounded-full cursor-pointer dark:bg-gray-700">
+          <MdEdit className="text-black dark:text-white" />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+          />
+        </label>
+      </div>
+
+      {/* User Info Form */}
       <div className="space-y-5">
-        {['firstName', 'lastName', 'email', 'address', 'country'].map((field) => (
+        {['firstName', 'lastName', 'email', 'phone', 'address', 'country'].map((field) => (
           <div key={field}>
             <label className="block font-medium capitalize mb-1" htmlFor={field}>
               {field === 'email' ? 'Gmail' : field}
@@ -96,6 +133,7 @@ export default function Account() {
         ))}
       </div>
 
+      {/* Buttons */}
       <div className="mt-6 flex justify-between">
         <button
           onClick={() => navigate(-1)}
@@ -110,6 +148,7 @@ export default function Account() {
           Save
         </button>
       </div>
+
       <Footer />
     </div>
   );
