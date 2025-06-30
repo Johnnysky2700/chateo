@@ -1,41 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdChevronLeft, MdEdit } from 'react-icons/md';
 import imageCompression from 'browser-image-compression';
+import { useAuth } from '../context/AuthContext';
 import Footer from './Footer';
 
 export default function Account() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [avatar, setAvatar] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { currentUser, setCurrentUser } = useAuth();
+
+  const [user, setUser] = useState(currentUser || {});
+  const [avatar, setAvatar] = useState(user?.avatar || null);
+  const [loading, setLoading] = useState(!currentUser);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("currentUser"));
-
-    if (!stored?.id) {
-      alert("No user found. Please log in again.");
-      navigate('/VerifyPage');
-      return;
-    }
-
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(`http://localhost:8000/users/${stored.id}`);
-        if (!res.ok) throw new Error('User not found');
-        const data = await res.json();
-        setUser(data);
-        setAvatar(data.avatar || null);
-        setLoading(false);
-      } catch (err) {
-        console.error("Failed to load user:", err);
-        alert("Failed to load user info.");
-        navigate('/VerifyPage');
+    if (!currentUser) {
+      const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (storedUser) {
+        setUser(storedUser);
+        setAvatar(storedUser.avatar || null);
       }
-    };
-
-    fetchUser();
-  }, [navigate]);
+      setLoading(false);
+    }
+  }, [currentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,7 +44,7 @@ export default function Account() {
       setAvatar(base64);
       setUser((prev) => ({ ...prev, avatar: base64 }));
     } catch (error) {
-      console.error("Image compression failed:", error);
+      console.error('Image compression failed:', error);
     }
   };
 
@@ -69,25 +56,26 @@ export default function Account() {
         body: JSON.stringify({ ...user, avatar }),
       });
 
-      if (!res.ok) throw new Error('Failed to save user');
+      if (!res.ok) throw new Error('Failed to save user info');
 
       const updatedUser = await res.json();
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser)); // ✅ Update localStorage
-      alert('Profile updated!');
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      setCurrentUser(updatedUser);
+
+      alert('Account info saved!');
       navigate('/MorePage');
     } catch (err) {
       console.error(err);
-      alert('Error saving user data');
+      alert('Error saving user info');
     }
   };
 
-  if (loading || !user) {
+  if (loading) {
     return <div className="p-6 text-center">Loading...</div>;
   }
 
   return (
     <div className="min-h-screen p-6 bg-white text-black dark:bg-black dark:text-white pb-24">
-      {/* Header */}
       <div className="flex items-center gap-3 fixed w-full left-0 top-0 p-2 bg-white dark:bg-black z-20">
         <MdChevronLeft
           className="text-2xl cursor-pointer mb-6"
@@ -96,10 +84,9 @@ export default function Account() {
         <h1 className="text-2xl font-bold mb-6">Edit Account</h1>
       </div>
 
-      {/* Avatar */}
       <div className="relative w-24 h-24 mx-auto mb-6 mt-16">
         <img
-          src={avatar || "/default-avatar.png"}
+          src={avatar || '/default-avatar.png'}
           alt="Avatar"
           className="w-full h-full object-cover rounded-full border-2 border-gray-300 dark:border-gray-600"
         />
@@ -114,7 +101,6 @@ export default function Account() {
         </label>
       </div>
 
-      {/* User Info Form */}
       <div className="space-y-5">
         {['firstName', 'lastName', 'email', 'phone', 'address', 'country'].map((field) => (
           <div key={field}>
@@ -133,7 +119,6 @@ export default function Account() {
         ))}
       </div>
 
-      {/* Buttons */}
       <div className="mt-6 flex justify-between">
         <button
           onClick={() => navigate(-1)}

@@ -1,35 +1,18 @@
-import { useEffect, useState } from 'react';
 import { FiSun, FiHelpCircle, FiMail } from 'react-icons/fi';
-import {
-  RiChat3Line,
-  RiUserLine,
-  RiFolder3Line,
-} from 'react-icons/ri';
-import {
-  MdNotificationsNone,
-  MdOutlinePrivacyTip,
-  MdChevronRight,
-} from 'react-icons/md';
+import { RiChat3Line, RiUserLine, RiFolder3Line } from 'react-icons/ri';
+import { MdNotificationsNone, MdOutlinePrivacyTip, MdChevronRight } from 'react-icons/md';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Footer from './Footer';
 
 export default function MorePage() {
   const { darkMode } = useTheme();
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (user) {
-      setCurrentUser(user);
-    } else {
-      navigate('/VerifyPage'); // redirect if not logged in
-    }
-  }, [navigate]);
+  const { currentUser, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
+    logout();
     navigate('/VerifyPage');
   };
 
@@ -48,9 +31,9 @@ export default function MorePage() {
   return (
     <div className={`min-h-screen flex flex-col justify-between p-4 pb-24 ${darkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
       <div>
-        <h1 className="text-2xl font-bold mb-6 fixed top-0 left-0 w-full bg-white p-2 z-10">More</h1>
+        <h1 className="text-2xl font-bold mb-6 fixed top-0 left-0 w-full bg-white p-2">More</h1>
 
-        {/* ✅ Profile Info */}
+        {/* Profile Section */}
         {currentUser && (
           <div
             className="flex items-center gap-4 mb-6 mt-16 cursor-pointer"
@@ -78,7 +61,7 @@ export default function MorePage() {
           </div>
         )}
 
-        {/* Menu */}
+        {/* Menu List */}
         <div className="space-y-6">
           {menuItems.map((item, index) =>
             item.divider ? (

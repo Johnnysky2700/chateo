@@ -1,29 +1,33 @@
-// src/context/AuthContext.js
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (storedUser) {
+      setCurrentUser(storedUser);
+    }
+  }, []);
+
   const login = (user) => {
-    setCurrentUser(user);
     localStorage.setItem('currentUser', JSON.stringify(user));
-    localStorage.setItem('currentUserId', user.id);
+    setCurrentUser(user);
   };
 
   const logout = () => {
-    setCurrentUser(null);
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentUserId');
+    setCurrentUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout }}>
+    <AuthContext.Provider value={{ currentUser, setCurrentUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// ✅ Add this hook so components can use: const { currentUser } = useAuth();
+// ✅ Make sure this exists for usage
 export const useAuth = () => useContext(AuthContext);

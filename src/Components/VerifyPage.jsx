@@ -12,7 +12,6 @@ export default function VerifyPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showKeypad, setShowKeypad] = useState(false);
 
-  // ✅ Auto-login if already stored
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     if (user) {
@@ -37,24 +36,21 @@ export default function VerifyPage() {
     const fullPhoneNumber = "+" + phoneNumber;
 
     try {
-      // Step 1: Check if phone exists in contacts
       const res = await fetch("http://localhost:8000/contacts");
       const contacts = await res.json();
       const exactContact = contacts.find(
         (c) => c.phone && "+" + c.phone.trim() === fullPhoneNumber.trim()
       );
 
+      let user;
+
       if (exactContact) {
-        // Step 2: Check if already exists in users
         const userRes = await fetch(`http://localhost:8000/users?phone=${exactContact.phone}`);
         const existingUser = await userRes.json();
-
-        let user;
 
         if (existingUser.length > 0) {
           user = existingUser[0];
         } else {
-          // Step 3: Migrate contact to user
           const newUser = {
             firstName: exactContact.name?.split(" ")[0] || "",
             lastName: exactContact.name?.split(" ").slice(1).join(" ") || "",
@@ -72,10 +68,11 @@ export default function VerifyPage() {
           });
           user = await createRes.json();
         }
+      }
 
-        // Step 4: Save user locally and login
+      if (user) {
         localStorage.setItem("currentUser", JSON.stringify(user));
-        localStorage.setItem("currentUserId", user.id); // ✅ Important for MorePage / Account
+        localStorage.setItem("currentUserId", user.id);
         login(user);
         navigate("/ContactPage");
       } else {

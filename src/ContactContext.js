@@ -1,44 +1,32 @@
-// ContactContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Create the context
 const ContactContext = createContext();
 
-// Provider component to wrap the application
-export function ContactProvider({ children }) {
+export const ContactProvider = ({ children }) => {
   const [contacts, setContacts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Load current user as contact with id 1
   useEffect(() => {
-    async function fetchCurrentUser() {
-      try {
-        const res = await fetch("http://localhost:8000/contacts");
-        const data = await res.json();
-        setContacts(data);
+    // Load contacts and currentUser from localStorage or API
+    const storedUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (storedUser) setCurrentUser(storedUser);
 
-        const user = data.find((c) => c.id === 1);
-        if (user) {
-          setCurrentUser(user);
-        } else {
-          console.warn("Contact with id 1 not found");
-        }
-      } catch (err) {
-        console.error("Failed to fetch contacts", err);
-      }
-    }
-
-    fetchCurrentUser();
+    // Simulate fetching contacts
+    const fetchContacts = async () => {
+      const res = await fetch("http://localhost:8000/contacts");
+      const data = await res.json();
+      setContacts(data);
+    };
+    fetchContacts();
   }, []);
 
   return (
-    <ContactContext.Provider value={{ contacts, setContacts, currentUser, setCurrentUser }}>
+    <ContactContext.Provider
+      value={{ contacts, setContacts, currentUser, setCurrentUser }}
+    >
       {children}
     </ContactContext.Provider>
   );
-}
+};
 
-// Custom hook to use the contact context
-export function useContacts() {
-  return useContext(ContactContext);
-}
+export const useContacts = () => useContext(ContactContext);

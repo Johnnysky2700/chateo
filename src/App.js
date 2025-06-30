@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./Components/HomePage";
@@ -30,15 +29,10 @@ function AppWithContext() {
   const { setCurrentUser } = useContacts();
 
   useEffect(() => {
-    // Simulate logged-in user from localStorage or API
-    const loggedInContact = {
-      id: 1,
-      name: "John Doe",
-      avatar: "/avatar.jpg",
-      phone: "+1234567890",
-      initials: "JD",
-    };
-    setCurrentUser(loggedInContact);
+    const storedUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (storedUser) {
+      setCurrentUser(storedUser);
+    }
   }, [setCurrentUser]);
 
   return (
@@ -50,8 +44,7 @@ function AppWithContext() {
           <Route path="/VerifyPage" element={<VerifyPage />} />
           <Route path="/OtpPage" element={<OtpPage />} />
           <Route path="/ProfileAcc" element={<ProfileAcc />} />
-          <Route path="/ContactPage" element={ <PrivateRoute><ContactPage /></PrivateRoute> } />
-          <Route path="/ContactPage" element={<ContactPage />} />
+          <Route path="/ContactPage" element={<PrivateRoute><ContactPage /></PrivateRoute>} />
           <Route path="/ChatPage" element={<ChatPage />} />
           <Route path="/MorePage" element={<MorePage />} />
           <Route path="/ChatDetails/:id" element={<ChatDetails />} />
