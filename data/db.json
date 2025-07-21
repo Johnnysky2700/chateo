@@ -276,6 +276,51 @@
       "bgColor": null,
       "createdAt": "2025-06-24T08:00:00Z",
       "expiresAt": "2025-06-25T08:00:00Z"
+    },
+    {
+      "id": "e360",
+      "userId": "0155",
+      "text": "hello world",
+      "file": null,
+      "bgColor": "#007BFF",
+      "createdAt": "2025-07-21T11:48:08.526Z",
+      "expiresAt": "2025-07-22T11:48:08.527Z"
+    },
+    {
+      "id": "8ced",
+      "userId": "0155",
+      "text": "hello wrld",
+      "file": null,
+      "bgColor": "#FF5733",
+      "createdAt": "2025-07-21T12:12:47.636Z",
+      "expiresAt": "2025-07-22T12:12:47.636Z"
+    },
+    {
+      "id": "0698",
+      "userId": "0155",
+      "text": "hello world",
+      "file": null,
+      "bgColor": "#FF5733",
+      "createdAt": "2025-07-21T12:24:59.291Z",
+      "expiresAt": "2025-07-22T12:24:59.291Z"
+    },
+    {
+      "id": "3edb",
+      "userId": "0155",
+      "text": "",
+      "file": "blob:http://localhost:3000/159b7f92-d472-4441-a55c-bf6acefaf4c4",
+      "bgColor": null,
+      "createdAt": "2025-07-21T12:49:57.341Z",
+      "expiresAt": "2025-07-22T12:49:57.341Z"
+    },
+    {
+      "id": "021f",
+      "userId": "0155",
+      "text": "hello world",
+      "file": null,
+      "bgColor": "#FF5733",
+      "createdAt": "2025-07-21T13:10:33.355Z",
+      "expiresAt": "2025-07-22T13:10:33.355Z"
     }
   ],
   "posts": [
@@ -322,6 +367,22 @@
       ],
       "saved": false,
       "liked": true
+    },
+    {
+      "id": "c079",
+      "username": "CurrentUser",
+      "userAvatar": "/default-avatar.png",
+      "caption": "",
+      "location": "",
+      "tagged": [
+        ""
+      ],
+      "mediaUrl": "blob:http://localhost:3000/c92f0919-85ca-4dc0-b068-93852de94af7",
+      "type": "image",
+      "timestamp": "2025-06-30T11:35:11.382Z",
+      "likes": 0,
+      "comments": [],
+      "saved": false
     }
   ],
   "comments": [
