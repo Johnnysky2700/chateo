@@ -25,24 +25,28 @@ export default function ChatPage() {
 
   const [stories, setStories] = useState([]);
 
-  useEffect(() => {
-    const fetchStories = async () => {
-      const res = await fetch("http://localhost:8000/stories");
-      const data = await res.json();
-      const now = new Date();
-
-      const valid = data
-        .filter((story) => new Date(story.expiresAt) > now)
-        .map((s) => ({
-          ...s,
-          userId: s.userId || s.contactId,
-        }));
-
-      setStories(valid);
-    };
-
-    fetchStories();
+  // Move fetchStories outside useEffect so it can be reused
+  const fetchStories = useCallback(async () => {
+    const res = await fetch("http://localhost:8000/stories");
+    const data = await res.json();
+    console.log("Fetched stories:", data); // Log all fetched stories
+    const now = new Date();
+    const valid = data
+      .filter((story) => new Date(story.expiresAt) > now)
+      .map((s) => {
+        // Only set userId if it exists, otherwise log a warning
+        if (!s.userId) {
+          console.warn("Story missing userId:", s);
+        }
+        return s.userId ? { ...s, userId: s.userId } : null;
+      })
+      .filter(Boolean);
+    setStories(valid);
   }, []);
+
+  useEffect(() => {
+    fetchStories();
+  }, [fetchStories]);
 
   const fetchContacts = useCallback(async () => {
     try {
@@ -99,7 +103,7 @@ export default function ChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),
       });
-
+      console.log("Posted story:", newStory); // Log posted story
       if (!response.ok) throw new Error("Upload failed");
 
       alert("Story uploaded!");
@@ -209,7 +213,7 @@ export default function ChatPage() {
           onStoryUpload={() => {
             setStoryText("");
             setStoryFile(null);
-            //  fetchStoriesAgain(); // Optional to refresh stories
+            fetchStories(); // Refresh stories after upload
           }}
         />
       )}

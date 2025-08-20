@@ -20,25 +20,30 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
   const handleUpload = async () => {
     if (!storyText && !storyFile) return;
 
-    // Here, ideally you'd upload the file itself to your backend or cloud storage
-    // but for demo we're just sending the preview URL and text.
+    // For demo: store only the file name, and instruct user to copy file to public/Uploads/
+    let fileName = null;
+    if (storyFile) {
+      fileName = storyFile.name;
+      // In a real app, upload the file to a server or cloud storage and get a public URL
+      // For demo, user must manually copy the file to public/Uploads/
+      alert(`Please copy your file (${fileName}) to the public/Uploads/ folder for it to be accessible.`);
+    }
 
     const newStory = {
       userId: currentUser?.id,
       text: storyText,
-      file: storyFile ? previewUrl : null,
+      file: fileName ? `/Uploads/${fileName}` : null,
       bgColor: !storyFile ? bgColor : null,
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 86400000).toISOString(), // 24h
     };
-
+    console.log("StoryModal posting story:", newStory); // Debug log
     try {
       await fetch("http://localhost:8000/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),
       });
-
       onClose();
       onStoryUpload?.();
     } catch (err) {

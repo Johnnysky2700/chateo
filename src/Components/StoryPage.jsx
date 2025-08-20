@@ -15,6 +15,7 @@ export default function StoryPage() {
     try {
       const res = await fetch(`http://localhost:8000/stories?userId=${userId}`);
       const data = await res.json();
+      console.log("Fetched stories for userId", userId, data); // Debug log
       const now = new Date();
       const validStories = data.filter(
         (story) => new Date(story.expiresAt) > now

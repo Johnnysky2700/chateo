@@ -107,6 +107,27 @@
       "status": "New Contact",
       "online": false,
       "avatar": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/="
+    },
+    {
+      "id": "b209",
+      "firstName": "Omotoso",
+      "middleName": "henry",
+      "lastName": "taiwo",
+      "phone": "+23409038163098"
+    },
+    {
+      "id": "21af",
+      "firstName": "Omotoso",
+      "middleName": "henry",
+      "lastName": "taiwo",
+      "phone": "+23409038163098"
+    },
+    {
+      "id": "e95f",
+      "firstName": "Omotoso",
+      "middleName": "henry",
+      "lastName": "taiwo",
+      "phone": "+23409038163098"
     }
   ],
   "messages": [
@@ -321,6 +342,57 @@
       "bgColor": "#FF5733",
       "createdAt": "2025-07-21T13:10:33.355Z",
       "expiresAt": "2025-07-22T13:10:33.355Z"
+    },
+    {
+      "id": "32cf",
+      "text": "hey there",
+      "file": null,
+      "bgColor": "#FF5733",
+      "createdAt": "2025-08-13T20:48:13.156Z",
+      "expiresAt": "2025-08-14T20:48:13.156Z"
+    },
+    {
+      "id": "581f",
+      "text": "test",
+      "file": null,
+      "bgColor": "#1E1E1E",
+      "createdAt": "2025-08-13T20:54:41.965Z",
+      "expiresAt": "2025-08-14T20:54:41.965Z"
+    },
+    {
+      "id": "4adb",
+      "text": "checking",
+      "file": "blob:http://localhost:3000/e455a825-201f-4fbf-a02c-b2cac8afbf38",
+      "bgColor": null,
+      "createdAt": "2025-08-13T20:55:44.614Z",
+      "expiresAt": "2025-08-14T20:55:44.614Z"
+    },
+    {
+      "id": "f6ac",
+      "userId": "0155",
+      "text": "test",
+      "file": null,
+      "bgColor": "#1E1E1E",
+      "createdAt": "2025-08-13T20:57:28.867Z",
+      "expiresAt": "2025-08-14T20:57:28.867Z"
+    },
+    {
+      "id": "e64c",
+      "userId": "0155",
+      "text": "new link available",
+      "file": null,
+      "bgColor": "#1E1E1E",
+      "createdAt": "2025-08-13T21:11:48.662Z",
+      "expiresAt": "2025-08-14T21:11:48.662Z"
+    },
+    {
+      "id": "5b67",
+      "userId": "0155",
+      "text": "new image ",
+      "file": "/Uploads/WhatsApp Image 2025-07-14 at 14.03.42_a861832a.jpg",
+      "bgColor": null,
+      "createdAt": "2025-08-13T21:22:12.671Z",
+      "expiresAt": "2025-08-14T21:22:12.672Z"
     }
   ],
   "posts": [
