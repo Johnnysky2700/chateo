@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { FiSun, FiHelpCircle, FiMail } from 'react-icons/fi';
 import { RiChat3Line, RiUserLine, RiFolder3Line } from 'react-icons/ri';
 import { MdNotificationsNone, MdOutlinePrivacyTip, MdChevronRight } from 'react-icons/md';
@@ -10,6 +11,7 @@ export default function MorePage() {
   const { darkMode } = useTheme();
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -31,15 +33,15 @@ export default function MorePage() {
   return (
     <div className={`min-h-screen flex flex-col justify-between p-4 pb-24 ${darkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
       <div>
-        <h1 className="text-2xl font-bold mb-6 fixed top-0 left-0 w-full bg-white p-2">More</h1>
+        <h1 className="text-2xl font-bold mb-6 fixed top-0 left-0 w-full bg-white dark:bg-black p-2">More</h1>
 
         {/* Profile Section */}
         {currentUser && (
-          <div
-            className="flex items-center gap-4 mb-6 mt-16 cursor-pointer"
-            onClick={() => navigate('/Account')}
-          >
-            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+          <div className="flex items-center gap-4 mb-6 mt-16">
+            <div
+              className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden cursor-pointer"
+              onClick={() => setPreviewOpen(true)}
+            >
               {currentUser.avatar ? (
                 <img
                   src={currentUser.avatar}
@@ -97,6 +99,20 @@ export default function MorePage() {
       </div>
 
       <Footer />
+
+      {/* Avatar Preview Modal */}
+      {previewOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setPreviewOpen(false)}
+        >
+          <img
+            src={currentUser.avatar}
+            alt="Avatar Preview"
+            className="w-96 h-96 rounded-full shadow-full"
+          />
+        </div>
+      )}
     </div>
   );
 }

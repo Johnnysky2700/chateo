@@ -94,7 +94,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white p-4 pb-24 text-black dark:bg-black dark:text-white">
       {/* Header */}
-      <div className="fixed z-50 top-0 w-full bg-white left-0">
+      <div className="fixed z-50 top-0 w-full bg-white  dark:bg-black left-0">
         <div className="flex justify-between items-center mb-4 py-4 px-2">
           <h1 className="text-xl">Contacts</h1>
           <button className="text-2xl" onClick={() => setShowModal(true)}>

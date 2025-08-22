@@ -342,6 +342,24 @@
       "bgColor": "#FF5733",
       "createdAt": "2025-07-21T13:10:33.355Z",
       "expiresAt": "2025-07-22T13:10:33.355Z"
+    },
+    {
+      "id": "4bae",
+      "userId": "0155",
+      "text": "hello",
+      "file": null,
+      "bgColor": "#1E1E1E",
+      "createdAt": "2025-08-20T21:54:23.701Z",
+      "expiresAt": "2025-08-21T21:54:23.701Z"
+    },
+    {
+      "id": "7e9d",
+      "userId": "0155",
+      "text": "did you like what you see",
+      "file": "/Uploads/WhatsApp Img3.jpeg",
+      "bgColor": null,
+      "createdAt": "2025-08-20T23:36:02.444Z",
+      "expiresAt": "2025-08-21T23:36:02.444Z"
     }
   ],
   "posts": [
