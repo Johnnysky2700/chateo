@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { FiSun, FiHelpCircle, FiMail } from 'react-icons/fi';
 import { RiChat3Line, RiUserLine, RiFolder3Line } from 'react-icons/ri';
 import { MdNotificationsNone, MdOutlinePrivacyTip, MdChevronRight } from 'react-icons/md';
@@ -6,12 +5,14 @@ import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Footer from './Footer';
+import { useState } from 'react';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function MorePage() {
   const { darkMode } = useTheme();
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const [previewOpen, setPreviewOpen] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -37,10 +38,10 @@ export default function MorePage() {
 
         {/* Profile Section */}
         {currentUser && (
-          <div className="flex items-center gap-4 mb-6 mt-16">
+          <div className="flex items-center gap-4 mb-6 mt-16 cursor-pointer">
             <div
-              className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden cursor-pointer"
-              onClick={() => setPreviewOpen(true)}
+              className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden"
+              onClick={() => setShowPreview(true)}
             >
               {currentUser.avatar ? (
                 <img
@@ -101,16 +102,32 @@ export default function MorePage() {
       <Footer />
 
       {/* Avatar Preview Modal */}
-      {previewOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
-          onClick={() => setPreviewOpen(false)}
-        >
-          <img
-            src={currentUser.avatar}
-            alt="Avatar Preview"
-            className="w-96 h-96 rounded-full shadow-full"
-          />
+      {showPreview && currentUser?.avatar && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+          <TransformWrapper
+            doubleClick={{ mode: "zoomIn" }} // double-tap / double-click zoom in
+            wheel={{ step: 0.2 }} // smooth scroll zoom
+            pinch={{ step: 5 }} // smooth pinch zoom
+          >
+            {({ zoomIn, zoomOut, resetTransform }) => (
+              <>
+                <TransformComponent>
+                  <img
+                    src={currentUser.avatar}
+                    alt="Avatar Preview"
+                    className="w-96 h-96 rounded-full"
+                  />
+                </TransformComponent>
+              </>
+            )}
+          </TransformWrapper>
+
+          <button
+            onClick={() => setShowPreview(false)}
+            className="absolute top-4 right-4 bg-white text-black px-1 rounded"
+          >
+            ❌
+          </button>
         </div>
       )}
     </div>

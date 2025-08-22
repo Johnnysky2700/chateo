@@ -21,11 +21,12 @@
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^7.5.2",
     "react-scripts": "5.0.1",
+    "react-zoom-pan-pinch": "^3.7.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start --no-source-maps",
+    "build": "react-scripts build --no-source-maps",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
