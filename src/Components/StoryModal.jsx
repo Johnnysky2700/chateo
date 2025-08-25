@@ -20,34 +20,48 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
   const handleUpload = async () => {
     if (!storyText && !storyFile) return;
 
-    // For demo: store only the file name, and instruct user to copy file to public/Uploads/
-    let fileName = null;
-    if (storyFile) {
-      fileName = storyFile.name;
-      // In a real app, upload the file to a server or cloud storage and get a public URL
-      // For demo, user must manually copy the file to public/Uploads/
-      alert(`Please copy your file (${fileName}) to the public/Uploads/ folder for it to be accessible.`);
-    }
-
-    const newStory = {
-      userId: currentUser?.id,
-      text: storyText,
-      file: fileName ? `/Uploads/${fileName}` : null,
-      bgColor: !storyFile ? bgColor : null,
-      createdAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 86400000).toISOString(), // 24h
-    };
-    console.log("StoryModal posting story:", newStory); // Debug log
     try {
+      let fileUrl = null;
+
+      if (storyFile) {
+        // ---- send file to Express backend ----
+        const formData = new FormData();
+        formData.append("file", storyFile);
+
+        const uploadRes = await fetch("http://localhost:8000/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) throw new Error("File upload failed");
+        const data = await uploadRes.json();
+
+        // ✅ Express returns { url: "/Uploads/filename" }
+        // we point it to static folder
+        fileUrl = `http://localhost:8000${data.url}`;
+      }
+
+      const newStory = {
+        userId: currentUser?.id,
+        text: storyText,
+        file: fileUrl,
+        bgColor: !storyFile ? bgColor : null,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 86400000).toISOString(),
+      };
+
+      // save story to db.json
       await fetch("http://localhost:8000/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),
       });
+
       onClose();
       onStoryUpload?.();
     } catch (err) {
       console.error("Upload failed", err);
+      alert("Upload failed. Check server logs.");
     }
   };
 
@@ -56,10 +70,11 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
       {/* Close button */}
       <div className="absolute top-4 right-4 z-50 bg-black bg-opacity-60 rounded-full p-1">
         <XMarkIcon
-        className="w-6 h-6 cursor-pointer text-white"
-        onClick={onClose}
+          className="w-6 h-6 cursor-pointer text-white"
+          onClick={onClose}
         />
       </div>
+
       {/* Story preview */}
       <div className="flex-grow flex items-center justify-center relative w-full h-full">
         {storyFile ? (
@@ -77,14 +92,11 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
                 className="w-full h-full object-contain"
               />
             )}
-            {/* Overlay text */}
             {storyText && (
               <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-black bg-opacity-50 text-white text-lg rounded max-w-[90%] text-center pointer-events-none">
                 {storyText}
               </div>
             )}
-
-            {/* Input box for text entry */}
             <input
               type="text"
               value={storyText}
@@ -102,6 +114,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
           </div>
         )}
       </div>
+
       {/* Input & Options */}
       <div className="p-4 bg-black">
         {!storyFile && (
