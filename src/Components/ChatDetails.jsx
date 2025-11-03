@@ -23,15 +23,17 @@ export default function ChatDetails() {
   const [attachmentPreview, setAttachmentPreview] = useState(null);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [selectMode, setSelectMode] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const bottomRef = useRef(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // ✅ Delete / Block / Mute actions
   const handleMenuAction = async (action) => {
     if (action === "delete") {
       if (selectedMessages.length === 0) {
-        setSelectMode(true); // Enable selection mode
+        setSelectMode(true);
         return;
       }
 
@@ -65,6 +67,7 @@ export default function ChatDetails() {
     }
   };
 
+  // ✅ File input handler
   const handleFileInput = (type) => {
     const input = document.createElement("input");
     input.type = "file";
@@ -72,8 +75,8 @@ export default function ChatDetails() {
       type === "photos"
         ? "image/*"
         : type === "document"
-        ? ".pdf,.doc,.docx"
-        : "";
+          ? ".pdf,.doc,.docx"
+          : "";
 
     input.onchange = (e) => {
       const file = e.target.files[0];
@@ -110,23 +113,43 @@ export default function ChatDetails() {
 
     input.click();
   };
+
+  // ✅ Fetch messages from backend or from contact
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/messages`);
-        const data = await res.json();
-        const filtered = data.filter(
+        const msgRes = await fetch(`http://localhost:8000/messages`);
+        let msgData = [];
+        if (msgRes.ok) msgData = await msgRes.json();
+
+        // Filter if /messages exists
+        let filtered = msgData.filter(
           (msg) => String(msg.contactId) === String(id)
         );
+
+        // If /messages is empty, use contact.messages
+        if (filtered.length === 0) {
+          const contactRes = await fetch(`http://localhost:8000/contacts/${id}`);
+          const contactData = await contactRes.json();
+          filtered = contactData.messages || [];
+        }
+
+        // Sort by timestamp if available
+        filtered.sort((a, b) =>
+          new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
+        );
+
         setMessages(filtered);
         setFilteredMessages(filtered);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
       }
     };
+
     fetchMessages();
   }, [id]);
 
+  // ✅ Fetch contact info
   useEffect(() => {
     const fetchContact = async () => {
       try {
@@ -140,12 +163,12 @@ export default function ChatDetails() {
     fetchContact();
   }, [id]);
 
+  // ✅ Auto scroll to bottom
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // ✅ Search
   useEffect(() => {
     if (searchTerm.trim() !== "") {
       const filtered = messages.filter((msg) =>
@@ -157,6 +180,7 @@ export default function ChatDetails() {
     }
   }, [searchTerm, messages]);
 
+  // ✅ Send new message
   const handleSendMessage = async () => {
     if (!message.trim() && !attachmentPreview) return;
 
@@ -171,13 +195,11 @@ export default function ChatDetails() {
     };
 
     try {
-      const res = await fetch(`http://localhost:8000/messages`, {
+      await fetch(`http://localhost:8000/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMessage),
       });
-
-      if (!res.ok) throw new Error("Message not saved");
 
       await fetch(`http://localhost:8000/contacts/${id}`, {
         method: "PATCH",
@@ -194,6 +216,7 @@ export default function ChatDetails() {
       console.error("Failed to send message:", err);
     }
   };
+
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black relative">
       {/* Header */}
@@ -207,6 +230,7 @@ export default function ChatDetails() {
             {contact?.name || "Loading..."}
           </h2>
         </div>
+
         <div className="flex items-center gap-3 text-2xl text-black dark:text-white relative">
           <AiOutlineSearch
             className="cursor-pointer"
@@ -240,19 +264,8 @@ export default function ChatDetails() {
           )}
         </div>
       </div>
-      {selectMode && (
-        <button
-          className="text-sm text-red-500 border px-2 py-1 rounded"
-          onClick={() => {
-            setSelectMode(false);
-            setSelectedMessages([]);
-          }}
-        >
-          Cancel
-        </button>
-      )}
 
-      {/* Search Input */}
+      {/* Search Bar */}
       {searchMode && (
         <div className="px-4 py-2 bg-gray-100 dark:bg-gray-900">
           <input
@@ -265,99 +278,76 @@ export default function ChatDetails() {
         </div>
       )}
 
-      {/* Message List */}
+      {/* Messages */}
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {filteredMessages.map((msg, index) => (
           <div
             key={msg.id || index}
-            className={`flex ${
-              msg.sender === "you" ? "justify-end" : "justify-start"
-            } relative group`}
+            className={`flex ${msg.sender === "you" ? "justify-end" : "justify-start"
+              }`}
           >
-            {selectMode && (
-              <input
-                type="checkbox"
-                className="absolute -left-6 top-1"
-                checked={selectedMessages.includes(msg.id)}
-                onChange={() => {
-                  setSelectedMessages((prev) =>
-                    prev.includes(msg.id)
-                      ? prev.filter((id) => id !== msg.id)
-                      : [...prev, msg.id]
-                  );
-                }}
-              />
-            )}
             <div className="max-w-[75%]">
-              {msg.type === "image" && msg.attachmentUrl ? (
-                <img
-                  src={msg.attachmentUrl}
-                  className="w-full rounded-lg"
-                  alt="Attachment"
-                />
-              ) : msg.type === "document" && msg.attachmentUrl ? (
-                <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-sm text-black dark:text-white">
-                  📄 {msg.attachmentName}
+              {msg.type === "image" && (msg.attachmentUrl || msg.src) ? (
+                <div className="flex flex-col">
+                  <img
+                    src={
+                      (msg.attachmentUrl || msg.src).startsWith("http")
+                        ? msg.attachmentUrl || msg.src
+                        : `http://localhost:3000${msg.attachmentUrl || msg.src}`
+                    }
+                    alt="media"
+                    className="w-full rounded-lg"
+                  />
+                  {msg.text && (
+                    <div
+                      className={`mt-1 p-2 rounded-lg text-sm ${msg.sender === "you"
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 dark:bg-gray-700"
+                        }`}
+                    >
+                      {msg.text}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div
-                  className={`p-3 rounded-lg text-sm ${
-                    msg.sender === "you"
+                  className={`p-3 rounded-lg text-sm ${msg.sender === "you"
                       ? "bg-blue-600 text-white"
                       : "bg-gray-100 dark:bg-gray-700"
-                  }`}
+                    }`}
                 >
                   {msg.text}
                 </div>
               )}
               <div
-                className={`text-[10px] mt-1 text-right ${
-                  msg.sender === "you" ? "text-white/80" : "text-gray-500"
-                }`}
+                className={`text-[10px] mt-1 text-right ${msg.sender === "you" ? "text-white/80" : "text-gray-500"
+                  }`}
               >
                 {msg.timestamp &&
                   new Date(msg.timestamp).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                {msg.read && " • Read"}
               </div>
             </div>
           </div>
         ))}
         <div ref={bottomRef} />
       </div>
-
-      {/* Attachment Preview */}
-      {attachmentPreview && (
-        <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-neutral-800">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm text-black dark:text-white">
-              Attachment Preview
-            </p>
-            <button
-              className="text-red-500 text-sm"
-              onClick={() => setAttachmentPreview(null)}
-            >
-              Cancel
-            </button>
-          </div>
-          {attachmentPreview.type === "image" && (
-            <img
-              src={attachmentPreview.url}
-              alt="preview"
-              className="w-full rounded"
-            />
-          )}
-          {attachmentPreview.type === "document" && (
-            <div className="p-2 bg-white dark:bg-neutral-700 text-sm rounded text-black dark:text-white">
-              📄 {attachmentPreview.file.name}
-            </div>
-          )}
+      {/* Image preview modal 👇 */}
+      {imagePreview && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50"
+          onClick={() => setImagePreview(null)}
+        >
+          <img
+            src={imagePreview}
+            alt="preview"
+            className="max-w-[90%] max-h-[90%] rounded-lg shadow-lg"
+          />
         </div>
       )}
-
-      {/* Input Bar + Attachment Menu + Modals */}
+      {/* Input Area */}
       <div className="relative">
         {showAttachmentMenu && (
           <AttachmentMenu

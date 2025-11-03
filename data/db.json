@@ -48,7 +48,7 @@
       "status": "Online",
       "avatar": "/Avatars/Erlan.png",
       "online": true,
-      "lastMessage": "how are you doing today"
+      "lastMessage": "hello "
     },
     {
       "id": "3",
@@ -88,7 +88,8 @@
       "phone": "17343095200",
       "status": "New Contact",
       "online": false,
-      "avatar": null
+      "avatar": null,
+      "lastMessage": "good morning nath"
     },
     {
       "id": "d156",
@@ -166,27 +167,11 @@
       "type": "text"
     },
     {
-      "id": "85ca",
-      "contactId": "2",
-      "type": "text",
-      "text": "hello how you doing today",
-      "time": "02:35",
-      "sender": "you",
-      "read": true
-    },
-    {
       "id": "d4ef",
       "contactId": "2",
       "sender": "you",
       "text": "good morning",
       "timestamp": "2025-05-19T07:24:27.042Z"
-    },
-    {
-      "id": "e35e",
-      "sender": "you",
-      "text": "hello",
-      "timestamp": "2025-05-27T08:51:36.633Z",
-      "contactId": "2"
     },
     {
       "id": "512d",
@@ -207,6 +192,33 @@
       "type": "text",
       "attachmentUrl": null,
       "attachmentName": null
+    },
+    {
+      "id": "03c5",
+      "sender": "you",
+      "text": "good morning nath",
+      "timestamp": "2025-11-03T13:57:18.103Z",
+      "contactId": "2810",
+      "type": "text",
+      "attachmentUrl": null,
+      "attachmentName": null
+    },
+    {
+      "id": "9001",
+      "contactId": "2810",
+      "sender": "other",
+      "text": "Look at how chocho sleep in my arms!",
+      "timestamp": "16:46",
+      "type": "image",
+      "src": "/Avatars/cat.png"
+    },
+    {
+      "id": "9002",
+      "contactId": "2810",
+      "sender": "you",
+      "text": "Can I come over?",
+      "timestamp": "16:46",
+      "type": "text"
     }
   ],
   "users": [
