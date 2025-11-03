@@ -2,7 +2,7 @@ import React from 'react';
 import { FaLinkedin } from "react-icons/fa";
 import { FaBehance } from "react-icons/fa";
 import { Link } from 'react-router-dom'; 
-import ChateoLogo from '../Assets/Images/ChateoLogo.png'
+import JohnnyskyLogo from '../Assets/Images/JohnnyskyLogo.png'
 
 const HomePage = () => {
   return (
@@ -10,14 +10,14 @@ const HomePage = () => {
       <div className="max-w-md m-auto">
         {/* Logo and Title */}
         <div className="flex items-center justify-start mb-6">
-          <img src={ChateoLogo}
-          alt="Chateo Logo" 
+          <img src={JohnnyskyLogo}
+          alt="Johnnysky Logo" 
           />
         </div>
 
         {/* Description */}
         <p className='font-semibold text-[16px]'>
-          Chateo has been created to help designers 
+          Johnnysky has been created to help designers 
           for your next project. This UI kit are completely 
           free for personal or commercial purposes. if you 
           have any feedback, reach me out on Linkedin 

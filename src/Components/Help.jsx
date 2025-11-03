@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MdChevronLeft } from "react-icons/md";
-import ChateoLogo from '../Assets/Images/ChateoLogo.png'
+import JohnnyskyLogo from '../Assets/Images/JohnnyskyLogo.png'
 
 const Help = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Help = () => {
       {/* Icon */}
       <div className="flex-grow flex items-center justify-center px-4 py-6">
         <img
-          src={ChateoLogo} // Replace with your actual path
+          src={JohnnyskyLogo} // Replace with your actual path
           alt="Chateo Logo"
           className="w-64 h-64 object-contain"
         />
