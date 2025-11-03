@@ -28,17 +28,17 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
         const formData = new FormData();
         formData.append("file", storyFile);
 
-        const uploadRes = await fetch("http://localhost:8000/upload", {
+        const uploadRes = await fetch("http://127.0.0.1:5000/upload", {
           method: "POST",
-          body: formData,
+          body: formData, // DO NOT set headers for FormData
         });
 
         if (!uploadRes.ok) throw new Error("File upload failed");
         const data = await uploadRes.json();
 
-        // ✅ Express returns { url: "/Uploads/filename" }
-        // we point it to static folder
-        fileUrl = `http://localhost:8000${data.url}`;
+        // ✅ Express returns { file: { filename, path } }
+        // Build file URL for static use
+        fileUrl = `http://127.0.0.1:5000/uploads/${data.file.filename}`;
       }
 
       const newStory = {
@@ -50,7 +50,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
         expiresAt: new Date(Date.now() + 86400000).toISOString(),
       };
 
-      // save story to db.json
+      // save story to db.json (JSON-server)
       await fetch("http://localhost:8000/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

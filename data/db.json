@@ -378,6 +378,15 @@
       "bgColor": "#FF5733",
       "createdAt": "2025-08-22T22:14:29.438Z",
       "expiresAt": "2025-08-23T22:14:29.438Z"
+    },
+    {
+      "id": "b8c1",
+      "userId": "0155",
+      "text": "",
+      "file": "http://127.0.0.1:5000/uploads/1762173439005.png",
+      "bgColor": null,
+      "createdAt": "2025-11-03T12:37:19.032Z",
+      "expiresAt": "2025-11-04T12:37:19.032Z"
     }
   ],
   "posts": [
