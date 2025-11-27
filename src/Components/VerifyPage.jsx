@@ -1,22 +1,81 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdChevronLeft } from "react-icons/md";
 import { IoBackspaceOutline } from "react-icons/io5";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { AuthContext } from "../context/AuthContext";
+
+import app, { auth as firebaseAuth } from "../firebaseConfig";
+import { RecaptchaVerifier, signInWithPhoneNumber, getAuth } from "firebase/auth";
 
 export default function VerifyPage() {
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showKeypad, setShowKeypad] = useState(false);
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-    if (user) {
-      navigate("/ContactPage");
+  // Define test numbers for development
+  const testNumbers = {
+    "+2349038163098": "123456",
+    "+15555550002": "654321",
+  };
+
+  const ensureAuthSettings = (authInstance) => {
+    if (!authInstance) return authInstance;
+    if (typeof authInstance.settings === "undefined") {
+      try {
+        // try simple assignment (works in most environments)
+        authInstance.settings = {};
+      } catch (err) {
+        // fallback to defineProperty if assignment is blocked
+        try {
+          Object.defineProperty(authInstance, "settings", {
+            value: {},
+            writable: true,
+            configurable: true,
+            enumerable: true,
+          });
+        } catch (err2) {
+          console.warn("Could not create auth.settings:", err2);
+        }
+      }
     }
+    return authInstance;
+  };
+
+  // Initialize Recaptcha once on mount
+  useEffect(() => {
+    const initRecaptcha = async () => {
+      // prefer the exported auth from firebaseConfig, fallback to getAuth(app)
+      const authInstance = ensureAuthSettings(firebaseAuth || getAuth(app));
+
+      // Only set this for local development/testing
+      if (window.location.hostname === "localhost") {
+        try {
+          authInstance.settings.appVerificationDisabledForTesting = true;
+        } catch (err) {
+          console.warn("Couldn't set appVerificationDisabledForTesting:", err);
+        }
+      }
+
+      if (!window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier = new RecaptchaVerifier(
+            "recaptcha-container",
+            { size: "invisible", callback: () => console.log("Recaptcha resolved") },
+            authInstance
+          );
+          // optional: render immediately so appVerifier is ready
+          await window.recaptchaVerifier.render();
+        } catch (err) {
+          console.error("Failed to initialize reCAPTCHA:", err);
+        }
+      }
+    };
+
+    initRecaptcha();
+
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user) navigate("/ContactPage");
   }, [navigate]);
 
   const handleInput = (value) => {
@@ -28,59 +87,56 @@ export default function VerifyPage() {
   };
 
   const handleContinue = async () => {
-    if (phoneNumber.length < 7) {
+    if (!phoneNumber || phoneNumber.length < 7) {
       alert("Please enter a valid phone number.");
       return;
     }
 
-    const fullPhoneNumber = "+" + phoneNumber;
-
+    const fullPhoneNumber = `+${phoneNumber}`;
+    // ensure the same auth instance is used for signIn
+    const authInstance = ensureAuthSettings(firebaseAuth || getAuth(app));
+    const appVerifier = window.recaptchaVerifier;
     try {
-      const res = await fetch("http://localhost:8000/contacts");
-      const contacts = await res.json();
-      const exactContact = contacts.find(
-        (c) => c.phone && "+" + c.phone.trim() === fullPhoneNumber.trim()
-      );
-
-      let user;
-
-      if (exactContact) {
-        const userRes = await fetch(`http://localhost:8000/users?phone=${exactContact.phone}`);
-        const existingUser = await userRes.json();
-
-        if (existingUser.length > 0) {
-          user = existingUser[0];
-        } else {
-          const newUser = {
-            firstName: exactContact.name?.split(" ")[0] || "",
-            lastName: exactContact.name?.split(" ").slice(1).join(" ") || "",
-            phone: exactContact.phone,
-            avatar: exactContact.avatar || null,
-            email: "",
-            address: "",
-            country: "",
-          };
-
-          const createRes = await fetch("http://localhost:8000/users", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newUser),
-          });
-          user = await createRes.json();
-        }
-      }
-
-      if (user) {
-        localStorage.setItem("currentUser", JSON.stringify(user));
-        localStorage.setItem("currentUserId", user.id);
-        login(user);
-        navigate("/ContactPage");
-      } else {
+      // If number is a test number, skip SMS
+      if (testNumbers[fullPhoneNumber]) {
+        alert(
+          `Test number detected! Use OTP: ${testNumbers[fullPhoneNumber]}`
+        );
         navigate("/OtpPage", { state: { phone: fullPhoneNumber } });
+        return;
       }
+
+      // Wait for Recaptcha to render fully
+      await appVerifier.render();
+
+      // Send OTP
+      const confirmationResult = await signInWithPhoneNumber(
+        authInstance,
+        fullPhoneNumber,
+        appVerifier
+      );
+      window.confirmationResult = confirmationResult;
+
+      alert("OTP sent successfully!");
+      navigate("/OtpPage", { state: { phone: fullPhoneNumber } });
     } catch (error) {
-      console.error("Error verifying phone:", error);
-      alert("An error occurred during verification. Please try again.");
+      console.error("Error sending OTP:", error);
+
+      if (error.code === "auth/network-request-failed") {
+        alert(
+          "Network error: Unable to reach Firebase. Check your internet connection."
+        );
+      } else if (error.code === "auth/invalid-phone-number") {
+        alert(
+          "Invalid phone number. Please enter a valid number including country code."
+        );
+      } else if (error.code === "auth/quota-exceeded") {
+        alert(
+          "SMS quota exceeded for this phone number/project. Try again later."
+        );
+      } else {
+        alert(`Failed to send OTP: ${error.message}`);
+      }
     }
   };
 
@@ -107,7 +163,7 @@ export default function VerifyPage() {
 
         <div className="mb-6 pt-4 pb-8" onClick={() => setShowKeypad(true)}>
           <PhoneInput
-            country={"id"}
+            country={"ng"}
             value={phoneNumber}
             onChange={setPhoneNumber}
             inputProps={{
@@ -138,6 +194,8 @@ export default function VerifyPage() {
         >
           Continue
         </button>
+
+        <div id="recaptcha-container"></div>
       </div>
 
       {showKeypad && (

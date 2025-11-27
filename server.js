@@ -2,6 +2,14 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const admin = require("firebase-admin");
+
+// Load service account credentials (download from Firebase console)
+const serviceAccount = require("./firebaseServiceAccount.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 // NPM modules
 const express = require("express");
@@ -12,6 +20,16 @@ const multer = require("multer");
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Logging middleware – logs every request hitting your backend
+app.use((req, res, next) => {
+  console.log(`🟦 [REQUEST] ${req.method} ${req.url}`);
+  if (req.body) {
+    console.log("📦 Request body:", req.body);
+  }
+  next();
+});
+
 
 // Static folders
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -58,6 +76,43 @@ app.get("/data", (req, res) => {
     age: 26,
   };
   res.json(myObj);
+});
+
+// === 🚀 Verify Login Endpoint (Firebase OTP Integration) ===
+let users = []; // temporary memory store; replace with DB or json-server later
+
+app.post("/verify-login", async (req, res) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ error: "Missing token" });
+  }
+
+  try {
+    // Verify the Firebase ID token
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const { uid, phone_number } = decodedToken;
+
+    // Check if user exists in our memory
+    let user = users.find((u) => u.uid === uid);
+
+    if (!user) {
+      // Create new user record
+      user = {
+        uid,
+        phone: phone_number,
+        createdAt: new Date().toISOString(),
+      };
+      users.push(user);
+      console.log("🆕 New user created:", user);
+    } else {
+      console.log("✅ Existing user verified:", user);
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error("❌ Error verifying token:", error);
+    res.status(401).json({ error: "Invalid or expired token" });
+  }
 });
 
 // === Serve index.html ===

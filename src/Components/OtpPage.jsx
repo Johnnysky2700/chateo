@@ -1,5 +1,5 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdChevronLeft } from "react-icons/md";
 
@@ -8,35 +8,76 @@ export default function OtpPage() {
   const location = useLocation();
   const { phone } = location.state || {};
 
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [showKeypad, setShowKeypad] = useState(true);
 
   const keypadNumbers = [
-    '1', '2', '3',
-    '4', '5', '6',
-    '7', '8', '9',
-    '', '0', 'backspace'
+    "1", "2", "3",
+    "4", "5", "6",
+    "7", "8", "9",
+    "", "0", "backspace"
   ];
 
-  const handleInput = (value) => {
-    if (value === 'backspace') {
+  // Define test numbers for local development (must match VerifyPage)
+  const testNumbers = {
+    "+15555550001": "123456",
+    "+15555550002": "654321",
+  };
+
+  const handleInput = async (value) => {
+    if (value === "backspace") {
       setOtp((prev) => prev.slice(0, -1));
-    } else if (otp.length < 4) {
+    } else if (otp.length < 6) {
       const newOtp = otp + value;
       setOtp(newOtp);
 
-      if (newOtp.length === 4) {
-        // Save verified phone number to localStorage
-        localStorage.setItem('registeredPhone', phone);
+      if (newOtp.length === 6) {
+        try {
+          // ✅ Handle test numbers locally
+          if (testNumbers[phone]) {
+            if (newOtp === testNumbers[phone]) {
+              // Save user as logged-in
+              localStorage.setItem("registeredPhone", phone);
+              localStorage.setItem("currentUser", JSON.stringify({ phone }));
+              alert("Login successful (test number)!");
+              navigate("/ContactPage");
+            } else {
+              throw new Error("Invalid OTP for test number");
+            }
+            return;
+          }
 
-        // Simulate short delay before navigating
-        setTimeout(() => navigate('/ProfileAcc'), 300);
+          // Regular Firebase OTP flow
+          const confirmationResult = window.confirmationResult;
+
+          if (!confirmationResult) {
+            alert("No OTP session found. Please request a new code.");
+            navigate("/VerifyPage");
+            return;
+          }
+
+          await confirmationResult.confirm(newOtp);
+
+          // Save user as logged-in
+          localStorage.setItem("registeredPhone", phone);
+          localStorage.setItem("currentUser", JSON.stringify({ phone }));
+          navigate("/ContactPage");
+
+        } catch (error) {
+          console.error("Invalid OTP:", error);
+          alert("Invalid OTP. Please try again.");
+          setOtp("");
+        }
       }
     }
   };
 
-  const handleBack = () => navigate('/VerifyPage');
-  const handleResend = () => setOtp('');
+  const handleBack = () => navigate("/VerifyPage");
+
+  const handleResend = () => {
+    setOtp("");
+    navigate("/VerifyPage");
+  };
 
   useEffect(() => {
     setShowKeypad(true);
@@ -45,7 +86,9 @@ export default function OtpPage() {
   return (
     <div className="flex flex-col min-h-screen justify-between p-6 bg-white relative text-black">
       <div>
-        <button onClick={handleBack} className="text-2xl mb-6 pb-8"><MdChevronLeft /></button>
+        <button onClick={handleBack} className="text-2xl mb-6 pb-8">
+          <MdChevronLeft />
+        </button>
 
         <div className="flex flex-col items-center justify-center p-6">
           <h1 className="text-2xl font-bold mb-2">Enter Code</h1>
@@ -56,13 +99,13 @@ export default function OtpPage() {
 
           {/* OTP Circles */}
           <div className="flex gap-4 mb-6 pb-6 pt-6">
-            {[0, 1, 2, 3].map((index) => {
-              const char = otp[index] || '';
+            {[0, 1, 2, 3, 4, 5].map((index) => {
+              const char = otp[index] || "";
               return (
                 <div
                   key={index}
                   className={`w-6 h-6 flex items-center justify-center text-xl font-semibold
-                    ${char ? '' : 'rounded-full border-2 border-[#EDEDED] bg-[#EDEDED]'}`}
+                    ${char ? "" : "rounded-full border-2 border-[#EDEDED] bg-[#EDEDED]"}`}
                 >
                   {char}
                 </div>
@@ -89,7 +132,9 @@ export default function OtpPage() {
                 onClick={() => key && handleInput(key)}
                 className="py-2 bg-[#F7F7FC] hover:bg-gray-200"
               >
-                {key === 'backspace' ? <IoBackspaceOutline className='ml-10' /> : key}
+                {key === "backspace"
+                  ? <IoBackspaceOutline className="mx-auto" />
+                  : key}
               </button>
             ))}
           </div>
