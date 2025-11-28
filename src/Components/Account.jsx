@@ -11,18 +11,34 @@ export default function Account() {
 
   const [user, setUser] = useState(currentUser || {});
   const [avatar, setAvatar] = useState(user?.avatar || null);
-  const [loading, setLoading] = useState(!currentUser);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch latest user info from db.json to auto-sync
   useEffect(() => {
-    if (!currentUser) {
-      const storedUser = JSON.parse(localStorage.getItem('currentUser'));
-      if (storedUser) {
-        setUser(storedUser);
-        setAvatar(storedUser.avatar || null);
+    async function fetchUser() {
+      if (!currentUser?.phone) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      try {
+        const res = await fetch(`http://localhost:8000/users?phone=${currentUser.phone}`);
+        const data = await res.json();
+        if (data.length > 0) {
+          setUser(data[0]);
+          setAvatar(data[0].avatar || null);
+          setCurrentUser(data[0]);
+          localStorage.setItem('currentUser', JSON.stringify(data[0]));
+        }
+      } catch (err) {
+        console.error('Failed to fetch user:', err);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [currentUser]);
+
+    fetchUser();
+  }, [currentUser?.phone, setCurrentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,8 +75,10 @@ export default function Account() {
       if (!res.ok) throw new Error('Failed to save user info');
 
       const updatedUser = await res.json();
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      setAvatar(updatedUser.avatar);
       setCurrentUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
       alert('Account info saved!');
       navigate('/MorePage');
@@ -70,9 +88,7 @@ export default function Account() {
     }
   };
 
-  if (loading) {
-    return <div className="p-6 text-center">Loading...</div>;
-  }
+  if (loading) return <div className="p-6 text-center">Loading...</div>;
 
   return (
     <div className="min-h-screen p-6 bg-white text-black dark:bg-black dark:text-white pb-24">

@@ -5,14 +5,35 @@ import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Footer from './Footer';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function MorePage() {
   const { darkMode } = useTheme();
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, setCurrentUser, logout } = useAuth();
   const [showPreview, setShowPreview] = useState(false);
+  const [userData, setUserData] = useState(currentUser || {});
+
+  // Fetch fresh user info from db.json to keep it in sync
+  useEffect(() => {
+    async function fetchUser() {
+      if (!currentUser?.phone) return;
+
+      try {
+        const res = await fetch(`http://localhost:8000/users?phone=${currentUser.phone}`);
+        const data = await res.json();
+        if (data.length > 0) {
+          setUserData(data[0]);
+          setCurrentUser(data[0]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch user:', err);
+      }
+    }
+
+    fetchUser();
+  }, [currentUser?.phone, setCurrentUser]);
 
   const handleLogout = () => {
     logout();
@@ -37,15 +58,15 @@ export default function MorePage() {
         <h1 className="text-2xl font-bold mb-6 fixed top-0 left-0 w-full bg-white dark:bg-black p-2">More</h1>
 
         {/* Profile Section */}
-        {currentUser && (
+        {userData && (
           <div className="flex items-center gap-4 mb-6 mt-16 cursor-pointer">
             <div
               className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden"
               onClick={() => setShowPreview(true)}
             >
-              {currentUser.avatar ? (
+              {userData.avatar ? (
                 <img
-                  src={currentUser.avatar}
+                  src={userData.avatar}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
@@ -55,11 +76,13 @@ export default function MorePage() {
             </div>
             <div>
               <p className="font-semibold">
-                {currentUser.firstName} {currentUser.lastName}
+                {userData.firstName} {userData.lastName}
               </p>
               <p className="text-gray-400 text-sm">
-                +{currentUser.phone || '...'}
+                {userData.phone?.startsWith('+') ? userData.phone : `+${userData.phone}` || '...'}
               </p>
+              {userData.email && <p className="text-gray-400 text-sm">{userData.email}</p>}
+              {userData.address && <p className="text-gray-400 text-sm">{userData.address}, {userData.country}</p>}
             </div>
           </div>
         )}
@@ -68,10 +91,7 @@ export default function MorePage() {
         <div className="space-y-6">
           {menuItems.map((item, index) =>
             item.divider ? (
-              <hr
-                key={index}
-                className="border-t border-gray-300 dark:border-gray-600"
-              />
+              <hr key={index} className="border-t border-gray-300 dark:border-gray-600" />
             ) : (
               <div
                 key={index}
@@ -102,24 +122,20 @@ export default function MorePage() {
       <Footer />
 
       {/* Avatar Preview Modal */}
-      {showPreview && currentUser?.avatar && (
+      {showPreview && userData?.avatar && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
           <TransformWrapper
-            doubleClick={{ mode: "zoomIn" }} // double-tap / double-click zoom in
-            wheel={{ step: 0.2 }} // smooth scroll zoom
-            pinch={{ step: 5 }} // smooth pinch zoom
+            doubleClick={{ mode: "zoomIn" }}
+            wheel={{ step: 0.2 }}
+            pinch={{ step: 5 }}
           >
-            {({ zoomIn, zoomOut, resetTransform }) => (
-              <>
-                <TransformComponent>
-                  <img
-                    src={currentUser.avatar}
-                    alt="Avatar Preview"
-                    className="w-96 h-96 rounded-full"
-                  />
-                </TransformComponent>
-              </>
-            )}
+            <TransformComponent>
+              <img
+                src={userData.avatar}
+                alt="Avatar Preview"
+                className="w-96 h-96 rounded-full"
+              />
+            </TransformComponent>
           </TransformWrapper>
 
           <button

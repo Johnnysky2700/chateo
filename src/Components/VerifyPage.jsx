@@ -1,3 +1,5 @@
+// ✅ VERIFY PAGE (FINAL FIXED VERSION)
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdChevronLeft } from "react-icons/md";
@@ -13,20 +15,20 @@ export default function VerifyPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showKeypad, setShowKeypad] = useState(false);
 
-  // Define test numbers for development
+  // 🔹 DEVELOPMENT TEST NUMBERS
   const testNumbers = {
     "+2349038163098": "123456",
     "+15555550002": "654321",
   };
 
+  // 🔧 Fix: Ensure auth.settings exists so Firebase does not break
   const ensureAuthSettings = (authInstance) => {
     if (!authInstance) return authInstance;
+
     if (typeof authInstance.settings === "undefined") {
       try {
-        // try simple assignment (works in most environments)
         authInstance.settings = {};
       } catch (err) {
-        // fallback to defineProperty if assignment is blocked
         try {
           Object.defineProperty(authInstance, "settings", {
             value: {},
@@ -35,25 +37,24 @@ export default function VerifyPage() {
             enumerable: true,
           });
         } catch (err2) {
-          console.warn("Could not create auth.settings:", err2);
+          console.warn("Failed to create auth.settings:", err2);
         }
       }
     }
     return authInstance;
   };
 
-  // Initialize Recaptcha once on mount
+  // 🔧 Initialize recaptcha once
   useEffect(() => {
     const initRecaptcha = async () => {
-      // prefer the exported auth from firebaseConfig, fallback to getAuth(app)
       const authInstance = ensureAuthSettings(firebaseAuth || getAuth(app));
 
-      // Only set this for local development/testing
+      // ONLY localhost allowed to disable verification
       if (window.location.hostname === "localhost") {
         try {
           authInstance.settings.appVerificationDisabledForTesting = true;
         } catch (err) {
-          console.warn("Couldn't set appVerificationDisabledForTesting:", err);
+          console.warn("Could not disable verification:", err);
         }
       }
 
@@ -61,19 +62,23 @@ export default function VerifyPage() {
         try {
           window.recaptchaVerifier = new RecaptchaVerifier(
             "recaptcha-container",
-            { size: "invisible", callback: () => console.log("Recaptcha resolved") },
+            {
+              size: "invisible",
+              callback: () => console.log("Recaptcha solved"),
+            },
             authInstance
           );
-          // optional: render immediately so appVerifier is ready
+
           await window.recaptchaVerifier.render();
         } catch (err) {
-          console.error("Failed to initialize reCAPTCHA:", err);
+          console.error("Recaptcha init error:", err);
         }
       }
     };
 
     initRecaptcha();
 
+    // auto-login
     const user = JSON.parse(localStorage.getItem("currentUser"));
     if (user) navigate("/ContactPage");
   }, [navigate]);
@@ -81,9 +86,9 @@ export default function VerifyPage() {
   const handleInput = (value) => {
     if (value === "backspace") {
       setPhoneNumber((prev) => prev.slice(0, -1));
-    } else {
-      setPhoneNumber((prev) => prev + value);
+      return;
     }
+    setPhoneNumber((prev) => prev + value);
   };
 
   const handleContinue = async () => {
@@ -92,48 +97,40 @@ export default function VerifyPage() {
       return;
     }
 
-    const fullPhoneNumber = `+${phoneNumber}`;
-    // ensure the same auth instance is used for signIn
+    const fullPhone = `+${phoneNumber}`;
     const authInstance = ensureAuthSettings(firebaseAuth || getAuth(app));
     const appVerifier = window.recaptchaVerifier;
+
     try {
-      // If number is a test number, skip SMS
-      if (testNumbers[fullPhoneNumber]) {
-        alert(
-          `Test number detected! Use OTP: ${testNumbers[fullPhoneNumber]}`
-        );
-        navigate("/OtpPage", { state: { phone: fullPhoneNumber } });
+      // 🔥 TEST NUMBER BYPASS
+      if (testNumbers[fullPhone]) {
+        alert(`TEST NUMBER! Use OTP: ${testNumbers[fullPhone]}`);
+        navigate("/OtpPage", { state: { phone: fullPhone } });
         return;
       }
 
-      // Wait for Recaptcha to render fully
       await appVerifier.render();
 
-      // Send OTP
       const confirmationResult = await signInWithPhoneNumber(
         authInstance,
-        fullPhoneNumber,
+        fullPhone,
         appVerifier
       );
+
       window.confirmationResult = confirmationResult;
 
-      alert("OTP sent successfully!");
-      navigate("/OtpPage", { state: { phone: fullPhoneNumber } });
+      alert("OTP sent!");
+      navigate("/OtpPage", { state: { phone: fullPhone } });
+
     } catch (error) {
-      console.error("Error sending OTP:", error);
+      console.error("OTP SEND ERROR:", error);
 
       if (error.code === "auth/network-request-failed") {
-        alert(
-          "Network error: Unable to reach Firebase. Check your internet connection."
-        );
+        alert("Network error. Check your internet connection.");
       } else if (error.code === "auth/invalid-phone-number") {
-        alert(
-          "Invalid phone number. Please enter a valid number including country code."
-        );
+        alert("Invalid phone number format.");
       } else if (error.code === "auth/quota-exceeded") {
-        alert(
-          "SMS quota exceeded for this phone number/project. Try again later."
-        );
+        alert("SMS quota exceeded. Try later.");
       } else {
         alert(`Failed to send OTP: ${error.message}`);
       }
@@ -177,10 +174,8 @@ export default function VerifyPage() {
             inputStyle={{
               width: "100%",
               border: "none",
-              borderRadius: 0,
               fontSize: "1rem",
               backgroundColor: "#F7F7FC",
-              color: "inherit",
             }}
             buttonStyle={{ backgroundColor: "#F7F7FC" }}
             dropdownStyle={{ color: "black" }}
@@ -190,7 +185,7 @@ export default function VerifyPage() {
 
         <button
           onClick={handleContinue}
-          className="w-full bg-blue-600 text-white py-3 rounded-full text-[16px] hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-3 rounded-full text-[16px] hover:bg-blue-700"
         >
           Continue
         </button>
@@ -204,13 +199,11 @@ export default function VerifyPage() {
             <button
               key={idx}
               onClick={() => key && handleInput(key)}
-              className="py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-black dark:text-white"
+              className="py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
             >
-              {key === "backspace" ? (
-                <IoBackspaceOutline className="mx-auto" />
-              ) : (
-                key
-              )}
+              {key === "backspace"
+                ? <IoBackspaceOutline className="mx-auto" />
+                : key}
             </button>
           ))}
         </div>
