@@ -78,11 +78,11 @@ export default function MorePage() {
               <p className="font-semibold">
                 {userData.firstName} {userData.lastName}
               </p>
-              <p className="text-gray-400 text-sm">
+              {/* <p className="text-gray-400 text-sm">
                 {userData.phone?.startsWith('+') ? userData.phone : `+${userData.phone}` || '...'}
               </p>
               {userData.email && <p className="text-gray-400 text-sm">{userData.email}</p>}
-              {userData.address && <p className="text-gray-400 text-sm">{userData.address}, {userData.country}</p>}
+              {userData.address && <p className="text-gray-400 text-sm">{userData.address}, {userData.country}</p>} */}
             </div>
           </div>
         )}
