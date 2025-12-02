@@ -13,22 +13,24 @@ export default function Account() {
   const [avatar, setAvatar] = useState(user?.avatar || null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch latest user info from db.json to auto-sync
+  // Fetch latest user info from MongoDB on mount
   useEffect(() => {
     async function fetchUser() {
-      if (!currentUser?.phone) {
+      const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!storedUser?._id) {
         setLoading(false);
         return;
       }
 
       try {
-        const res = await fetch(`http://localhost:8000/users?phone=${currentUser.phone}`);
+        const res = await fetch(`http://localhost:5000/user/${storedUser._id}`);
         const data = await res.json();
-        if (data.length > 0) {
-          setUser(data[0]);
-          setAvatar(data[0].avatar || null);
-          setCurrentUser(data[0]);
-          localStorage.setItem('currentUser', JSON.stringify(data[0]));
+
+        if (res.ok && data) {
+          setUser(data);
+          setAvatar(data.avatar || null);
+          setCurrentUser(data);
+          localStorage.setItem('currentUser', JSON.stringify(data));
         }
       } catch (err) {
         console.error('Failed to fetch user:', err);
@@ -38,13 +40,33 @@ export default function Account() {
     }
 
     fetchUser();
-  }, [currentUser?.phone, setCurrentUser]);
+  }, [setCurrentUser]);
 
-  const handleChange = (e) => {
+  // Handle input changes and auto-sync to AuthContext & localStorage
+  const handleChange = async (e) => {
     const { name, value } = e.target;
-    setUser((prev) => ({ ...prev, [name]: value }));
+    const updatedUser = { ...user, [name]: value };
+    setUser(updatedUser);
+
+    // Optimistically update AuthContext and localStorage
+    setCurrentUser(updatedUser);
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+    // Auto-save to backend
+    if (user._id) {
+      try {
+        await fetch(`http://localhost:5000/user/${user._id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedUser),
+        });
+      } catch (err) {
+        console.error('Failed to auto-save user:', err);
+      }
+    }
   };
 
+  // Handle avatar change
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -57,24 +79,49 @@ export default function Account() {
       });
 
       const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
+
+      const updatedUser = { ...user, avatar: base64 };
       setAvatar(base64);
-      setUser((prev) => ({ ...prev, avatar: base64 }));
+      setUser(updatedUser);
+
+      // Update AuthContext and localStorage
+      setCurrentUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+      // Save to backend
+      if (user._id) {
+        await fetch(`http://localhost:5000/user/${user._id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedUser),
+        });
+      }
     } catch (error) {
       console.error('Image compression failed:', error);
+      alert('Failed to process avatar image.');
     }
   };
 
   const handleSave = async () => {
+    if (!user._id) {
+      alert('User not logged in. Please login again.');
+      return;
+    }
+
     try {
-      const res = await fetch(`http://localhost:8000/users/${user.id}`, {
+      const res = await fetch(`http://localhost:5000/user/${user._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...user, avatar }),
+        body: JSON.stringify(user),
       });
 
-      if (!res.ok) throw new Error('Failed to save user info');
-
       const updatedUser = await res.json();
+
+      if (!res.ok) {
+        alert(updatedUser.error || 'Error saving user info');
+        return;
+      }
+
       setUser(updatedUser);
       setAvatar(updatedUser.avatar);
       setCurrentUser(updatedUser);

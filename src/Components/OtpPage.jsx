@@ -2,13 +2,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdChevronLeft } from "react-icons/md";
-import { useAuth } from "../context/AuthContext"; // <-- Make sure this exists
+import { useAuth } from "../context/AuthContext";
 
 export default function OtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { phone } = location.state || {};
-  const { login } = useAuth(); // AuthContext
+  const { email } = location.state || {};  // <-- changed from phone to email
+  const { login } = useAuth();
 
   const [otp, setOtp] = useState("");
   const [showKeypad, setShowKeypad] = useState(true);
@@ -20,28 +20,26 @@ export default function OtpPage() {
     "", "0", "backspace"
   ];
 
-  // ✅ TEST NUMBERS & DUMMY USERS
-  const testNumbers = {
-    "+2349038163098": {
+  // TEST EMAILS FOR DEVELOPMENT
+  const testEmails = {
+    "seyi@example.com": {
       code: "123456",
       user: {
-        id: 1,
-        phone: "+2349038163098",
+        email: "seyi@example.com",
         firstName: "Seyi",
         lastName: "Johnson",
         avatar: "",
-        email: "seyi@example.com"
+        phone: ""
       }
     },
-    "+15555550002": {
+    "john@example.com": {
       code: "654321",
       user: {
-        id: 2,
-        phone: "+15555550002",
+        email: "john@example.com",
         firstName: "John",
         lastName: "Doe",
         avatar: "",
-        email: "john@example.com"
+        phone: ""
       }
     }
   };
@@ -58,90 +56,92 @@ export default function OtpPage() {
 
       if (newOtp.length === 6) {
         try {
-          // ✅ TEST NUMBER LOGIN
-          if (testNumbers[phone]) {
-            if (newOtp === testNumbers[phone].code) {
-              // Save full dummy user to AuthContext
-              login(testNumbers[phone].user);
-              localStorage.setItem("registeredPhone", phone);
-              localStorage.setItem("currentUser", JSON.stringify(testNumbers[phone].user));
+          // 🔹 TEST EMAIL BYPASS
+          if (testEmails[email]) {
+            if (newOtp === testEmails[email].code) {
+              await login(testEmails[email].user);
               alert("Login successful!");
               navigate("/ContactPage");
             } else {
-              alert("Invalid OTP for test number.");
+              alert("Invalid OTP for test email.");
               setOtp("");
             }
             return;
           }
 
-          // ✅ FIREBASE CONFIRMATION
-          const confirmationResult = window.confirmationResult;
-          if (!confirmationResult) {
-            alert("Session expired. Please request a new OTP.");
-            navigate("/VerifyPage");
+          // 🔹 VERIFY OTP WITH BACKEND
+          const verifyRes = await fetch("http://localhost:5000/verify-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp: newOtp }),
+          });
+
+          const verifyData = await verifyRes.json();
+
+          if (verifyRes.status !== 200) {
+            alert(verifyData.error || "Invalid OTP");
+            setOtp("");
             return;
           }
 
-          await confirmationResult.confirm(newOtp);
+          // SUCCESS → login via AuthContext (fetch latest MongoDB data)
+          await login(verifyData.user);
 
-          // ✅ LOGIN WITH JSON SERVER
-          await handleLogin(phone);
+          alert("Login successful!");
+          navigate("/ContactPage");
 
         } catch (error) {
-          console.error("Invalid OTP:", error);
-          alert("Invalid OTP. Please try again.");
+          console.error("OTP ERROR:", error);
+          alert("Unable to verify OTP.");
           setOtp("");
         }
       }
     }
   };
 
-  // 🔥 LOGIN FUNCTION (JSON SERVER)
-  const handleLogin = async (phoneNumber) => {
+  const handleBack = () => navigate("/VerifyPage");
+
+  const [cooldown, setCooldown] = useState(0);
+
+  const handleResend = async () => {
+    if (cooldown > 0) return;
+
+    setOtp("");
+
     try {
-      const res = await fetch(`http://localhost:5000/users?phone=${phoneNumber}`);
+      const res = await fetch("http://localhost:5000/request-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
       const data = await res.json();
 
-      let user;
-      if (data.length > 0) {
-        user = data[0]; // existing user
-      } else {
-        // create new user
-        const newUser = {
-          phone: phoneNumber,
-          firstName: "",
-          lastName: "",
-          avatar: "",
-          email: "",
-        };
-
-        const createRes = await fetch(`http://localhost:5000/users`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newUser),
-        });
-
-        user = await createRes.json();
+      if (res.status !== 200) {
+        alert(data.error || "Failed to resend OTP.");
+        return;
       }
 
-      // Save full user to AuthContext + localStorage
-      login(user);
-      localStorage.setItem("registeredPhone", phoneNumber);
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      alert("A new OTP has been sent to your email.");
 
-      navigate("/ContactPage");
+      // Start 30-second timer
+      setCooldown(30);
 
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Failed to login. Try again.");
+    } catch (err) {
+      console.error("Resend OTP error:", err);
+      alert("Network error while resending OTP.");
     }
   };
 
-  const handleBack = () => navigate("/VerifyPage");
-  const handleResend = () => {
-    setOtp("");
-    navigate("/VerifyPage");
-  };
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((time) => time - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   useEffect(() => {
     setShowKeypad(true);
@@ -157,13 +157,13 @@ export default function OtpPage() {
         <div className="flex flex-col items-center justify-center p-6">
           <h1 className="text-2xl font-bold mb-2">Enter Code</h1>
           <p className="text-gray-500 mb-4 text-sm text-center">
-            We have sent you an SMS with the code to <br />
-            <span className="font-semibold">{phone}</span>
+            We have sent you an OTP code to <br />
+            <span className="font-semibold">{email}</span>
           </p>
 
           {/* OTP Circles */}
           <div className="flex gap-4 mb-6 pb-6 pt-6">
-            {[0,1,2,3,4,5].map((index) => {
+            {[0, 1, 2, 3, 4, 5].map((index) => {
               const char = otp[index] || "";
               return (
                 <div
@@ -186,7 +186,6 @@ export default function OtpPage() {
         </button>
       </div>
 
-      {/* Keypad */}
       {showKeypad && (
         <div className="absolute bottom-0 left-0 right-0 bg-[#F7F7FC] shadow-2xl text-black">
           <div className="grid grid-cols-3 gap-4 text-2xl text-center p-2">

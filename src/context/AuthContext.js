@@ -5,26 +5,50 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch current user from localStorage on mount
+  // Fetch current user from localStorage and then refresh from MongoDB
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+    const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
-      setCurrentUser(storedUser);
+      const parsedUser = JSON.parse(storedUser);
+      // Fetch fresh data from backend to get latest edits
+      fetch(`http://localhost:5000/users?email=${parsedUser.email}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.length > 0) {
+            setCurrentUser(data[0]);
+            localStorage.setItem('currentUser', JSON.stringify(data[0]));
+          } else {
+            setCurrentUser(parsedUser);
+          }
+        })
+        .catch(() => setCurrentUser(parsedUser));
     }
   }, []);
 
-  const login = async (phone) => {
+  // Login using email (from OTP flow)
+  const login = async (userData) => {
     try {
-      const res = await fetch(`http://localhost:8000/users?phone=${phone}`);
+      // userData must contain at least email
+      const email = userData.email;
+      const res = await fetch(`http://localhost:5000/users?email=${email}`);
       const data = await res.json();
+
+      let user;
       if (data.length > 0) {
-        const user = data[0];
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        setCurrentUser(user);
-        return true;
+        user = data[0];
       } else {
-        return false;
+        // Create new user if not exists
+        const createRes = await fetch(`http://localhost:5000/users`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData),
+        });
+        user = await createRes.json();
       }
+
+      setCurrentUser(user);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      return true;
     } catch (err) {
       console.error('Login failed:', err);
       return false;

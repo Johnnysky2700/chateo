@@ -1,213 +1,80 @@
-// ✅ VERIFY PAGE (FINAL FIXED VERSION)
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdChevronLeft } from "react-icons/md";
-import { IoBackspaceOutline } from "react-icons/io5";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-
-import app, { auth as firebaseAuth } from "../firebaseConfig";
-import { RecaptchaVerifier, signInWithPhoneNumber, getAuth } from "firebase/auth";
 
 export default function VerifyPage() {
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [showKeypad, setShowKeypad] = useState(false);
+  const [username, setUsername] = useState("");
+  const domain = "@gmail.com";
 
-  // 🔹 DEVELOPMENT TEST NUMBERS
-  const testNumbers = {
-    "+2349038163098": "123456",
-    "+15555550002": "654321",
-  };
-
-  // 🔧 Fix: Ensure auth.settings exists so Firebase does not break
-  const ensureAuthSettings = (authInstance) => {
-    if (!authInstance) return authInstance;
-
-    if (typeof authInstance.settings === "undefined") {
-      try {
-        authInstance.settings = {};
-      } catch (err) {
-        try {
-          Object.defineProperty(authInstance, "settings", {
-            value: {},
-            writable: true,
-            configurable: true,
-            enumerable: true,
-          });
-        } catch (err2) {
-          console.warn("Failed to create auth.settings:", err2);
-        }
-      }
-    }
-    return authInstance;
-  };
-
-  // 🔧 Initialize recaptcha once
   useEffect(() => {
-    const initRecaptcha = async () => {
-      const authInstance = ensureAuthSettings(firebaseAuth || getAuth(app));
-
-      // ONLY localhost allowed to disable verification
-      if (window.location.hostname === "localhost") {
-        try {
-          authInstance.settings.appVerificationDisabledForTesting = true;
-        } catch (err) {
-          console.warn("Could not disable verification:", err);
-        }
-      }
-
-      if (!window.recaptchaVerifier) {
-        try {
-          window.recaptchaVerifier = new RecaptchaVerifier(
-            "recaptcha-container",
-            {
-              size: "invisible",
-              callback: () => console.log("Recaptcha solved"),
-            },
-            authInstance
-          );
-
-          await window.recaptchaVerifier.render();
-        } catch (err) {
-          console.error("Recaptcha init error:", err);
-        }
-      }
-    };
-
-    initRecaptcha();
-
-    // auto-login
     const user = JSON.parse(localStorage.getItem("currentUser"));
     if (user) navigate("/ContactPage");
   }, [navigate]);
 
-  const handleInput = (value) => {
-    if (value === "backspace") {
-      setPhoneNumber((prev) => prev.slice(0, -1));
-      return;
-    }
-    setPhoneNumber((prev) => prev + value);
-  };
-
   const handleContinue = async () => {
-    if (!phoneNumber || phoneNumber.length < 7) {
-      alert("Please enter a valid phone number.");
+    if (!username || username.length < 2) {
+      alert("Enter a valid username.");
       return;
     }
 
-    const fullPhone = `+${phoneNumber}`;
-    const authInstance = ensureAuthSettings(firebaseAuth || getAuth(app));
-    const appVerifier = window.recaptchaVerifier;
+    const email = username.includes("@") ? username : username + domain;
 
     try {
-      // 🔥 TEST NUMBER BYPASS
-      if (testNumbers[fullPhone]) {
-        alert(`TEST NUMBER! Use OTP: ${testNumbers[fullPhone]}`);
-        navigate("/OtpPage", { state: { phone: fullPhone } });
+      const response = await fetch("http://127.0.0.1:5000/request-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Failed to send OTP.");
         return;
       }
 
-      await appVerifier.render();
-
-      const confirmationResult = await signInWithPhoneNumber(
-        authInstance,
-        fullPhone,
-        appVerifier
-      );
-
-      window.confirmationResult = confirmationResult;
-
-      alert("OTP sent!");
-      navigate("/OtpPage", { state: { phone: fullPhone } });
+      alert("OTP sent to your email!");
+      navigate("/OtpPage", { state: { email } });
 
     } catch (error) {
       console.error("OTP SEND ERROR:", error);
-
-      if (error.code === "auth/network-request-failed") {
-        alert("Network error. Check your internet connection.");
-      } else if (error.code === "auth/invalid-phone-number") {
-        alert("Invalid phone number format.");
-      } else if (error.code === "auth/quota-exceeded") {
-        alert("SMS quota exceeded. Try later.");
-      } else {
-        alert(`Failed to send OTP: ${error.message}`);
-      }
+      alert("Failed to send OTP. Check your server.");
     }
   };
 
   const handleBack = () => navigate("/WalkThrough");
 
-  const keypadNumbers = [
-    "1", "2", "3",
-    "4", "5", "6",
-    "7", "8", "9",
-    "", "0", "backspace"
-  ];
-
   return (
-    <div className="flex flex-col min-h-screen justify-between p-6 bg-white dark:bg-black text-black dark:text-white">
+    <div className="flex flex-col min-h-screen justify-between bg-white dark:bg-black text-black dark:text-white p-6">
       <div>
         <button onClick={handleBack} className="text-2xl mb-6">
           <MdChevronLeft />
         </button>
 
-        <h1 className="text-2xl pt-12 font-bold mb-2">Enter Your Phone Number</h1>
+        <h1 className="text-2xl pt-12 font-bold mb-2">Email Verification</h1>
+
         <p className="mb-6 text-center">
-          Please confirm your country code and enter your phone number
+          Enter your Gmail username (your email will become username{domain})
         </p>
 
-        <div className="mb-6 pt-4 pb-8" onClick={() => setShowKeypad(true)}>
-          <PhoneInput
-            country={"ng"}
-            value={phoneNumber}
-            onChange={setPhoneNumber}
-            inputProps={{
-              name: "phone",
-              required: true,
-              readOnly: true,
-              onFocus: () => setShowKeypad(true),
-            }}
-            placeholder="Phone Number"
-            containerStyle={{ width: "100%", backgroundColor: "#F7F7FC" }}
-            inputStyle={{
-              width: "100%",
-              border: "none",
-              fontSize: "1rem",
-              backgroundColor: "#F7F7FC",
-            }}
-            buttonStyle={{ backgroundColor: "#F7F7FC" }}
-            dropdownStyle={{ color: "black" }}
-            enableSearch
-          />
-        </div>
+        {/* 🔥 Normal device keyboard input */}
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter Gmail username"
+          className="w-full bg-[#F7F7FC] dark:bg-gray-900 px-4 py-4 rounded-xl 
+                     text-lg outline-none"
+        />
 
         <button
           onClick={handleContinue}
-          className="w-full bg-blue-600 text-white py-3 rounded-full text-[16px] hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white py-3 rounded-full text-[16px] hover:bg-blue-700 mt-6"
         >
           Continue
         </button>
-
-        <div id="recaptcha-container"></div>
       </div>
-
-      {showKeypad && (
-        <div className="grid grid-cols-3 gap-4 text-2xl text-center mt-6 bg-[#F7F7FC] dark:bg-black p-2 absolute bottom-0 w-full left-0">
-          {keypadNumbers.map((key, idx) => (
-            <button
-              key={idx}
-              onClick={() => key && handleInput(key)}
-              className="py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-            >
-              {key === "backspace"
-                ? <IoBackspaceOutline className="mx-auto" />
-                : key}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

@@ -15,17 +15,22 @@ export default function MorePage() {
   const [showPreview, setShowPreview] = useState(false);
   const [userData, setUserData] = useState(currentUser || {});
 
-  // Fetch fresh user info from db.json to keep it in sync
+  // Fetch fresh user info from MongoDB
   useEffect(() => {
     async function fetchUser() {
       if (!currentUser?.phone) return;
 
       try {
-        const res = await fetch(`http://localhost:8000/users?phone=${currentUser.phone}`);
+        const res = await fetch(
+          `http://localhost:5000/api/users/phone/${currentUser.phone}`
+        );
+
         const data = await res.json();
-        if (data.length > 0) {
-          setUserData(data[0]);
-          setCurrentUser(data[0]);
+
+        if (data) {
+          setUserData(data);
+          setCurrentUser(data);
+          localStorage.setItem("currentUser", JSON.stringify(data));
         }
       } catch (err) {
         console.error('Failed to fetch user:', err);
@@ -36,9 +41,10 @@ export default function MorePage() {
   }, [currentUser?.phone, setCurrentUser]);
 
   const handleLogout = () => {
-    logout();
-    navigate('/VerifyPage');
-  };
+  setCurrentUser(null); // clear context
+  localStorage.removeItem("currentUser"); // clear localStorage
+  navigate("/VerifyPage"); // or wherever login page is
+};
 
   const menuItems = [
     { label: 'Account', icon: <RiUserLine />, path: '/Account' },
@@ -78,11 +84,6 @@ export default function MorePage() {
               <p className="font-semibold">
                 {userData.firstName} {userData.lastName}
               </p>
-              {/* <p className="text-gray-400 text-sm">
-                {userData.phone?.startsWith('+') ? userData.phone : `+${userData.phone}` || '...'}
-              </p>
-              {userData.email && <p className="text-gray-400 text-sm">{userData.email}</p>}
-              {userData.address && <p className="text-gray-400 text-sm">{userData.address}, {userData.country}</p>} */}
             </div>
           </div>
         )}
