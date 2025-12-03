@@ -75,8 +75,11 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS, // MUST be Gmail App Password
+    pass: process.env.MAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 // ------------------ OTP ENDPOINTS ------------------
