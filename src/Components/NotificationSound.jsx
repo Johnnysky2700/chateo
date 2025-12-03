@@ -50,7 +50,7 @@ export default function NotificationSound() {
 
   const handleSave = async () => {
     try {
-      await fetch("http://localhost:8000/api/save-tone", {
+      await fetch("http://127.0.0.1:5000/api/save-tone", {
         method: "POST",
         body: JSON.stringify({ tone: selectedTone }),
         headers: { "Content-Type": "application/json" },

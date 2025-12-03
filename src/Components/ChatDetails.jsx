@@ -43,7 +43,7 @@ export default function ChatDetails() {
       try {
         await Promise.all(
           selectedMessages.map((msgId) =>
-            fetch(`http://localhost:8000/messages/${msgId}`, {
+            fetch(`http://127.0.0.1:5000/messages/${msgId}`, {
               method: "DELETE",
             })
           )

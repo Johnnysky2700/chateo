@@ -11,7 +11,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 export default function MorePage() {
   const { darkMode } = useTheme();
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser, logout } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
   const [showPreview, setShowPreview] = useState(false);
   const [userData, setUserData] = useState(currentUser || {});
 
@@ -22,7 +22,7 @@ export default function MorePage() {
 
       try {
         const res = await fetch(
-          `http://localhost:5000/api/users/phone/${currentUser.phone}`
+          `http://127.0.0.1:5000/api/users/phone/${currentUser.phone}`
         );
 
         const data = await res.json();

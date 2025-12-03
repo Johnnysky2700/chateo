@@ -27,7 +27,7 @@ export default function ChatPage() {
 
   // Move fetchStories outside useEffect so it can be reused
   const fetchStories = useCallback(async () => {
-    const res = await fetch("http://localhost:8000/stories");
+    const res = await fetch("http://127.0.0.1:5000/stories");
     const data = await res.json();
     console.log("Fetched stories:", data); // Log all fetched stories
     const now = new Date();

@@ -32,7 +32,7 @@ export default function NewsFeed() {
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("currentUser"));
     if (stored?.id) {
-      fetch(`http://localhost:8000/users/${stored.id}`)
+      fetch(`http://127.0.0.1:5000/users/${stored.id}`)
         .then((res) => res.json())
         .then((data) => setCurrentUser(data))
         .catch((err) => console.error("Failed to fetch user:", err));

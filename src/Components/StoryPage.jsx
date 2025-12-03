@@ -13,7 +13,7 @@ export default function StoryPage() {
 
   const fetchStories = useCallback(async () => {
     try {
-      const res = await fetch(`http://localhost:8000/stories?userId=${userId}`);
+      const res = await fetch(`http://127.0.0.1:5000/stories?userId=${userId}`);
       const data = await res.json();
       console.log("Fetched stories for userId", userId, data); // Debug log
       const now = new Date();

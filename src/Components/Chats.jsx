@@ -10,7 +10,7 @@ export default function Chats() {
   const [keepArchived, setKeepArchived] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/chatSettings")
+    fetch("http://127.0.0.1:5000/chatSettings")
       .then((res) => res.json())
       .then((data) => {
         setSaveToPhotos(data.saveToPhotos);

@@ -9,7 +9,7 @@ export default function CommentModal({ postId, onClose }) {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/comments?postId=${postId}`);
+        const res = await fetch(`http://127.0.0.1:5000/comments?postId=${postId}`);
         const data = await res.json();
         setComments(data);
       } catch (error) {

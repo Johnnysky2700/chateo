@@ -22,7 +22,7 @@ export default function ContactPage() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await fetch("http://localhost:8000/contacts");
+        const res = await fetch("http://127.0.0.1:5000/contacts");
         const data = await res.json();
         setContacts(data); // Update contacts via context
       } catch (err) {

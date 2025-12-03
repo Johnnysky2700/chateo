@@ -6,7 +6,7 @@ export default function StoryBar({ onSelectStory }) {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const res = await fetch("http://localhost:8000/stories");
+        const res = await fetch("http://127.0.0.1:5000/stories");
         const data = await res.json();
         setStories(data.filter(story => Date.now() - new Date(story.timestamp) < 24 * 60 * 60 * 1000));
       } catch (error) {
