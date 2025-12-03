@@ -70,7 +70,7 @@ export default function OtpPage() {
           }
 
           // 🔹 VERIFY OTP WITH BACKEND
-          const verifyRes = await fetch("http://127.0.0.1:5000/verify-otp", {
+          const verifyRes = await fetch("https://chateo-ml7k.onrender.com/verify-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, otp: newOtp }),
