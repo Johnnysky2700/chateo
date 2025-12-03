@@ -25,7 +25,7 @@ export default function CreatePostModal({ onClose, onPost }) {
     };
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/posts", {
+      const res = await fetch("https://chateo-ml7k.onrender.com/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPost),

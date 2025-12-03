@@ -23,7 +23,7 @@ export default function Account() {
       }
 
       try {
-        const res = await fetch(`http://127.0.0.1:5000/user/${storedUser._id}`);
+        const res = await fetch(`https://chateo-ml7k.onrender.com/user/${storedUser._id}`);
         const data = await res.json();
 
         if (res.ok && data) {
@@ -55,7 +55,7 @@ export default function Account() {
     // Auto-save to backend
     if (user._id) {
       try {
-        await fetch(`http://localhost:5000/user/${user._id}`, {
+        await fetch(`https://chateo-ml7k.onrender.com/user/${user._id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedUser),
@@ -90,7 +90,7 @@ export default function Account() {
 
       // Save to backend
       if (user._id) {
-        await fetch(`http://localhost:5000/user/${user._id}`, {
+        await fetch(`https://chateo-ml7k.onrender.com/user/${user._id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedUser),
@@ -109,7 +109,7 @@ export default function Account() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/user/${user._id}`, {
+      const res = await fetch(`https://chateo-ml7k.onrender.com/user/${user._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),

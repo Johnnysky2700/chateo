@@ -28,7 +28,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
         const formData = new FormData();
         formData.append("file", storyFile);
 
-        const uploadRes = await fetch("http://127.0.0.1:5000/upload", {
+        const uploadRes = await fetch("https://chateo-ml7k.onrender.com/upload", {
           method: "POST",
           body: formData, // DO NOT set headers for FormData
         });
@@ -38,7 +38,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
 
         // ✅ Express returns { file: { filename, path } }
         // Build file URL for static use
-        fileUrl = `http://127.0.0.1:5000/uploads/${data.file.filename}`;
+        fileUrl = `https://chateo-ml7k.onrender.com/uploads/${data.file.filename}`;
       }
 
       const newStory = {
@@ -51,7 +51,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
       };
 
       // save story to db.json (JSON-server)
-      await fetch("http://localhost:8000/stories", {
+      await fetch("https://chateo-ml7k.onrender.com/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),

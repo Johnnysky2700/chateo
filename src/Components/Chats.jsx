@@ -10,7 +10,7 @@ export default function Chats() {
   const [keepArchived, setKeepArchived] = useState(true);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/chatSettings")
+    fetch("https://chateo-ml7k.onrender.com/chatSettings")
       .then((res) => res.json())
       .then((data) => {
         setSaveToPhotos(data.saveToPhotos);
@@ -20,7 +20,7 @@ export default function Chats() {
   }, []);
 
   const updateSetting = async (field, value) => {
-    await fetch(`http://localhost:8000/chatSettings`, {
+    await fetch(`https://chateo-ml7k.onrender.com/chatSettings`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: value }),
@@ -34,7 +34,7 @@ export default function Chats() {
   };
 
   const handleAction = async (action) => {
-    const response = await fetch(`http://localhost:8000/chats/${action}`, {
+    const response = await fetch(`https://chateo-ml7k.onrender.com/chats/${action}`, {
       method: "POST",
     });
     if (response.ok) {

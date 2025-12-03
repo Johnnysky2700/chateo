@@ -27,7 +27,7 @@ export default function ChatPage() {
 
   // Move fetchStories outside useEffect so it can be reused
   const fetchStories = useCallback(async () => {
-    const res = await fetch("http://127.0.0.1:5000/stories");
+    const res = await fetch("https://chateo-ml7k.onrender.com/stories");
     const data = await res.json();
     console.log("Fetched stories:", data); // Log all fetched stories
     const now = new Date();
@@ -50,7 +50,7 @@ export default function ChatPage() {
 
   const fetchContacts = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:8000/contacts");
+      const res = await fetch("https://chateo-ml7k.onrender.com/contacts");
       const data = await res.json();
       setContacts(data);
     } catch (err) {
@@ -72,7 +72,7 @@ export default function ChatPage() {
     try {
       await Promise.all(
         selectedChats.map((id) =>
-          fetch(`http://localhost:8000/contacts/${id}`, { method: "DELETE" })
+          fetch(`https://chateo-ml7k.onrender.com/contacts/${id}`, { method: "DELETE" })
         )
       );
       fetchContacts();
@@ -98,7 +98,7 @@ export default function ChatPage() {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/stories", {
+      const response = await fetch("https://chateo-ml7k.onrender.com/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),

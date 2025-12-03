@@ -32,7 +32,7 @@ export default function NewsFeed() {
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("currentUser"));
     if (stored?.id) {
-      fetch(`http://127.0.0.1:5000/users/${stored.id}`)
+      fetch(`https://chateo-ml7k.onrender.com/users/${stored.id}`)
         .then((res) => res.json())
         .then((data) => setCurrentUser(data))
         .catch((err) => console.error("Failed to fetch user:", err));
@@ -41,7 +41,7 @@ export default function NewsFeed() {
 
   const fetchPosts = useCallback(async () => {
     try {
-      let url = `http://localhost:8000/posts?_page=${page}&_limit=5`;
+      let url = `https://chateo-ml7k.onrender.com/posts?_page=${page}&_limit=5`;
       if (friendPostsOnly && currentUser?.friends) {
         const friendsFilter = currentUser.friends.join(",");
         url += `&userId=${friendsFilter}`;
@@ -85,7 +85,7 @@ export default function NewsFeed() {
   const handleDoubleTap = async (postId) => {
     if (!likedPosts.includes(postId)) {
       setLikedPosts([...likedPosts, postId]);
-      await fetch(`http://localhost:8000/posts/${postId}`, {
+      await fetch(`https://chateo-ml7k.onrender.com/posts/${postId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ liked: true }),
@@ -100,7 +100,7 @@ export default function NewsFeed() {
       : [...savedPosts, postId];
 
     setSavedPosts(updated);
-    await fetch(`http://localhost:8000/posts/${postId}`, {
+    await fetch(`https://chateo-ml7k.onrender.com/posts/${postId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ saved: !isSaved }),

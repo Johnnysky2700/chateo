@@ -102,14 +102,13 @@ export default function OtpPage() {
   const handleBack = () => navigate("/VerifyPage");
 
   const [cooldown, setCooldown] = useState(0);
-
   const handleResend = async () => {
     if (cooldown > 0) return;
 
     setOtp("");
 
     try {
-      const res = await fetch("http://localhost:5000/request-otp", {
+      const res = await fetch("https://chateo-ml7k.onrender.com/request-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -124,7 +123,6 @@ export default function OtpPage() {
 
       alert("A new OTP has been sent to your email.");
 
-      // Start 30-second timer
       setCooldown(30);
 
     } catch (err) {

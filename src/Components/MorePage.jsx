@@ -22,7 +22,7 @@ export default function MorePage() {
 
       try {
         const res = await fetch(
-          `http://127.0.0.1:5000/api/users/phone/${currentUser.phone}`
+          `https://chateo-ml7k.onrender.com/api/users/phone/${currentUser.phone}`
         );
 
         const data = await res.json();

@@ -43,7 +43,7 @@ export default function ChatDetails() {
       try {
         await Promise.all(
           selectedMessages.map((msgId) =>
-            fetch(`http://127.0.0.1:5000/messages/${msgId}`, {
+            fetch(`https://chateo-ml7k.onrender.com/messages/${msgId}`, {
               method: "DELETE",
             })
           )
@@ -118,7 +118,7 @@ export default function ChatDetails() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const msgRes = await fetch(`http://localhost:8000/messages`);
+        const msgRes = await fetch(`https://chateo-ml7k.onrender.com/messages`);
         let msgData = [];
         if (msgRes.ok) msgData = await msgRes.json();
 
@@ -129,7 +129,7 @@ export default function ChatDetails() {
 
         // If /messages is empty, use contact.messages
         if (filtered.length === 0) {
-          const contactRes = await fetch(`http://localhost:8000/contacts/${id}`);
+          const contactRes = await fetch(`https://chateo-ml7k.onrender.com/contacts/${id}`);
           const contactData = await contactRes.json();
           filtered = contactData.messages || [];
         }
@@ -153,7 +153,7 @@ export default function ChatDetails() {
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/contacts/${id}`);
+        const res = await fetch(`https://chateo-ml7k.onrender.com/contacts/${id}`);
         const data = await res.json();
         setContact(data);
       } catch (error) {
@@ -195,13 +195,13 @@ export default function ChatDetails() {
     };
 
     try {
-      await fetch(`http://localhost:8000/messages`, {
+      await fetch(`https://chateo-ml7k.onrender.com/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMessage),
       });
 
-      await fetch(`http://localhost:8000/contacts/${id}`, {
+      await fetch(`https://chateo-ml7k.onrender.com/contacts/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
