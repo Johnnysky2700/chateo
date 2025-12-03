@@ -14,7 +14,7 @@ const app = express();
 
 // CORS for Netlify
 app.use(cors({
-  origin: ["https://chateo-app.netlify.app"],
+  origin: ["*"],
   methods: ["GET", "POST", "PATCH"],
   credentials: true
 }));
