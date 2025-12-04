@@ -21,11 +21,17 @@ export default function VerifyPage() {
     const email = username.includes("@") ? username : username + domain;
 
     try {
-      const response = await fetch("https://chateo-ml7k.onrender.com/request-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      // ✅ Use the full backend URL
+      const response = await fetch(
+        "https://chateo-ml7k.onrender.com/request-otp",
+        {
+          method: "POST",            // POST is required
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
 
@@ -39,7 +45,9 @@ export default function VerifyPage() {
 
     } catch (error) {
       console.error("OTP SEND ERROR:", error);
-      alert("Failed to send OTP. Check your server.");
+      alert(
+        "Failed to send OTP. Make sure your backend is running and accessible."
+      );
     }
   };
 
@@ -58,14 +66,12 @@ export default function VerifyPage() {
           Enter your Gmail username (your email will become username{domain})
         </p>
 
-        {/* 🔥 Normal device keyboard input */}
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Enter Gmail username"
-          className="w-full bg-[#F7F7FC] dark:bg-gray-900 px-4 py-4 rounded-xl 
-                     text-lg outline-none"
+          className="w-full bg-[#F7F7FC] dark:bg-gray-900 px-4 py-4 rounded-xl text-lg outline-none"
         />
 
         <button
