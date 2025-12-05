@@ -21,6 +21,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
+      "http://localhost:5000",
       "https://chateo-app.netlify.app", // your real frontend UI
     ],
     methods: ["GET", "POST", "PATCH", "OPTIONS"],
