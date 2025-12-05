@@ -23,7 +23,7 @@ export default function VerifyPage() {
     try {
       // ✅ Use the full backend URL
       const response = await fetch(
-        "https://chateo-ml7k.onrender.com/request-otp", 
+        "https://your-backend.vercel.app/request-otp", 
         {
           method: "POST",            // POST is required
           headers: {
@@ -32,9 +32,6 @@ export default function VerifyPage() {
           body: JSON.stringify({ email }),
         }
       );
-
-      const contacts = await response.json();
-      console.log(contacts);
 
       const data = await response.json();
 
