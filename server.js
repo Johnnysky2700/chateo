@@ -174,10 +174,9 @@ app.post("/verify-otp", async (req, res) => {
 // ------------------ CONTACTS API ------------------
 app.get("/contacts", async (req, res) => {
   try {
-    const contacts = await User.find({}, "-otp -otpExpires");
+    const contacts = await User.find();
     res.json(contacts);
-  } catch (err) {
-    console.error("❌ FETCH CONTACTS ERROR:", err);
+  } catch (error) {
     res.status(500).json({ error: "Failed to fetch contacts" });
   }
 });

@@ -23,10 +23,18 @@ export default function ContactPage() {
     const fetchContacts = async () => {
       try {
         const res = await fetch("https://chateo-ml7k.onrender.com/contacts");
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
         const data = await res.json();
-        setContacts(data); // Update contacts via context
+        setContacts(data);
       } catch (err) {
-        console.error("Failed to fetch contacts:", err);
+        console.error("❌ Failed to fetch contacts:", err);
+        // Optionally show user-friendly message
+        alert("Could not load contacts. Make sure the backend is running.");
+        setContacts([]); // Set empty array as fallback
       }
     };
 
