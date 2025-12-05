@@ -5,6 +5,8 @@ import { MdChevronLeft } from "react-icons/md";
 export default function VerifyPage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
+  const [error, setError] = useState("");       // ✅ Inline error
+  const [loading, setLoading] = useState(false); // ✅ Loading state
   const domain = "@gmail.com";
 
   useEffect(() => {
@@ -13,22 +15,22 @@ export default function VerifyPage() {
   }, [navigate]);
 
   const handleContinue = async () => {
+    setError(""); // Clear previous error
+
     if (!username || username.length < 2) {
-      alert("Enter a valid username.");
+      setError("Enter a valid username.");
       return;
     }
 
     const email = username.includes("@") ? username : username + domain;
 
+    setLoading(true);
     try {
-      // ✅ Use the full backend URL
       const response = await fetch(
-        "https://your-backend.vercel.app/request-otp", 
+        "https://chateo-zeta.vercel.app/request-otp",
         {
-          method: "POST",            // POST is required
-          headers: {
-            "Content-Type": "application/json",
-          },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
         }
       );
@@ -36,18 +38,19 @@ export default function VerifyPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || "Failed to send OTP.");
+        setError(data.error || "Failed to send OTP.");
         return;
       }
 
       alert("OTP sent to your email!");
       navigate("/OtpPage", { state: { email } });
-
-    } catch (error) {
-      console.error("OTP SEND ERROR:", error);
-      alert(
+    } catch (err) {
+      console.error("OTP SEND ERROR:", err);
+      setError(
         "Failed to send OTP. Make sure your backend is running and accessible."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,11 +77,15 @@ export default function VerifyPage() {
           className="w-full bg-[#F7F7FC] dark:bg-gray-900 px-4 py-4 rounded-xl text-lg outline-none"
         />
 
+        {/* ✅ Inline error message */}
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+
         <button
           onClick={handleContinue}
-          className="w-full bg-blue-600 text-white py-3 rounded-full text-[16px] hover:bg-blue-700 mt-6"
+          disabled={loading} // ✅ Disable while loading
+          className="w-full bg-blue-600 text-white py-3 rounded-full text-[16px] hover:bg-blue-700 mt-6 disabled:opacity-50"
         >
-          Continue
+          {loading ? "Sending OTP..." : "Continue"} {/* ✅ Show loading */}
         </button>
       </div>
     </div>
