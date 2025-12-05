@@ -9,7 +9,7 @@ export default function CommentModal({ postId, onClose }) {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await fetch(`https://chateo-ml7k.onrender.com/comments?postId=${postId}`);
+        const res = await fetch(`https://chateo-zeta.vercel.app/comments?postId=${postId}`);
         const data = await res.json();
         setComments(data);
       } catch (error) {
@@ -29,7 +29,7 @@ export default function CommentModal({ postId, onClose }) {
     };
 
     try {
-      const res = await fetch("https://chateo-ml7k.onrender.com/comments", {
+      const res = await fetch("https://chateo-zeta.vercel.app/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(comment),

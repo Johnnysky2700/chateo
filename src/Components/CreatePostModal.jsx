@@ -25,7 +25,7 @@ export default function CreatePostModal({ onClose, onPost }) {
     };
 
     try {
-      const res = await fetch("https://chateo-ml7k.onrender.com/posts", {
+      const res = await fetch("https://chateo-zeta.vercel.app/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPost),

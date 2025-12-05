@@ -27,7 +27,7 @@ export default function ChatPage() {
 
   // Move fetchStories outside useEffect so it can be reused
   const fetchStories = useCallback(async () => {
-    const res = await fetch("https://chateo-ml7k.onrender.com/stories");
+    const res = await fetch("https://chateo-zeta.vercel.app/stories");
     const data = await res.json();
     console.log("Fetched stories:", data); // Log all fetched stories
     const now = new Date();
@@ -50,7 +50,7 @@ export default function ChatPage() {
 
   const fetchContacts = useCallback(async () => {
     try {
-      const res = await fetch("https://chateo-ml7k.onrender.com/contacts");
+      const res = await fetch("https://chateo-zeta.vercel.app/contacts");
       const data = await res.json();
       setContacts(data);
     } catch (err) {
@@ -72,7 +72,7 @@ export default function ChatPage() {
     try {
       await Promise.all(
         selectedChats.map((id) =>
-          fetch(`https://chateo-ml7k.onrender.com/contacts/${id}`, { method: "DELETE" })
+          fetch(`https://chateo-zeta.vercel.app/contacts/${id}`, { method: "DELETE" })
         )
       );
       fetchContacts();
@@ -98,7 +98,7 @@ export default function ChatPage() {
     };
 
     try {
-      const response = await fetch("https://chateo-ml7k.onrender.com/stories", {
+      const response = await fetch("https://chateo-zeta.vercel.app/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),

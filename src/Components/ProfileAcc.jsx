@@ -23,7 +23,7 @@ export default function ProfileAcc() {
     const phoneNumber = localStorage.getItem('registeredPhone');
 
     try {
-      const response = await fetch('https://chateo-ml7k.onrender.com/contacts', {
+      const response = await fetch('https://chateo-zeta.vercel.app/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

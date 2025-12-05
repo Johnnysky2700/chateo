@@ -14,7 +14,7 @@ const InviteFriends = () => {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await fetch("https://chateo-ml7k.onrender.com/contacts");
+        const res = await fetch("https://chateo-zeta.vercel.app/contacts");
         const data = await res.json();
         setContacts(data || []);
       } catch (err) {
