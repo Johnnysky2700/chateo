@@ -16,36 +16,40 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS setup
-app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://chateo-app.netlify.app",   // ✅ your real frontend
-  ],
-  methods: ["GET", "POST", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+// ------------------ CORS ------------------
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://chateo-app.netlify.app", // your real frontend UI
+    ],
+    methods: ["GET", "POST", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 app.options("*", cors());
 
 // Logging middleware
 app.use((req, res, next) => {
   console.log(`🟦 [REQUEST] ${req.method} ${req.url}`);
-  if (req.body && Object.keys(req.body).length) console.log("📦 Request body:", req.body);
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log("📦 Request body:", req.body);
+  }
   next();
 });
 
-// Static folders
+// Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Multer storage
+// Multer config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
-    cb(null, uploadDir);
+    const dir = path.join(__dirname, "uploads");
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -55,8 +59,13 @@ const upload = multer({ storage });
 
 // ------------------ UPLOAD ROUTE ------------------
 app.post("/upload", upload.single("file"), (req, res) => {
-  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-  res.json({ message: "File uploaded successfully", file: req.file });
+  if (!req.file)
+    return res.status(400).json({ message: "No file uploaded" });
+
+  res.json({
+    message: "File uploaded successfully",
+    file: req.file,
+  });
 });
 
 // ------------------ MONGODB SETUP ------------------
@@ -78,51 +87,66 @@ const UserSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", UserSchema);
 
-// ------------------ NODEMAILER SETUP ------------------
+// ------------------ NODEMAILER SETUP (Render compatible) ------------------
+// ❗ DO NOT USE: service: "gmail" → Render will block it
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
+    pass: process.env.MAIL_PASS, // must be a Gmail app password
   },
-  tls: { rejectUnauthorized: false }
 });
 
-// ------------------ OTP ENDPOINTS ------------------
-
-// Request OTP
+// ------------------ REQUEST OTP ------------------
 app.post("/request-otp", async (req, res) => {
   const { email } = req.body;
-  if (!email) return res.status(400).json({ error: "Email is required" });
+
+  if (!email)
+    return res.status(400).json({ error: "Email is required" });
 
   try {
     const normalizedEmail = email.toLowerCase().trim();
     let user = await User.findOne({ email: normalizedEmail });
+
     if (!user) user = new User({ email: normalizedEmail });
 
+    // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     user.otp = otp;
     user.otpExpires = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    await transporter.sendMail({
-      from: `"Chateo App" <${process.env.MAIL_USER}>`,
-      to: normalizedEmail,
-      subject: "Your OTP Code",
-      html: `<h1>${otp}</h1><p>This OTP expires in 5 minutes.</p>`,
-    });
+    // Attempt sending the OTP email
+    try {
+      await transporter.sendMail({
+        from: `"Chateo App" <${process.env.MAIL_USER}>`,
+        to: normalizedEmail,
+        subject: "Your OTP Code",
+        html: `<h1>${otp}</h1><p>This OTP expires in 5 minutes.</p>`,
+      });
+    } catch (mailError) {
+      console.error("❌ EMAIL ERROR:", mailError);
+      return res.status(500).json({
+        error: "Email not sent",
+        details: mailError.message,
+      });
+    }
 
     res.json({ message: "OTP sent" });
-  } catch (error) {
-    console.error("❌ OTP SEND ERROR:", error);
+  } catch (err) {
+    console.error("❌ OTP SEND ERROR:", err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 });
 
-// Verify OTP
+// ------------------ VERIFY OTP ------------------
 app.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
-  if (!email || !otp) return res.status(400).json({ error: "Email and OTP required" });
+
+  if (!email || !otp)
+    return res.status(400).json({ error: "Email and OTP required" });
 
   try {
     const normalizedEmail = email.toLowerCase().trim();
@@ -134,13 +158,14 @@ app.post("/verify-otp", async (req, res) => {
     if (Date.now() > user.otpExpires)
       return res.status(400).json({ error: "OTP expired" });
 
+    // Clear OTP
     user.otp = null;
     user.otpExpires = null;
     await user.save();
 
     res.json({ message: "Login successful", user });
-  } catch (error) {
-    console.error("❌ OTP VERIFY ERROR:", error);
+  } catch (err) {
+    console.error("❌ OTP VERIFY ERROR:", err);
     res.status(500).json({ error: "Verification error" });
   }
 });
@@ -148,10 +173,10 @@ app.post("/verify-otp", async (req, res) => {
 // ------------------ CONTACTS API ------------------
 app.get("/contacts", async (req, res) => {
   try {
-    const contacts = await User.find({}, "-otp -otpExpires"); // Exclude OTP fields
+    const contacts = await User.find({}, "-otp -otpExpires");
     res.json(contacts);
-  } catch (error) {
-    console.error("❌ FETCH CONTACTS ERROR:", error);
+  } catch (err) {
+    console.error("❌ FETCH CONTACTS ERROR:", err);
     res.status(500).json({ error: "Failed to fetch contacts" });
   }
 });
@@ -173,6 +198,6 @@ app.use((req, res) => {
 
 // ------------------ START SERVER ------------------
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Backend running on port ${PORT}`);
-});
+app.listen(PORT, () =>
+  console.log(`🚀 Backend running on port ${PORT}`)
+);
