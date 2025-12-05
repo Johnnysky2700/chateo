@@ -20,13 +20,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://your-netlify-domain.netlify.app",
-    "https://chateo-ml7k.onrender.com"
+    "https://chateo-app.netlify.app",   // ✅ your real frontend
   ],
   methods: ["GET", "POST", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
-app.options("*", cors()); // Handle preflight requests
+
+app.options("*", cors());
 
 // Logging middleware
 app.use((req, res, next) => {
@@ -141,6 +142,17 @@ app.post("/verify-otp", async (req, res) => {
   } catch (error) {
     console.error("❌ OTP VERIFY ERROR:", error);
     res.status(500).json({ error: "Verification error" });
+  }
+});
+
+// ------------------ CONTACTS API ------------------
+app.get("/contacts", async (req, res) => {
+  try {
+    const contacts = await User.find({}, "-otp -otpExpires"); // Exclude OTP fields
+    res.json(contacts);
+  } catch (error) {
+    console.error("❌ FETCH CONTACTS ERROR:", error);
+    res.status(500).json({ error: "Failed to fetch contacts" });
   }
 });
 
