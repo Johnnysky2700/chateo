@@ -23,7 +23,7 @@ export default function Account() {
       }
 
       try {
-        const res = await fetch(`https://chateo-zeta.vercel.app/user/${storedUser._id}`);
+        const res = await fetch(`https://chat-backend-xt3z.onrender.com/user/${storedUser._id}`);
         const data = await res.json();
 
         if (res.ok && data) {

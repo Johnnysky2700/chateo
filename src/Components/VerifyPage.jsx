@@ -27,7 +27,7 @@ export default function VerifyPage() {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://chateo-zeta.vercel.app/request-otp",
+        "https://chat-backend-xt3z.onrender.com/api/auth/send-otp",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

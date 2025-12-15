@@ -70,7 +70,7 @@ export default function OtpPage() {
           }
 
           // 🔹 VERIFY OTP WITH BACKEND
-          const verifyRes = await fetch("https://chateo-zeta.vercel.app/verify-otp", {
+          const verifyRes = await fetch("https://chat-backend-xt3z.onrender.com/verify-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, otp: newOtp }),
@@ -108,7 +108,7 @@ export default function OtpPage() {
     setOtp("");
 
     try {
-      const res = await fetch("https://chateo-zeta.vercel.app/request-otp", {
+      const res = await fetch("https://chat-backend-xt3z.onrender.com/request-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
