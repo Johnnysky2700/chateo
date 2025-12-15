@@ -27,7 +27,7 @@ export default function VerifyPage() {
     setLoading(true);
     try {
       const response = await fetch(
-        "express-js-on-vercel-eight-virid.vercel.app/api/auth/send-otp",
+        "https://chat-backend-ten-chi.vercel.app/api/auth/send-otp",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
