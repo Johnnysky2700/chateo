@@ -5,16 +5,17 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch current user from localStorage and then refresh from MongoDB
+  // Fetch current user from localStorage and then refresh from backend
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
+
       // Fetch fresh data from backend to get latest edits
-      fetch(`"https://chat-backend-ten-chi.vercel.app/users?email=${parsedUser.email}`)
+      fetch(`https://chat-backend-ten-chi.vercel.app/users?email=${parsedUser.email}`)
         .then((res) => res.json())
         .then((data) => {
-          if (data.length > 0) {
+          if (data && data.length > 0) {
             setCurrentUser(data[0]);
             localStorage.setItem('currentUser', JSON.stringify(data[0]));
           } else {
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
 
       let user;
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         user = data[0];
       } else {
         // Create new user if not exists
