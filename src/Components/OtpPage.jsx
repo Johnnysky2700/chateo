@@ -70,7 +70,7 @@ export default function OtpPage() {
           }
 
           // 🔹 VERIFY OTP WITH BACKEND
-          const verifyRes = await fetch("https://chat-backend-ten-chi.vercel.app/verify-otp", {
+          const verifyRes = await fetch("https://chat-backend-ten-chi.vercel.app/api/auth/verify-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, otp: newOtp }),
@@ -108,7 +108,7 @@ export default function OtpPage() {
     setOtp("");
 
     try {
-      const res = await fetch("https://chat-backend-ten-chi.vercel.app/request-otp", {
+      const res = await fetch("https://chat-backend-ten-chi.vercel.app/api/auth/request-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
