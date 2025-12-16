@@ -108,7 +108,7 @@ export default function OtpPage() {
     setOtp("");
 
     try {
-      const res = await fetch("https://chat-backend-ten-chi.vercel.app/api/auth/request-otp", {
+      const res = await fetch("https://chat-backend-ten-chi.vercel.app/api/auth/sent-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
