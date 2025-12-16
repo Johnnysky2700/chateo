@@ -8,6 +8,9 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Footer from "./Footer";
 
+// ✅ Use environment variable for backend base URL
+const API_BASE = process.env.REACT_APP_API_BASE;
+
 export default function ContactPage() {
   const { contacts, setContacts } = useContacts(); // use context here
   const [search, setSearch] = useState("");
@@ -22,7 +25,7 @@ export default function ContactPage() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await fetch("https://chat-backend-ten-chi.vercel.app/api/users");
+        const res = await fetch(`${API_BASE}/api/users`);
 
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}: ${res.statusText}`);
@@ -32,14 +35,13 @@ export default function ContactPage() {
         setContacts(data);
       } catch (err) {
         console.error("❌ Failed to fetch contacts:", err);
-        // Optionally show user-friendly message
         alert("Could not load contacts. Make sure the backend is running.");
-        setContacts([]); // Set empty array as fallback
+        setContacts([]); // fallback
       }
     };
 
     fetchContacts();
-  }, [setContacts]); // Make sure setContacts is stable
+  }, [setContacts]);
 
   const filteredContacts = contacts.filter((contact) =>
     contact?.name?.toLowerCase().includes(search.toLowerCase())
@@ -75,7 +77,7 @@ export default function ContactPage() {
     };
 
     try {
-      const res = await fetch("https://chat-backend-ten-chi.vercel.app/api/users", {
+      const res = await fetch(`${API_BASE}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newContact),
@@ -83,7 +85,7 @@ export default function ContactPage() {
 
       if (res.ok) {
         const saved = await res.json();
-        setContacts((prev) => [...prev, saved]); // Update the contacts list
+        setContacts((prev) => [...prev, saved]);
         setShowModal(false);
         setFirstName("");
         setMiddleName("");
