@@ -22,7 +22,7 @@ export default function ContactPage() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await fetch("https://chateo-zeta.vercel.app/contacts");
+        const res = await fetch(`${API_BASE}/api/users/users`);
 
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}: ${res.statusText}`);
@@ -75,7 +75,7 @@ export default function ContactPage() {
     };
 
     try {
-      const res = await fetch("https://chateo-zeta.vercel.app/contacts", {
+      const res = await fetch(`${API_BASE}/api/users/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newContact),
