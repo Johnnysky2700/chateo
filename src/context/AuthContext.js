@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
       const parsedUser = JSON.parse(storedUser);
 
       // Fetch fresh data from backend to get latest edits
-      fetch(`https://chat-backend-ten-chi.vercel.app/users?email=${parsedUser.email}`)
+      fetch(`https://chat-backend-chi-virid.vercel.app/users?email=${parsedUser.email}`)
         .then((res) => res.json())
         .then((data) => {
           if (data && data.length > 0) {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // userData must contain at least email
       const email = userData.email;
-      const res = await fetch(`https://chat-backend-ten-chi.vercel.app/users?email=${email}`);
+      const res = await fetch(`https://chat-backend-chi-virid.vercel.app/users?email=${email}`);
       const data = await res.json();
 
       let user;
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
         user = data[0];
       } else {
         // Create new user if not exists
-        const createRes = await fetch(`https://chat-backend-ten-chi.vercel.app/users`, {
+        const createRes = await fetch(`https://chat-backend-chi-virid.vercel.app/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(userData),

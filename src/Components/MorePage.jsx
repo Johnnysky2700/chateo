@@ -22,7 +22,7 @@ export default function MorePage() {
 
       try {
         const res = await fetch(
-          `https://chateo-zeta.vercel.app/api/users/phone/${currentUser.phone}`
+          `https://chat-backend-chi-virid.vercel.app/api/users/phone/${currentUser.phone}`
         );
 
         const data = await res.json();

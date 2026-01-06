@@ -10,7 +10,7 @@ export default function Chats() {
   const [keepArchived, setKeepArchived] = useState(true);
 
   useEffect(() => {
-    fetch("https://chateo-zeta.vercel.app/chatSettings")
+    fetch("https://chat-backend-chi-virid.vercel.app/chatSettings")
       .then((res) => res.json())
       .then((data) => {
         setSaveToPhotos(data.saveToPhotos);
@@ -20,7 +20,7 @@ export default function Chats() {
   }, []);
 
   const updateSetting = async (field, value) => {
-    await fetch(`https://chateo-zeta.vercel.app/chatSettings`, {
+    await fetch(`https://chat-backend-chi-virid.vercel.app/chatSettings`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: value }),
@@ -34,7 +34,7 @@ export default function Chats() {
   };
 
   const handleAction = async (action) => {
-    const response = await fetch(`https://chateo-zeta.vercel.app/chats/${action}`, {
+    const response = await fetch(`https://chat-backend-chi-virid.vercel.app/chats/${action}`, {
       method: "POST",
     });
     if (response.ok) {

@@ -50,7 +50,7 @@ export default function NotificationSound() {
 
   const handleSave = async () => {
     try {
-      await fetch("https://chateo-zeta.vercel.app/api/save-tone", {
+      await fetch("https://chat-backend-chi-virid.vercel.app/api/save-tone", {
         method: "POST",
         body: JSON.stringify({ tone: selectedTone }),
         headers: { "Content-Type": "application/json" },
