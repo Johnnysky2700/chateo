@@ -76,9 +76,24 @@ export default function OtpPage() {
             body: JSON.stringify({ email, otp: newOtp }),
           });
 
-          const verifyData = await verifyRes.json();
+          // Read as text first to avoid crashing on non-JSON (e.g., HTML 404 page)
+          const resText = await verifyRes.text();
+          let verifyData;
+          try {
+            verifyData = JSON.parse(resText);
+          } catch (e) {
+            verifyData = { error: resText };
+          }
+
+          if (verifyRes.status === 404) {
+            console.error("OTP verify endpoint not found (404):", resText);
+            alert("OTP verification service is unavailable (404). Please try again later.");
+            setOtp("");
+            return;
+          }
 
           if (verifyRes.status !== 200) {
+            console.error("OTP verify failed:", verifyRes.status, verifyData);
             alert(verifyData.error || "Invalid OTP");
             setOtp("");
             return;
