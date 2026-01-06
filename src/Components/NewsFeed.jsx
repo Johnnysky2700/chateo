@@ -32,7 +32,7 @@ export default function NewsFeed() {
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("currentUser"));
     if (stored?.id) {
-      fetch(`https://chat-backend-chi-virid.vercel.app/users/${stored.id}`)
+      fetch(`https://chat-backend-chi-virid.vercel.app/api/users/${stored.id}`)
         .then((res) => res.json())
         .then((data) => setCurrentUser(data))
         .catch((err) => console.error("Failed to fetch user:", err));
