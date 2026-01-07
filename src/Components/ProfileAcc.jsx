@@ -23,7 +23,7 @@ export default function ProfileAcc() {
     const phoneNumber = localStorage.getItem('registeredPhone');
 
     try {
-      const response = await fetch('https://chat-backend-chi-virid.vercel.app/api/contacts', {
+      const response = await fetch('https://chat-backend-chi-virid.vercel.app/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

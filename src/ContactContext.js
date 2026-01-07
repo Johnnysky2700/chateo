@@ -13,7 +13,7 @@ export const ContactProvider = ({ children }) => {
 
     // Simulate fetching contacts
     const fetchContacts = async () => {
-      const res = await fetch("chat-backend-three-delta.vercel.app/contacts");
+      const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/users");
       const data = await res.json();
       setContacts(data);
     };

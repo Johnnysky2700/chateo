@@ -129,7 +129,7 @@ export default function ChatDetails() {
 
         // If /messages is empty, use contact.messages
         if (filtered.length === 0) {
-          const contactRes = await fetch(`https://chat-backend-chi-virid.vercel.app/api/contacts/${id}`);
+          const contactRes = await fetch(`https://chat-backend-chi-virid.vercel.app/api/users/${id}`);
           const contactData = await contactRes.json();
           filtered = contactData.messages || [];
         }
@@ -153,7 +153,7 @@ export default function ChatDetails() {
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const res = await fetch(`https://chat-backend-chi-virid.vercel.app/api/contacts/${id}`);
+        const res = await fetch(`https://chat-backend-chi-virid.vercel.app/api/users/${id}`);
         const data = await res.json();
         setContact(data);
       } catch (error) {
@@ -201,7 +201,7 @@ export default function ChatDetails() {
         body: JSON.stringify(newMessage),
       });
 
-      await fetch(`https://chat-backend-chi-virid.vercel.app/contacts/${id}`, {
+      await fetch(`https://chat-backend-chi-virid.vercel.app/api/users/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -301,8 +301,8 @@ export default function ChatDetails() {
                   {msg.text && (
                     <div
                       className={`mt-1 p-2 rounded-lg text-sm ${msg.sender === "you"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 dark:bg-gray-700"
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 dark:bg-gray-700"
                         }`}
                     >
                       {msg.text}
@@ -312,8 +312,8 @@ export default function ChatDetails() {
               ) : (
                 <div
                   className={`p-3 rounded-lg text-sm ${msg.sender === "you"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 dark:bg-gray-700"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700"
                     }`}
                 >
                   {msg.text}

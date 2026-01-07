@@ -8,13 +8,14 @@ const InviteFriends = () => {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
   const letterRefs = useRef({});
 
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/contacts");
+        const res = await fetch(
+          "https://chat-backend-chi-virid.vercel.app/api/users"
+        );
         const data = await res.json();
         setContacts(data || []);
       } catch (err) {
@@ -25,14 +26,13 @@ const InviteFriends = () => {
     fetchContacts();
   }, []);
 
-  // ✅ Safe filter (prevents undefined errors)
+  // Filter contacts by search term
   const filteredContacts = contacts.filter(
     (c) =>
-      c?.name &&
-      c.name.toLowerCase().includes(searchTerm.toLowerCase())
+      c?.name && c.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // ✅ Group by first letter safely
+  // Group contacts by first letter
   const groupedContacts = filteredContacts.reduce((acc, contact) => {
     if (!contact?.name) return acc;
     const firstLetter = contact.name[0].toUpperCase();
@@ -41,6 +41,7 @@ const InviteFriends = () => {
     return acc;
   }, {});
 
+  // Scroll to a letter
   const scrollToLetter = (letter) => {
     const el = letterRefs.current[letter];
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });

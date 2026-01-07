@@ -50,7 +50,7 @@ export default function ChatPage() {
 
   const fetchContacts = useCallback(async () => {
     try {
-      const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/contacts");
+      const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/users");
       const data = await res.json();
       setContacts(data);
     } catch (err) {
@@ -72,7 +72,7 @@ export default function ChatPage() {
     try {
       await Promise.all(
         selectedChats.map((id) =>
-          fetch(`https://chat-backend-chi-virid.vercel.app/api/contacts/${id}`, { method: "DELETE" })
+          fetch(`https://chat-backend-chi-virid.vercel.app/api/users/${id}`, { method: "DELETE" })
         )
       );
       fetchContacts();
@@ -394,7 +394,7 @@ export default function ChatPage() {
                           : "";
 
                         await fetch(
-                          `http://localhost:8000/contacts/${contact.id}`,
+                          `http://localhost:8000/api/users/${contact.id}`,
                           {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },
