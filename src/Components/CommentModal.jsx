@@ -9,7 +9,7 @@ export default function CommentModal({ postId, onClose }) {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await fetch(`https://chat-backend-chi-virid.vercel.app/comments?postId=${postId}`);
+        const res = await fetch(`https://chat-backend-chi-virid.vercel.app/api/comments?postId=${postId}`);
         const data = await res.json();
         setComments(data);
       } catch (error) {
@@ -29,7 +29,7 @@ export default function CommentModal({ postId, onClose }) {
     };
 
     try {
-      const res = await fetch("https://chat-backend-chi-virid.vercel.app/comments", {
+      const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(comment),

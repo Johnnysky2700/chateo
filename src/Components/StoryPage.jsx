@@ -13,7 +13,7 @@ export default function StoryPage() {
 
   const fetchStories = useCallback(async () => {
     try {
-      const res = await fetch(`https://chat-backend-chi-virid.vercel.app/stories?userId=${userId}`);
+      const res = await fetch(`https://chat-backend-chi-virid.vercel.app/api/stories?userId=${userId}`);
       const data = await res.json();
       console.log("Fetched stories for userId", userId, data); // Debug log
       const now = new Date();
@@ -103,7 +103,7 @@ export default function StoryPage() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`https://chat-backend-chi-virid.vercel.app/stories/${currentStory.id}`, {
+      await fetch(`https://chat-backend-chi-virid.vercel.app/api/stories/${currentStory.id}`, {
         method: "DELETE",
       });
       alert("Story deleted");

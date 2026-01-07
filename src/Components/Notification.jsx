@@ -16,7 +16,7 @@ export default function Notification() {
 
   const handleAction = async (action) => {
     const response = await fetch(
-      `https://chat-backend-chi-virid.vercel.app/notifications/${action}`,
+      `https://chat-backend-chi-virid.vercel.app/api/notifications/${action}`,
       {
         method: "POST",
       }

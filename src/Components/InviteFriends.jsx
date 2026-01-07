@@ -14,7 +14,7 @@ const InviteFriends = () => {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await fetch("https://chat-backend-chi-virid.vercel.app/contacts");
+        const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/contacts");
         const data = await res.json();
         setContacts(data || []);
       } catch (err) {

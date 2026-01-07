@@ -41,7 +41,7 @@ export default function NewsFeed() {
 
   const fetchPosts = useCallback(async () => {
     try {
-      let url = `https://chat-backend-chi-virid.vercel.app/posts?_page=${page}&_limit=5`;
+      let url = `https://chat-backend-chi-virid.vercel.app/api/posts?_page=${page}&_limit=5`;
       if (friendPostsOnly && currentUser?.friends) {
         const friendsFilter = currentUser.friends.join(",");
         url += `&userId=${friendsFilter}`;

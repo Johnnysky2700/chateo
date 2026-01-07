@@ -25,7 +25,7 @@ export default function CreatePostModal({ onClose, onPost }) {
     };
 
     try {
-      const res = await fetch("https://chat-backend-chi-virid.vercel.app/posts", {
+      const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPost),

@@ -6,7 +6,7 @@ export default function StoryBar({ onSelectStory }) {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const res = await fetch("https://chat-backend-chi-virid.vercel.app/stories");
+        const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/stories");
         const data = await res.json();
         setStories(data.filter(story => Date.now() - new Date(story.timestamp) < 24 * 60 * 60 * 1000));
       } catch (error) {

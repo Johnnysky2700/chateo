@@ -43,7 +43,7 @@ export default function ChatDetails() {
       try {
         await Promise.all(
           selectedMessages.map((msgId) =>
-            fetch(`https://chat-backend-chi-virid.vercel.app/messages/${msgId}`, {
+            fetch(`https://chat-backend-chi-virid.vercel.app/api/messages/${msgId}`, {
               method: "DELETE",
             })
           )
@@ -118,7 +118,7 @@ export default function ChatDetails() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const msgRes = await fetch(`https://chat-backend-chi-virid.vercel.app/messages`);
+        const msgRes = await fetch(`https://chat-backend-chi-virid.vercel.app/api/messages`);
         let msgData = [];
         if (msgRes.ok) msgData = await msgRes.json();
 
@@ -129,7 +129,7 @@ export default function ChatDetails() {
 
         // If /messages is empty, use contact.messages
         if (filtered.length === 0) {
-          const contactRes = await fetch(`https://chat-backend-chi-virid.vercel.app/contacts/${id}`);
+          const contactRes = await fetch(`https://chat-backend-chi-virid.vercel.app/api/contacts/${id}`);
           const contactData = await contactRes.json();
           filtered = contactData.messages || [];
         }
@@ -153,7 +153,7 @@ export default function ChatDetails() {
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const res = await fetch(`https://chat-backend-chi-virid.vercel.app/contacts/${id}`);
+        const res = await fetch(`https://chat-backend-chi-virid.vercel.app/api/contacts/${id}`);
         const data = await res.json();
         setContact(data);
       } catch (error) {

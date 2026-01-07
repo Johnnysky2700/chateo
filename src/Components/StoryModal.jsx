@@ -28,7 +28,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
         const formData = new FormData();
         formData.append("file", storyFile);
 
-        const uploadRes = await fetch("https://chat-backend-chi-virid.vercel.app/upload", {
+        const uploadRes = await fetch("https://chat-backend-chi-virid.vercel.app/api/upload", {
           method: "POST",
           body: formData, // DO NOT set headers for FormData
         });
@@ -38,7 +38,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
 
         // ✅ Express returns { file: { filename, path } }
         // Build file URL for static use
-        fileUrl = `https://chat-backend-chi-virid.vercel.app/uploads/${data.file.filename}`;
+        fileUrl = `https://chat-backend-chi-virid.vercel.app/api/uploads/${data.file.filename}`;
       }
 
       const newStory = {
@@ -51,7 +51,7 @@ export default function StoryModal({ currentUser, onClose, onStoryUpload }) {
       };
 
       // save story to db.json (JSON-server)
-      await fetch("https://chat-backend-chi-virid.vercel.app/stories", {
+      await fetch("https://chat-backend-chi-virid.vercel.app/api/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newStory),
