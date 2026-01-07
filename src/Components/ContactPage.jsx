@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useContacts } from "../ContactContext"; // import useContacts
+import { useContacts } from "../ContactContext";
 import { FiSearch } from "react-icons/fi";
 import { HiPlus } from "react-icons/hi";
 import { RiUserLine } from "react-icons/ri";
@@ -8,11 +8,11 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Footer from "./Footer";
 
-// ✅ Use environment variable for backend base URL
+// Backend base URL
 const API_BASE = process.env.REACT_APP_API_BASE;
 
 export default function ContactPage() {
-  const { contacts, setContacts } = useContacts(); // use context here
+  const { contacts, setContacts } = useContacts();
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -27,25 +27,25 @@ export default function ContactPage() {
       try {
         const res = await fetch(`${API_BASE}/api/users`);
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
         setContacts(data);
       } catch (err) {
         console.error("❌ Failed to fetch contacts:", err);
         alert("Could not load contacts. Make sure the backend is running.");
-        setContacts([]); // fallback
+        setContacts([]);
       }
     };
 
     fetchContacts();
   }, [setContacts]);
 
-  const filteredContacts = contacts.filter((contact) =>
-    contact?.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  // 🔥 FIXED: filter using first + last name
+  const filteredContacts = contacts.filter((contact) => {
+    const fullName = `${contact.firstName || ""} ${contact.lastName || ""}`.trim();
+    return fullName.toLowerCase().includes(search.toLowerCase());
+  });
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -67,13 +67,16 @@ export default function ContactPage() {
       return;
     }
 
+    // 🔥 FIXED: Match backend schema
     const newContact = {
-      name: `${firstName} ${middleName} ${lastName}`,
-      initials: `${firstName[0] || ""}${lastName[0] || ""}`,
+      firstName,
+      middleName,
+      lastName,
       phone,
+      avatar,
+      email: `${phone}@contact.local`, // prevents backend email validation issues
       status: "New Contact",
       online: false,
-      avatar,
     };
 
     try {
@@ -104,7 +107,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white p-4 pb-24 text-black dark:bg-black dark:text-white">
       {/* Header */}
-      <div className="fixed z-50 top-0 w-full bg-white  dark:bg-black left-0">
+      <div className="fixed z-50 top-0 w-full bg-white dark:bg-black left-0">
         <div className="flex justify-between items-center mb-4 py-4 px-2">
           <h1 className="text-xl">Contacts</h1>
           <button className="text-2xl" onClick={() => setShowModal(true)}>
@@ -112,7 +115,7 @@ export default function ContactPage() {
           </button>
         </div>
 
-        {/* Search Input */}
+        {/* Search */}
         <div className="mb-4 relative px-2">
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A4A4A4]" />
           <input
@@ -124,19 +127,20 @@ export default function ContactPage() {
           />
         </div>
       </div>
+
       {/* Contact List */}
       <div className="mt-28">
         <ul>
           {filteredContacts.map((contact) => (
             <li
-              key={contact.id}
+              key={contact._id}
               className="flex items-center gap-3 py-3 border-b"
             >
               {contact.avatar ? (
                 <div className="relative">
                   <img
                     src={contact.avatar}
-                    alt={contact.name}
+                    alt={`${contact.firstName} ${contact.lastName}`}
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   {contact.online && (
@@ -145,20 +149,23 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <div className="relative bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold">
-                  {contact.initials}
+                  {`${contact.firstName?.[0] || ""}${contact.lastName?.[0] || ""}`}
                   {contact.online && (
                     <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
                   )}
                 </div>
               )}
               <div>
-                <p className="font-medium">{contact.name}</p>
+                <p className="font-medium">
+                  {contact.firstName} {contact.lastName}
+                </p>
                 <p className="text-sm text-gray-400">{contact.phone}</p>
               </div>
             </li>
           ))}
         </ul>
       </div>
+
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -167,7 +174,7 @@ export default function ContactPage() {
               Add New Contact
             </h2>
 
-            {/* Avatar Upload */}
+            {/* Avatar */}
             <div className="flex justify-center mb-4">
               <div
                 className="relative"
@@ -197,7 +204,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Form Inputs */}
+            {/* Inputs */}
             <input
               type="text"
               value={firstName}
@@ -219,15 +226,13 @@ export default function ContactPage() {
               placeholder="Last Name"
               className="w-full p-2 mb-2 rounded bg-[#F7F7FC] dark:bg-gray-800"
             />
+
             <div className="mb-6">
               <PhoneInput
                 country={"id"}
                 value={phone}
                 onChange={setPhone}
-                inputProps={{
-                  name: "phone",
-                  required: true,
-                }}
+                inputProps={{ name: "phone", required: true }}
                 placeholder="Phone Number"
                 containerStyle={{ width: "100%" }}
                 inputStyle={{
@@ -245,6 +250,7 @@ export default function ContactPage() {
             >
               Save
             </button>
+
             <button
               onClick={() => setShowModal(false)}
               className="w-full py-2 text-gray-500 text-sm"
