@@ -13,6 +13,8 @@ export default function OtpPage() {
   const [otp, setOtp] = useState("");
   const [showKeypad, setShowKeypad] = useState(true);
 
+  const API_BASE = process.env.REACT_APP_API_BASE || "https://chat-backend-chi-virid.vercel.app";
+
   const keypadNumbers = [
     "1", "2", "3",
     "4", "5", "6",
@@ -70,7 +72,7 @@ export default function OtpPage() {
           }
 
           // 🔹 VERIFY OTP WITH BACKEND
-          const verifyRes = await fetch("https://chat-backend-chi-virid.vercel.app/api/auth/verify-otp", {
+          const verifyRes = await fetch(`${API_BASE}/api/auth/verify-otp`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, otp: newOtp }),
@@ -100,7 +102,7 @@ export default function OtpPage() {
           }
 
           // SUCCESS → login via AuthContext (fetch latest MongoDB data)
-          await login(verifyData.user);
+          await login(verifyData.user, verifyData.token);
 
           alert("Login successful!");
           navigate("/ContactPage");
@@ -123,7 +125,7 @@ export default function OtpPage() {
     setOtp("");
 
     try {
-      const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/auth/send-otp", {
+      const res = await fetch(`${API_BASE}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

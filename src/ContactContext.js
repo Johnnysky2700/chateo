@@ -13,9 +13,18 @@ export const ContactProvider = ({ children }) => {
 
     // Simulate fetching contacts
     const fetchContacts = async () => {
-      const res = await fetch("https://chat-backend-chi-virid.vercel.app/api/users");
-      const data = await res.json();
-      setContacts(data);
+      const storedToken = localStorage.getItem('token');
+      const API_BASE = process.env.REACT_APP_API_BASE || "https://chat-backend-chi-virid.vercel.app";
+
+      const res = await fetch(`${API_BASE}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setContacts(data);
+      }
     };
     fetchContacts();
   }, []);

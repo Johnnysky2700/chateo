@@ -8,12 +8,22 @@ export const AuthProvider = ({ children }) => {
   // Fetch current user from localStorage and then refresh from backend
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
+    const storedToken = localStorage.getItem('token');
+
+    if (storedUser && storedToken) {
       const parsedUser = JSON.parse(storedUser);
+      const API_BASE = process.env.REACT_APP_API_BASE || "https://chat-backend-chi-virid.vercel.app";
 
       // Fetch fresh data from backend to get latest edits
-      fetch(`https://chat-backend-chi-virid.vercel.app/api/users?email=${parsedUser.email}`)
-        .then((res) => res.json())
+      fetch(`${API_BASE}/api/users?email=${parsedUser.email}`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
+        .then((res) => {
+          if (res.status === 401) throw new Error("Unauthorized");
+          return res.json();
+        })
         .then((data) => {
           if (data && data.length > 0) {
             setCurrentUser(data[0]);
@@ -22,33 +32,21 @@ export const AuthProvider = ({ children }) => {
             setCurrentUser(parsedUser);
           }
         })
-        .catch(() => setCurrentUser(parsedUser));
+        .catch(() => {
+          // If auth fails, logout
+          logout();
+        });
     }
   }, []);
 
-  // Login using email (from OTP flow)
-  const login = async (userData) => {
+  // Login using data from OTP flow
+  const login = async (userData, token) => {
     try {
-      // userData must contain at least email
-      const email = userData.email;
-      const res = await fetch(`https://chat-backend-chi-virid.vercel.app/api/users?email=${email}`);
-      const data = await res.json();
-
-      let user;
-      if (data && data.length > 0) {
-        user = data[0];
-      } else {
-        // Create new user if not exists
-        const createRes = await fetch(`https://chat-backend-chi-virid.vercel.app/api/users`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(userData),
-        });
-        user = await createRes.json();
+      setCurrentUser(userData);
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+      if (token) {
+        localStorage.setItem('token', token);
       }
-
-      setCurrentUser(user);
-      localStorage.setItem('currentUser', JSON.stringify(user));
       return true;
     } catch (err) {
       console.error('Login failed:', err);
@@ -58,6 +56,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
     setCurrentUser(null);
   };
 
