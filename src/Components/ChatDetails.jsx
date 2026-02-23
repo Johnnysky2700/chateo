@@ -243,6 +243,41 @@ export default function ChatDetails() {
     }
   };
 
+  const confirmSendAttachment = async () => {
+    if (!attachmentPreview) return;
+
+    const file = attachmentPreview.file;
+    const type = attachmentPreview.type; // "image" or "document"
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const uploadRes = await fetch(`${API_URL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadRes.ok) throw new Error("Upload failed");
+
+      const uploadData = await uploadRes.json();
+      // uploadData format: { file: { filename, path } }
+      const fileUrl = `/uploads/${uploadData.file.filename}`;
+
+      sendRichMessage({
+        type: type,
+        text: message || "", // Optional caption
+        attachmentUrl: fileUrl,
+        attachmentName: file.name
+      });
+
+      setMessage("");
+      setAttachmentPreview(null);
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      alert(`Failed to send ${type}.`);
+    }
+  };
+
   const handleCamera = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -740,7 +775,7 @@ export default function ChatDetails() {
         ))}
         <div ref={bottomRef} />
       </div>
-      {/* Image preview modal 👇 */}
+      {/* Image preview modal (for viewing an already sent image) 👇 */}
       {imagePreview && (
         <div
           className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50"
@@ -751,6 +786,55 @@ export default function ChatDetails() {
             alt="preview"
             className="max-w-[90%] max-h-[90%] rounded-lg shadow-lg"
           />
+        </div>
+      )}
+
+      {/* Attachment Preview Modal (BEFORE sending) 👇 */}
+      {attachmentPreview && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow-lg max-w-sm w-full mx-4 flex flex-col items-center">
+
+            {attachmentPreview.type === "image" ? (
+              <img
+                src={attachmentPreview.url}
+                alt="attachment preview"
+                className="max-h-64 object-contain rounded-md w-full"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8">
+                <span className="text-6xl mb-4">📄</span>
+                <span className="text-sm font-medium text-black dark:text-white truncate w-64 text-center">
+                  {attachmentPreview.file?.name || "Document"}
+                </span>
+              </div>
+            )}
+
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Add a caption..."
+              className="mt-4 w-full p-3 rounded-lg bg-gray-100 dark:bg-neutral-700 text-black dark:text-white border-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <div className="flex w-full mt-4 space-x-3">
+              <button
+                onClick={() => {
+                  setAttachmentPreview(null);
+                  setMessage("");
+                }}
+                className="flex-1 py-2 text-gray-500 bg-gray-200 dark:bg-neutral-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-neutral-600 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmSendAttachment}
+                className="flex-1 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition"
+              >
+                Send
+              </button>
+            </div>
+          </div>
         </div>
       )}
       {/* Input Area */}
